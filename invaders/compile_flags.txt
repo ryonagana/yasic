@@ -1,0 +1,5 @@
+-ID:\projetos\c\invaders\invaders
+-ID:\projetos\c\invaders\invaders\src
+-ID:\projetos\libs\allegro-5.2.7\include
+-target
+i686-pc-windows-gnu
