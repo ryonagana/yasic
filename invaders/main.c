@@ -7,7 +7,7 @@
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_native_dialog.h>
 #include <stdio.h>
-
+#include <math.h>
 
 static void write_log(const char *fmt,...);
 
@@ -415,7 +415,7 @@ void draw_background()
 
         int sw = al_get_bitmap_width(background);
         int sh = al_get_bitmap_height(background);
-        al_draw_bitmap(background, TILE_SIZE * i, 0,0);
+        al_draw_bitmap(background, (TILE_SIZE * i) % sw,(TILE_SIZE * i) % sh,0);
     }
 }
 
@@ -514,6 +514,39 @@ void bullet_update(BULLET bullets[MAX_BULLETS]){
     }
 }
 
+
+void enemy_bullet_update(BULLET bullets[MAX_BULLETS], PLAYER *p){
+    
+       int bullet_index = rand() % MAX_BULLETS-1;
+        BULLET *b = &bullets[bullet_index];
+
+        b->ttl = rand() % 255;
+        b->vel_y = 1;
+
+        if(b->y <  -10 || b->y > (SCREEN_H + 10) ||  b->y < 0 ||  b->y > (SCREEN_W + 10) ){ // OUT OF THE SCREEN
+            //LOGW("[%d] bullet is dead",i)
+            bullet_delete(b);
+        }
+        
+        if(b->ttl > 0){
+            
+            float dx = b->x - p->x;
+            float dy = b->y - p->y;
+            double s = sqrt(dx*dx + dy*dy);
+            s /= SCREEN_H;
+            b->x = dx;
+            b->y = s * 0.5 * b->vel_y;
+            
+        }
+      
+        b->ttl--;
+        
+
+
+    
+}
+
+/*
 void enemy_bullet_update(BULLET bullets[MAX_BULLETS], PLAYER *p){
     for(int i = 0; i < MAX_BULLETS; i++){
         
@@ -529,7 +562,6 @@ void enemy_bullet_update(BULLET bullets[MAX_BULLETS], PLAYER *p){
             float h = sqrt((dx*dx)+(dy*dy));
             
             dx /= h;
-            // dy /= h;
         
             bullets[i].x += dx;
             bullets[i].y += bullets[i].vel_y * 0.5;
@@ -548,7 +580,7 @@ void enemy_bullet_update(BULLET bullets[MAX_BULLETS], PLAYER *p){
         
     }    
 }
-
+*/
 
 void draw_enemies_bullets(BULLET bullets[MAX_BULLETS]){
      

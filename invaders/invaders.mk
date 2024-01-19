@@ -2,24 +2,25 @@
 ## Auto Generated makefile by CodeLite IDE
 ## any manual changes will be erased      
 ##
-## Release
+## Debug
 ProjectName            :=invaders
-ConfigurationName      :=Release
-WorkspaceConfiguration := $(ConfigurationName)
+ConfigurationName      :=Debug
+WorkspaceConfiguration :=Debug
 WorkspacePath          :=D:/projetos/c/invaders
 ProjectPath            :=D:/projetos/c/invaders/invaders
-IntermediateDirectory  :=../build-$(ConfigurationName)/invaders
-OutDir                 :=../build-$(ConfigurationName)/invaders
+IntermediateDirectory  :=../build-$(WorkspaceConfiguration)/invaders
+OutDir                 :=$(IntermediateDirectory)
 CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Web Master
-Date                   :=26/11/2021
+Date                   :=1/8/2024
 CodeLitePath           :="C:/Program Files/CodeLite"
-LinkerName             :=C:/MinGW/bin/g++.exe
-SharedObjectLinkerName :=C:/MinGW/bin/g++.exe -shared -fPIC
+MakeDirCommand         :=mkdir
+LinkerName             :=C:/msys64/mingw64/bin/g++.exe
+SharedObjectLinkerName :=C:/msys64/mingw64/bin/g++.exe -shared -fPIC
 ObjectSuffix           :=.o
-DependSuffix           :=.o.d
+DependSuffix           :=
 PreprocessSuffix       :=.i
 DebugSwitch            :=-g 
 IncludeSwitch          :=-I
@@ -28,7 +29,8 @@ OutputSwitch           :=-o
 LibraryPathSwitch      :=-L
 PreprocessorSwitch     :=-D
 SourceSwitch           :=-c 
-OutputFile             :=..\build-$(ConfigurationName)\bin\$(ProjectName)
+OutputDirectory        :=D:/projetos/c/invaders/build-$(WorkspaceConfiguration)/bin
+OutputFile             :=..\build-$(WorkspaceConfiguration)\bin\$(ProjectName).exe
 Preprocessors          :=
 ObjectSwitch           :=-o 
 ArchiveOutputSwitch    := 
@@ -36,33 +38,33 @@ PreprocessOnlySwitch   :=-E
 ObjectsFileList        :=$(IntermediateDirectory)/ObjectsList.txt
 PCHCompileFlags        :=
 RcCmpOptions           := 
-RcCompilerName         :=C:/MinGW/bin/windres.exe
+RcCompilerName         :=C:/msys64/mingw64/bin/windres.exe
 LinkOptions            :=  
-IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)src $(IncludeSwitch)D:\projetos\libs\allegro-5.2.7\include 
+IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch)D:\projetos\libs\liballegro-5.2.9-git-release\include $(IncludeSwitch). 
 IncludePCH             := 
 RcIncludePath          := 
-Libs                   := $(LibrarySwitch)allegro_monolith.dll 
-ArLibs                 :=  "allegro_monolith.dll.a" 
-LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)D:\projetos\libs\allegro-5.2.7\lib 
+Libs                   := $(LibrarySwitch)allegro $(LibrarySwitch)allegro_audio $(LibrarySwitch)allegro_acodec $(LibrarySwitch)allegro_font $(LibrarySwitch)allegro_ttf $(LibrarySwitch)allegro_primitives $(LibrarySwitch)allegro_dialog $(LibrarySwitch)allegro_image 
+ArLibs                 :=  "allegro" "allegro_audio" "allegro_acodec" "allegro_font" "allegro_ttf" "allegro_primitives" "allegro_dialog" "allegro_image" 
+LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)D:\projetos\libs\liballegro-5.2.9-git-release\lib 
 
 ##
 ## Common variables
-## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables
+## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overridden using an environment variable
 ##
-AR       := C:/MinGW/bin/ar.exe rcu
-CXX      := C:/MinGW/bin/g++.exe
-CC       := C:/MinGW/bin/gcc.exe
-CXXFLAGS :=  -O4 -Wall -s $(Preprocessors)
-CFLAGS   :=  -O4 -Wall -s $(Preprocessors)
+AR       := C:/msys64/mingw64/bin/ar.exe -r
+CXX      := C:/msys64/mingw64/bin/g++.exe
+CC       := C:/msys64/mingw64/bin/gcc.exe
+CXXFLAGS :=  -gdwarf-2 -O0 -Wall $(Preprocessors)
+CFLAGS   :=  -gdwarf-2 -O0 -Wall $(Preprocessors)
 ASFLAGS  := 
-AS       := C:/MinGW/bin/as.exe
+AS       := C:/msys64/mingw64/bin/as.exe
 
 
 ##
 ## User defined environment variables
 ##
 CodeLiteDir:=C:\Program Files\CodeLite
-Objects0=../build-$(ConfigurationName)/invaders/main.c$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/main.c$(ObjectSuffix) 
 
 
 
@@ -74,18 +76,18 @@ Objects=$(Objects0)
 .PHONY: all clean PreBuild PrePreBuild PostBuild MakeIntermediateDirs
 all: MakeIntermediateDirs $(OutputFile)
 
-$(OutputFile): ../build-$(ConfigurationName)/invaders/.d $(Objects) 
-	@if not exist "..\build-$(ConfigurationName)\invaders" mkdir "..\build-$(ConfigurationName)\invaders"
+$(OutputFile): $(IntermediateDirectory)/.d $(Objects) 
+	@if not exist "$(IntermediateDirectory)" $(MakeDirCommand) "$(IntermediateDirectory)"
 	@echo "" > $(IntermediateDirectory)/.d
 	@echo $(Objects0)  > $(ObjectsFileList)
 	$(LinkerName) $(OutputSwitch)$(OutputFile) @$(ObjectsFileList) $(LibPath) $(Libs) $(LinkOptions)
 
 MakeIntermediateDirs:
-	@if not exist "..\build-$(ConfigurationName)\invaders" mkdir "..\build-$(ConfigurationName)\invaders"
-	@if not exist ""..\build-$(ConfigurationName)\bin"" mkdir ""..\build-$(ConfigurationName)\bin""
+	@if not exist "$(IntermediateDirectory)" $(MakeDirCommand) "$(IntermediateDirectory)"
+	@if not exist "$(OutputDirectory)" $(MakeDirCommand) "$(OutputDirectory)"
 
-../build-$(ConfigurationName)/invaders/.d:
-	@if not exist "..\build-$(ConfigurationName)\invaders" mkdir "..\build-$(ConfigurationName)\invaders"
+$(IntermediateDirectory)/.d:
+	@if not exist "$(IntermediateDirectory)" $(MakeDirCommand) "$(IntermediateDirectory)"
 
 PreBuild:
 
@@ -93,16 +95,11 @@ PreBuild:
 ##
 ## Objects
 ##
-../build-$(ConfigurationName)/invaders/main.c$(ObjectSuffix): main.c ../build-$(ConfigurationName)/invaders/main.c$(DependSuffix)
+$(IntermediateDirectory)/main.c$(ObjectSuffix): main.c 
 	$(CC) $(SourceSwitch) "D:/projetos/c/invaders/invaders/main.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/main.c$(ObjectSuffix) $(IncludePath)
-../build-$(ConfigurationName)/invaders/main.c$(DependSuffix): main.c
-	@$(CC) $(CFLAGS) $(IncludePath) -MG -MP -MT../build-$(ConfigurationName)/invaders/main.c$(ObjectSuffix) -MF../build-$(ConfigurationName)/invaders/main.c$(DependSuffix) -MM main.c
+$(IntermediateDirectory)/main.c$(PreprocessSuffix): main.c
+	$(CC) $(CFLAGS) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/main.c$(PreprocessSuffix) main.c
 
-../build-$(ConfigurationName)/invaders/main.c$(PreprocessSuffix): main.c
-	$(CC) $(CFLAGS) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) ../build-$(ConfigurationName)/invaders/main.c$(PreprocessSuffix) main.c
-
-
--include ../build-$(ConfigurationName)/invaders//*$(DependSuffix)
 ##
 ## Clean
 ##

@@ -1,8 +1,8 @@
 .PHONY: clean All
 
 All:
-	@echo "----------Building project:[ invaders - Release ]----------"
-	@cd "invaders" && "$(MAKE)" -f  "invaders.mk"
+	@echo "----------Building project:[ invaders_better - Debug ]----------"
+	@cd "invaders_better" && "$(MAKE)" -f  "invaders_better.mk"
 clean:
-	@echo "----------Cleaning project:[ invaders - Release ]----------"
-	@cd "invaders" && "$(MAKE)" -f  "invaders.mk" clean
+	@echo "----------Cleaning project:[ invaders_better - Debug ]----------"
+	@cd "invaders_better" && "$(MAKE)" -f  "invaders_better.mk" clean

@@ -3,3 +3,6 @@ build-*
 *.o
 *.d
 *.zip
+.codelite
+.cache
+.codelite

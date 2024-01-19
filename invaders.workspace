@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="invaders" Database="" Version="10000">
-  <Project Name="invaders" Path="invaders/invaders.project" Active="Yes"/>
+  <Project Name="invaders" Path="invaders/invaders.project" Active="No"/>
+  <Project Name="invaders_better" Path="invaders_better/invaders_better.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug">
       <Environment/>
       <Project Name="invaders" ConfigName="Debug"/>
+      <Project Name="invaders_better" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release">
       <Environment/>
       <Project Name="invaders" ConfigName="Release"/>
+      <Project Name="invaders_better" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
