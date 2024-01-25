@@ -4,7 +4,7 @@
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug">
       <Environment/>
-      <Project Name="invaders_better" ConfigName="Debug"/>
+      <Project Name="invaders_better" ConfigName=""/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release">
       <Environment/>

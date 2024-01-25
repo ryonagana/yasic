@@ -2,7 +2,7 @@
 <CodeLite_Project Name="invaders_better" Version="11000" InternalType="Console">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00030001N0005Debug0000000000000001N0014Debug - Static0000000000000001N0007Release000000000000]]>
+      <![CDATA[00040001N0005Debug0000000000000001N0014Debug - Static0000000000000001N0012Debug-Static0000000000000001N0007Release000000000000]]>
     </Plugin>
   </Plugins>
   <Description/>
@@ -16,7 +16,7 @@
   <Dependencies Name="Release - Static"/>
   <Settings Type="Executable">
     <GlobalSettings>
-      <Compiler Options="" C_Options="-Wextra;-Wall;-Werror;-Wno-unused-function;-Wno-switch;-Wuninitialized;-Wstrict-prototypes" Assembler="">
+      <Compiler Options="" C_Options="-ansi;-Wextra;-std=c99;-Werror;-Wno-unused-function;-Wno-switch;-Wuninitialized;-Wstrict-prototypes" Assembler="">
         <IncludePath Value="."/>
         <IncludePath Value="D:\projetos\libs\liballegro-5.2.9-git-release-static\include"/>
       </Compiler>
@@ -89,7 +89,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Debug - Static" CompilerType="gcc-13.1.0" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Debug-Static" CompilerType="gcc-13.1.0" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-gdwarf-2;-O0;-Wall" C_Options="-gdwarf-2;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
       </Compiler>
@@ -168,7 +168,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Release - Static" CompilerType="gcc-13.1.0" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Release-Static" CompilerType="gcc-13.1.0" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2;-Wall" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
         <Preprocessor Value="NDEBUG"/>
