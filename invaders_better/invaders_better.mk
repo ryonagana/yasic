@@ -14,7 +14,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Web Master
-Date                   :=1/24/2024
+Date                   :=1/25/2024
 CodeLitePath           :="C:/Program Files/CodeLite"
 MakeDirCommand         :=mkdir
 LinkerName             :=C:/msys64/mingw64/bin/g++.exe
@@ -39,13 +39,13 @@ ObjectsFileList        :=$(IntermediateDirectory)/ObjectsList.txt
 PCHCompileFlags        :=
 RcCmpOptions           := 
 RcCompilerName         :=C:/msys64/mingw64/bin/windres.exe
-LinkOptions            := -m64 
-IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)D:\projetos\libs\liballegro-5.2.9-git-release\include $(IncludeSwitch). 
+LinkOptions            := -m64 -static 
+IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch)D:\projetos\libs\liballegro-5.2.9-git-release-static\include $(IncludeSwitch). 
 IncludePCH             := 
 RcIncludePath          := 
-Libs                   := $(LibrarySwitch)allegro $(LibrarySwitch)allegro_audio $(LibrarySwitch)allegro_acodec $(LibrarySwitch)allegro_font $(LibrarySwitch)allegro_ttf $(LibrarySwitch)allegro_primitives $(LibrarySwitch)allegro_dialog $(LibrarySwitch)allegro_image $(LibrarySwitch)m 
-ArLibs                 :=  "allegro" "allegro_audio" "allegro_acodec" "allegro_font" "allegro_ttf" "allegro_primitives" "allegro_dialog" "allegro_image" "m" 
-LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)D:\projetos\libs\liballegro-5.2.9-git-release\lib 
+Libs                   := $(LibrarySwitch)allegro_monolith-static $(LibrarySwitch)winmm $(LibrarySwitch)shlwapi $(LibrarySwitch)ole32 $(LibrarySwitch)shell32 $(LibrarySwitch)user32 $(LibrarySwitch)stdc++ $(LibrarySwitch)opengl32 $(LibrarySwitch)gdi32 $(LibrarySwitch)gdiplus $(LibrarySwitch)webp $(LibrarySwitch)dsound $(LibrarySwitch)flac $(LibrarySwitch)psapi $(LibrarySwitch)dumb $(LibrarySwitch)freetype $(LibrarySwitch)png16 $(LibrarySwitch)zlib $(LibrarySwitch)comdlg32 $(LibrarySwitch)vorbis $(LibrarySwitch)ogg $(LibrarySwitch)opus $(LibrarySwitch)sharpyuv $(LibrarySwitch)vorbis 
+ArLibs                 :=  "allegro_monolith-static" "winmm" "shlwapi" "ole32" "shell32" "user32" "stdc++" "opengl32" "gdi32" "gdiplus" "webp" "dsound" "flac" "psapi" "dumb" "freetype" "png16" "zlib" "comdlg32" "vorbis" "ogg" "opus" "sharpyuv" "vorbis" 
+LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)D:\projetos\libs\liballegro-5.2.9-git-release-static\lib 
 
 ##
 ## Common variables
@@ -55,7 +55,7 @@ AR       := C:/msys64/mingw64/bin/ar.exe -r
 CXX      := C:/msys64/mingw64/bin/g++.exe
 CC       := C:/msys64/mingw64/bin/gcc.exe
 CXXFLAGS :=  -gdwarf-2 -O0 -Wall $(Preprocessors)
-CFLAGS   := -Wall  -Wextra  -Werror  -Wno-unused-function  -Wno-switch  -Wuninitialized  -Wstrict-prototypes -gdwarf-2 -O0 -Wall $(Preprocessors)
+CFLAGS   := -Wextra -Wall -Werror -Wno-unused-function -Wno-switch -Wuninitialized -Wstrict-prototypes -gdwarf-2 -O0 -Wall $(Preprocessors)
 ASFLAGS  := 
 AS       := C:/msys64/mingw64/bin/as.exe
 

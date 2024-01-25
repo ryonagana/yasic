@@ -2,7 +2,7 @@
 <CodeLite_Project Name="invaders_better" Version="11000" InternalType="Console">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
+      <![CDATA[00030001N0005Debug0000000000000001N0014Debug - Static0000000000000001N0007Release000000000000]]>
     </Plugin>
   </Plugins>
   <Description/>
@@ -10,25 +10,43 @@
   <VirtualDirectory Name="src">
     <File Name="main.c"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Debug - Static"/>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Release - Static"/>
   <Settings Type="Executable">
     <GlobalSettings>
-      <Compiler Options="" C_Options="-Wall; -Wextra; -Werror; -Wno-unused-function; -Wno-switch; -Wuninitialized; -Wstrict-prototypes" Assembler="">
+      <Compiler Options="" C_Options="-Wextra;-Wall;-Werror;-Wno-unused-function;-Wno-switch;-Wuninitialized;-Wstrict-prototypes" Assembler="">
         <IncludePath Value="."/>
-        <IncludePath Value="."/>
-        <IncludePath Value="D:\projetos\libs\liballegro-5.2.9-git-release\include"/>
+        <IncludePath Value="D:\projetos\libs\liballegro-5.2.9-git-release-static\include"/>
       </Compiler>
-      <Linker Options="-m64">
+      <Linker Options="-m64 -static">
         <LibraryPath Value="."/>
-        <LibraryPath Value="D:\projetos\libs\liballegro-5.2.9-git-release\lib"/>
-        <Library Value="allegro"/>
-        <Library Value="allegro_audio"/>
-        <Library Value="allegro_acodec"/>
-        <Library Value="allegro_font"/>
-        <Library Value="allegro_ttf"/>
-        <Library Value="allegro_primitives"/>
-        <Library Value="allegro_dialog"/>
-        <Library Value="allegro_image"/>
-        <Library Value="m"/>
+        <LibraryPath Value="D:\projetos\libs\liballegro-5.2.9-git-release-static\lib"/>
+        <Library Value="allegro_monolith-static"/>
+        <Library Value="winmm"/>
+        <Library Value="shlwapi"/>
+        <Library Value="ole32"/>
+        <Library Value="shell32"/>
+        <Library Value="user32"/>
+        <Library Value="stdc++"/>
+        <Library Value="opengl32"/>
+        <Library Value="gdi32"/>
+        <Library Value="gdiplus"/>
+        <Library Value="webp"/>
+        <Library Value="dsound"/>
+        <Library Value="flac"/>
+        <Library Value="psapi"/>
+        <Library Value="dumb"/>
+        <Library Value="freetype"/>
+        <Library Value="png16"/>
+        <Library Value="zlib"/>
+        <Library Value="comdlg32"/>
+        <Library Value="vorbis"/>
+        <Library Value="ogg"/>
+        <Library Value="opus"/>
+        <Library Value="sharpyuv"/>
+        <Library Value="vorbis"/>
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
@@ -71,7 +89,86 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
+    <Configuration Name="Debug - Static" CompilerType="gcc-13.1.0" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-gdwarf-2;-O0;-Wall" C_Options="-gdwarf-2;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(ProjectName).exe" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
     <Configuration Name="Release" CompilerType="gcc-13.1.0" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2;-Wall" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+        <IncludePath Value="."/>
+        <Preprocessor Value="NDEBUG"/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(ProjectName).exe" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release - Static" CompilerType="gcc-13.1.0" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2;-Wall" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
         <Preprocessor Value="NDEBUG"/>

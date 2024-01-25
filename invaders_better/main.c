@@ -1,4 +1,4 @@
- #include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <allegro5/allegro.h>
@@ -11,9 +11,8 @@
 #include <allegro5/allegro_ttf.h>
 
 
-#define TRUE (1ul)
-#define FALSE !TRUE
-
+#define TRUE  (1ul)
+#define FALSE (0l)
 #define TILE 32
 
 #define UNUSED(x) (void)x
@@ -52,15 +51,25 @@ typedef struct PARTICLE {
     int color;
 }PARTICLE;
 
+typedef struct PARTICLE_VERTEX {
+    int u,v;
+    float x,y;
+    int ttl;
+
+}PARTICLE_VERTEX;
+
+
 
 PARTICLE particles[DEFAULT_PARTICLES] = {0};
+
+
 
 void particle_create(PARTICLE *p, int x, int y, double vx,  double vy, int color, int life);
 void particle_update(PARTICLE *p);
 void particle_reset(PARTICLE *p, int max);
 PARTICLE *particle_free(PARTICLE *p, int max);
 void particle_explosion(PARTICLE *plist, int x, int y, int spread, int particle_count, int life);
-
+void particle_clear_buffer(PARTICLE *plist, ALLEGRO_BITMAP *bmp, ALLEGRO_COLOR color);
 
 
 
@@ -162,18 +171,18 @@ typedef struct TEXT {
 }TEXT;
 
 
-static TEXT score_list[10] = {};
+static TEXT score_list[10] = {0};
 
 
 #define MAX_SFX 20
 
-ALLEGRO_SAMPLE *sfx_list[MAX_SFX] = {};
+ALLEGRO_SAMPLE *sfx_list[MAX_SFX] = {0};
 
 
 
 static int gameover = 0;
-static int player_keys[ALLEGRO_KEY_MAX] = {};
-static int player_released_keys[ALLEGRO_KEY_MAX]  = {};
+static int player_keys[ALLEGRO_KEY_MAX] = {0};
+static int player_released_keys[ALLEGRO_KEY_MAX]  = {0};
 static int enemy_direction = 1; //1 or -1
 static int line = 0;
 static int  enemy_shoot_time = 70;
@@ -228,7 +237,7 @@ const char sprite_assets_path[SPRITE_MAX][255] = {
     {"assets//dshot.png"}
 };
 
-ALLEGRO_BITMAP *sprites[SPRITE_MAX] = {};
+ALLEGRO_BITMAP *sprites[SPRITE_MAX] = {0};
 
 
 
@@ -285,6 +294,8 @@ typedef struct STAR {
 }STAR;
 
 
+ALLEGRO_BITMAP *stars_bg = NULL;
+
 #define MAX_STARS 2000
 STAR stars[MAX_STARS] = {0};
 
@@ -297,7 +308,7 @@ enum FONT_ID {
 
 };
 #define MAX_FONTS 6
-ALLEGRO_FONT *font_list[MAX_FONTS] = {};
+ALLEGRO_FONT *font_list[MAX_FONTS] = {0};
 
 
 
@@ -628,7 +639,8 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
     
     #define NOT_VALID_PTR(x) (x == NULL || !x ? 1 : 0)
     
-    flags = ALLEGRO_OPENGL_3_0 | ALLEGRO_OPENGL_FORWARD_COMPATIBLE | ALLEGRO_EVENT_DISPLAY_EXPOSE;
+    flags = ALLEGRO_OPENGL_3_0 | ALLEGRO_EVENT_DISPLAY_EXPOSE;
+    
     al_set_new_display_option(ALLEGRO_VSYNC, vsync, ALLEGRO_REQUIRE);
     
     if(fullscreen){
@@ -639,7 +651,10 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
     
     allegro_get_desktop_size(0, &screen_width, &screen_height);
     
-    al_set_new_bitmap_flags(flags);
+
+    al_set_new_display_flags(flags);
+    
+    al_set_new_bitmap_flags(ALLEGRO_VIDEO_BITMAP);
     
     if(strlen(title) > 0 || title){
         al_set_new_window_title(title);
@@ -900,7 +915,7 @@ void draw_debug(void){
 }
 
 
-void draw_enemies(const ENEMY enemy_list[ENEMY_ROW_Y][ENEMY_ROW_X], float offset_x, float offset_y){
+void draw_enemies(ENEMY enemy_list[ENEMY_ROW_Y][ENEMY_ROW_X], float offset_x, float offset_y){
     
     (void)offset_x; (void)offset_y;
     
@@ -1282,10 +1297,10 @@ void enemies_update(void){
                             
                         }
                         
-        
+                      
+                        particle_explosion(particles, enemies[y][x].x, enemies[y][x].y, 80, 50, 10);
                         
-                        
-                        particle_explosion(particles, enemies[y][x].x, enemies[y][x].y, 200, 40, 70);
+                 
 
                         return;
                  }
@@ -1327,30 +1342,52 @@ void init_destroy(void){
     }
 }
 
-ALLEGRO_BITMAP *stars_bg = NULL;
 
 
 void stars_draw(ALLEGRO_BITMAP *bmp, STAR *stars, int frame_only){
     if(bmp){
        
+       al_lock_bitmap(bmp, ALLEGRO_PIXEL_FORMAT_ANY, ALLEGRO_LOCK_WRITEONLY);
        al_set_target_bitmap(bmp);
         for(int i  = 0; i < MAX_STARS; i++){
             if(frame_only){
+                
+                int rnd = game_rand(100);
+                
                 int rx  = game_rand_range(0, al_get_display_width(display));
                 int ry  = game_rand_range(0, al_get_display_width(display));
-                al_lock_bitmap(bmp, ALLEGRO_PIXEL_FORMAT_ANY, ALLEGRO_LOCK_WRITEONLY);
-                al_put_pixel(rx,ry, al_map_rgb(255,255,255));
-                al_unlock_bitmap(bmp);
+                
+                
+                if(rnd <= 20){
+                     al_put_pixel(rx,ry, al_map_rgb(255,255,255));
+                     al_put_pixel(rx+1,ry, al_map_rgb(255,255,255));
+                     al_put_pixel(rx,ry+1, al_map_rgb(255,255,255));
+                     al_put_pixel(rx+1,ry+1, al_map_rgb(255,255,255));
+                }else if(rnd <= 30){
+                    
+                     al_put_pixel(rx,ry, al_map_rgb(255,255,255));
+                     al_put_pixel(rx+1,ry, al_map_rgb(255,255,255));
+                     al_put_pixel(rx+2,ry, al_map_rgb(255,255,255));
+                     al_put_pixel(rx,ry+1, al_map_rgb(255,255,255));
+                     al_put_pixel(rx,ry+2, al_map_rgb(255,255,255));
+                     al_put_pixel(rx+1,ry+1, al_map_rgb(255,255,255));
+                     al_put_pixel(rx+2,ry+2, al_map_rgb(255,255,255));
+                     
+                     
+                }else {   
+                     al_put_pixel(rx,ry, al_map_rgb(255,255,255));
+                }
+                
+                
                 continue;
             }else {
-                al_lock_bitmap(bmp, ALLEGRO_PIXEL_FORMAT_ANY, ALLEGRO_LOCK_WRITEONLY);
                 al_put_pixel(stars[i].x, stars[i].y, al_map_rgb_f(1,1,1));
-                al_unlock_bitmap(bmp);
             }
         }
-        
+
         
         al_set_target_backbuffer(display);
+        al_unlock_bitmap(bmp);
     }
 }
 
@@ -1403,24 +1440,34 @@ void particle_create(PARTICLE *p, int x, int y, double vx,  double vy, int color
 
 void particle_draw(ALLEGRO_BITMAP *bmp, PARTICLE *p, int ox, int oy, const ALLEGRO_COLOR color){
     
-    int x, y;
     UNUSED(bmp);
-    
-    x = p->x - ox;
-    y = p->y - oy;
-    
-    //if(x < -16 || x > al_get_bitmap_width(bmp) + 16 || y < 16 || y > al_get_bitmap_height(bmp) + 16) return;
-    
-    if(x < 0 || x > al_get_display_width(display) + 16 ||  y < 16 || y > al_get_display_height(display) + 16) return;
-    
 
-
-    al_lock_bitmap(bmp, ALLEGRO_PIXEL_FORMAT_ANY, ALLEGRO_LOCK_WRITEONLY);
-    al_put_pixel(p->x, p->y, color);
-    al_unlock_bitmap(bmp);
+    ALLEGRO_VERTEX vtx[DEFAULT_PARTICLES] = {0};
     
-   // al_draw_filled_rectangle(p->x, p->y, p->x + 16, p->y + 16, color);
+    
+    for(int i = 0; i < DEFAULT_PARTICLES; i++){
+        if(p[i].ttl){
+            
+            int x, y;
+            
+          
 
+            x = p[i].x - ox;
+            y = p[i].y - oy;
+            
+            if(x < 0 || x > al_get_display_width(display) + 16 ||  y < 16 || y > al_get_display_height(display) + 16) return;
+            
+            vtx[i].x = x;
+            vtx[i].y = y;
+            vtx[i].z = 0;
+            vtx[i].u = 0;
+            vtx[i].v = 0;
+            vtx[i].color = color;
+            
+        }
+    }
+    
+    al_draw_prim(vtx, NULL, NULL, 0, DEFAULT_PARTICLES, ALLEGRO_PRIM_POINT_LIST);
 
 
     
@@ -1428,8 +1475,8 @@ void particle_draw(ALLEGRO_BITMAP *bmp, PARTICLE *p, int ox, int oy, const ALLEG
 }
 
 void particle_update(PARTICLE *p){
-    p->x += p->vx;
-    p->y += p->vy;
+    p->x += cos(1 * DEG2RAD) *  p->vx;
+    p->y += sin(-90 * DEG2RAD) *  p->vy;
     p->ttl--;
 }
 
@@ -1437,6 +1484,23 @@ void particle_reset(PARTICLE *p, int max){
     for(int i = 0; i < max; i++){
         p[i].ttl = 0;
     }
+}
+
+void particle_clear_buffer(PARTICLE *plist, ALLEGRO_BITMAP *bmp,  ALLEGRO_COLOR color){
+   UNUSED(color);
+    for(int i = 0; i < DEFAULT_PARTICLES; i++){
+        if(!plist[i].ttl){
+            
+            al_set_target_bitmap(bmp);
+            al_lock_bitmap(bmp, al_get_bitmap_format(bmp), ALLEGRO_LOCK_WRITEONLY);
+            //al_put_pixel(plist[i].x, plist[i].y, color);
+            //al_draw_pixel(plist[i].x, plist[i].y, color);
+            al_unlock_bitmap(bmp);
+            al_set_target_backbuffer(display);
+            
+        }
+    }
+    
 }
 
 PARTICLE *particle_free(PARTICLE *p, int max){
@@ -1451,13 +1515,23 @@ void particle_explosion(PARTICLE *plist, int x, int y, int spread, int particle_
     int i;
     PARTICLE *p;
     
+    float angle, speed;
+    
+    
+    
+    
     for(i = 0;i < particle_count;i++){
         p = particle_free(plist, DEFAULT_PARTICLES);
         if(p != NULL){
+            
+            speed = game_rand_range(1,3) + 0.5;
+            angle = game_rand_range(0,360);
+            
             particle_create(p, x + game_rand(spread) - spread / 2, 
                                y + game_rand(spread) - spread / 2,
-                               ((double)(game_rand(100)))/100.0 - 0.5,
-                               ((double)(game_rand(100)))/100.0 - 0.5, rand()%4 + 1,
+                               cos(angle * DEG2RAD) * speed,  //speed/100.0 - 0.5,
+                               sin(angle * DEG2RAD) * speed,
+                                rand()%4 + 1,
                                (life ? life : 70 -  game_rand(50))
                             );
         }
@@ -1466,16 +1540,19 @@ void particle_explosion(PARTICLE *plist, int x, int y, int spread, int particle_
 }
 
 
+
 int main(int argc, char **argv)
 {
     UNUSED(argc); UNUSED(argv);
     
-    char error[1024] = {};
+    char error[1024] = {0};
 	
     if(allegro_init(error) > 0 ){
         fprintf(stderr, "Error: %s", error);
         exit(1);
     }
+    
+    al_change_directory(".");
     
     if(allegro_create_display_context(0,0,0,1, "INVADERS!") > 0){
         fprintf(stderr, "Error: failed to load display context");
@@ -1492,17 +1569,16 @@ int main(int argc, char **argv)
     new_game();
    
     
-    g_spaceship_entity = malloc(sizeof(ENEMY));
+    g_spaceship_entity = al_malloc(sizeof(ENEMY));
     memset(g_spaceship_entity, 0, sizeof(*g_spaceship_entity));
     
-    
-    ALLEGRO_COLOR white = al_map_rgba_f(1.0f,1.0f,1.0f,0.1);
-    
-    ALLEGRO_BITMAP *particles_buffer = al_create_bitmap(al_get_display_width(display), al_get_display_height(display));
+    //int flags = al_get_new_bitmap_flags();
+    //al_set_new_bitmap_flags(ALLEGRO_MEMORY_BITMAP);
+    ALLEGRO_BITMAP *particles_buffer = al_create_bitmap(al_get_display_width(display), al_get_display_height(display));   
+    //al_set_new_bitmap_flags(flags);
     
     particle_reset(particles, DEFAULT_PARTICLES);
-    
-    stars_draw(buffer, stars, TRUE);
+    stars_draw(stars_bg, stars, TRUE);
     
     while(!close){
         ALLEGRO_EVENT e;
@@ -1511,41 +1587,35 @@ int main(int argc, char **argv)
         
         if(redraw && al_event_queue_is_empty(queue)){
             al_set_clipping_rectangle(0, 0, screen_width, screen_height);
-            
-            //al_clear_to_color(al_map_rgb(34, 47, 62));
             al_clear_to_color(al_map_rgb(0, 0, 0));
-            //al_draw_bitmap(stars_bg,0,0,0);
+            
             al_set_target_bitmap(buffer);
             al_clear_to_color(al_map_rgb(0, 0, 0));
             
-           
-            draw_spaceship();
+            al_draw_bitmap(stars_bg,0,0,0);
             al_draw_bitmap(particles_buffer,0,0,0);
+
+            draw_spaceship();
             draw_enemies(enemies,0,0);
             draw_player(player.x, player.y);
+
             player_draw_shot();
             pickup_draw();
             enemies_draw_bullets();
             draw_life_bar();
             score_draw_text();
             al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,20, 0, "SCORE: %08d", player.score);
-            al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,35, 0, "LIVES %02d", player.lives);
-            //al_draw_textf(debug_font, al_map_rgb_f(1,0,0), 0,55, 0, "%d",  g_ship_counter);
+            al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,35, 0, "LIVES %02d", player.lives);     
             
-           for(int i = 0; i  < DEFAULT_PARTICLES; i++){
-                if(particles[i].ttl) particle_draw(buffer, &particles[i], 16, 16 , al_map_rgb(255, 168, 0)); 
-            }
+            particle_draw(particles_buffer, particles,0,-8.0, al_map_rgb(255, 168, 0));
+           
             
-
             al_set_target_backbuffer(display);
-            
- 
-            
-            
-            
 
-            al_draw_tinted_bitmap(buffer,white,0,0,0);
+          
 
+            al_draw_bitmap(buffer, 0,0,0);
+            
             
             
             al_flip_display();
@@ -1592,9 +1662,11 @@ int main(int argc, char **argv)
                 pickup_update();
                 update_spaceship();
                 
+                
                 for(int i = 0; i  < DEFAULT_PARTICLES; i++){
                       if(particles[i].ttl) particle_update(&particles[i]);
                 }
+                
                 
                 g_ship_counter = (al_get_timer_count(timer) / 60) % 12;
                 
@@ -1620,6 +1692,7 @@ int main(int argc, char **argv)
                         g_spaceship_entity->x = al_get_display_width(display) + 32;
                         g_spaceship_entity->y = game_rand_range(65,100);
                         g_spaceship_entity->alive = TRUE;
+                        
 
                     }
                     
@@ -1632,6 +1705,8 @@ int main(int argc, char **argv)
                 break;
         }
     }
+    
+
     
     al_destroy_bitmap(particles_buffer);
     free(g_spaceship_entity);

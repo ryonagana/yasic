@@ -1,6 +1,0 @@
--ID:\projetos\c\invaders\invaders
--ID:\projetos\c\invaders\invaders\src
--ID:\projetos\libs\allegro-5.2.7\include
--DDEBUG
--target
-i686-pc-windows-gnu
