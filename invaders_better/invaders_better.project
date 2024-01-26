@@ -16,7 +16,7 @@
   <Dependencies Name="Release - Static"/>
   <Settings Type="Executable">
     <GlobalSettings>
-      <Compiler Options="" C_Options="-ansi;-Wextra;-std=c99;-Werror;-Wno-unused-function;-Wno-switch;-Wuninitialized;-Wstrict-prototypes" Assembler="">
+      <Compiler Options="" C_Options="-Wextra;-Werror;-Wno-unused-function;-Wno-switch;-Wuninitialized;-Wstrict-prototypes" Assembler="">
         <IncludePath Value="."/>
         <IncludePath Value="D:\projetos\libs\liballegro-5.2.9-git-release-static\include"/>
       </Compiler>

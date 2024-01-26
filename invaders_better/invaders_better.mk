@@ -14,7 +14,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Web Master
-Date                   :=1/25/2024
+Date                   :=1/26/2024
 CodeLitePath           :="C:/Program Files/CodeLite"
 MakeDirCommand         :=mkdir
 LinkerName             :=C:/msys64/mingw64/bin/g++.exe
@@ -55,7 +55,7 @@ AR       := C:/msys64/mingw64/bin/ar.exe -r
 CXX      := C:/msys64/mingw64/bin/g++.exe
 CC       := C:/msys64/mingw64/bin/gcc.exe
 CXXFLAGS :=  -gdwarf-2 -O0 -Wall $(Preprocessors)
-CFLAGS   := -ansi -Wextra -std=c99 -Werror -Wno-unused-function -Wno-switch -Wuninitialized -Wstrict-prototypes -gdwarf-2 -O0 -Wall $(Preprocessors)
+CFLAGS   := -Wextra -Werror -Wno-unused-function -Wno-switch -Wuninitialized -Wstrict-prototypes -gdwarf-2 -O0 -Wall $(Preprocessors)
 ASFLAGS  := 
 AS       := C:/msys64/mingw64/bin/as.exe
 
