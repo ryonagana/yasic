@@ -26,7 +26,6 @@ ALLEGRO_BITMAP *buffer  = NULL;
 ALLEGRO_FONT *debug_font = NULL;
 
 
-
 ALLEGRO_MIXER *mixer = NULL;
 ALLEGRO_VOICE *voice = NULL;
 
@@ -327,7 +326,7 @@ enum GAMESTATE_TYPE {
         GAMESTATE_TYPE_GAMEPLAY
 };
 
-static int g_gamestate = GAMESTATE_TYPE_GAMEPLAY;
+static int g_gamestate = GAMESTATE_TYPE_MENU;
 
 typedef struct MENU {
     int menu_id;
@@ -352,7 +351,7 @@ typedef struct MENU_CURSOR {
 
 MENU game_menu[MAX_MENU] = {
         {1, "START GAME\0", NULL, 0, NULL,0,0},
-        {2, "HI SCORE\0", NULL, 0, NULL,0,0},
+        {2, "HI-SCORE\0", NULL, 0, NULL,0,0},
         {3, "OPTIONS\0", NULL, 1, NULL,0,0},
         {4, "QUIT\0", NULL, 0, NULL,0,0}
 };

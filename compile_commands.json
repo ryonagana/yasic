@@ -1,5 +1,5 @@
 [{
-  "file": "D:\\projetos\\c\\invaders\\invaders_better\\main.c",
-  "directory": "D:\\projetos\\c\\invaders\\invaders_better",
-  "command": "C:/msys64/mingw64/bin/gcc.exe -c D:\\projetos\\c\\invaders\\invaders_better\\main.c -o D:\\projetos\\c\\invaders\\invaders_better\\main.c.o -target x86_64-w64-mingw32 -IC:\\msys64\\mingw64\\include\\c++\\13.1.0 -IC:\\msys64\\mingw64\\include\\c++\\13.1.0\\x86_64-w64-mingw32 -IC:\\msys64\\mingw64\\include\\c++\\13.1.0\\backward -IC:\\msys64\\mingw64\\lib\\gcc\\x86_64-w64-mingw32\\13.1.0\\include -IC:\\msys64\\mingw64\\include -IC:\\msys64\\mingw64\\lib\\gcc\\x86_64-w64-mingw32\\13.1.0\\include-fixed -I. -ID:\\projetos\\libs\\liballegro-5.2.9-git-release-static\\include -I.  -Wextra  -Werror  -Wno-unused-function  -Wno-switch  -Wuninitialized  -Wstrict-prototypes  -gdwarf-2  -O0  -Wall"
+  "file": "D:\\programacao\\C\\yasic\\invaders_better\\main.c",
+  "directory": "D:\\programacao\\C\\yasic\\invaders_better",
+  "command": "D:/msys64/mingw64/bin/gcc.exe -c D:\\programacao\\C\\yasic\\invaders_better\\main.c -o D:\\programacao\\C\\yasic\\invaders_better\\main.c.o -target x86_64-w64-mingw32 -ID:\\msys64\\mingw64\\include\\c++\\13.2.0 -ID:\\msys64\\mingw64\\include\\c++\\13.2.0\\x86_64-w64-mingw32 -ID:\\msys64\\mingw64\\include\\c++\\13.2.0\\backward -ID:\\msys64\\mingw64\\lib\\gcc\\x86_64-w64-mingw32\\13.2.0\\include -ID:\\msys64\\mingw64\\include -ID:\\msys64\\mingw64\\lib\\gcc\\x86_64-w64-mingw32\\13.2.0\\include-fixed -I. -I. -ID:\\libs\\allegro5.2.9.1-x64-static\\include  -Wextra  -Werror  -Wno-unused-function  -Wno-switch  -Wuninitialized  -Wstrict-prototypes  -gdwarf-2  -O0  -Wall"
  }]
