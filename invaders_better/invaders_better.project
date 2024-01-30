@@ -19,7 +19,7 @@
       <Compiler Options="" C_Options="-Wextra;-Werror;-Wno-unused-function;-Wno-switch;-Wuninitialized;-Wstrict-prototypes" Assembler="">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Options="-m64">
+      <Linker Options="">
         <LibraryPath Value="."/>
       </Linker>
       <ResourceCompiler Options=""/>
@@ -28,9 +28,12 @@
       <Compiler Options="-gdwarf-2;-O0;-Wall" C_Options="-gdwarf-2;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
         <IncludePath Value="D:\libs\allegro5.2.9.1-x64-static\include"/>
+        <IncludePath Value="D:\projetos\libs\liballegro-5.2.9-git-release-static/include"/>
+        <Preprocessor Value="DEBUG"/>
       </Compiler>
       <Linker Options="-m64;-static;-static-libstdc++;-static-libgcc" Required="yes">
         <LibraryPath Value="D:\libs\allegro5.2.9.1-x64-static\lib"/>
+        <LibraryPath Value="D:\projetos\libs\liballegro-5.2.9-git-release-static/lib"/>
         <Library Value="allegro_monolith-static"/>
         <Library Value="winmm"/>
         <Library Value="shlwapi"/>

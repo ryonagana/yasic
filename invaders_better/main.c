@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
+
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
@@ -9,6 +14,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
+
 
 
 #define TRUE  (1ul)
@@ -28,6 +34,11 @@ ALLEGRO_FONT *debug_font = NULL;
 
 ALLEGRO_MIXER *mixer = NULL;
 ALLEGRO_VOICE *voice = NULL;
+
+
+ALLEGRO_MUTEX *key_mutex = NULL;
+char keybuffer[255] = {0};
+int keybuffer_counter = 0;
 
 #define PI  ALLEGRO_PI
 #define PI2 (ALLEGRO_PI*2)
@@ -123,6 +134,7 @@ typedef struct PLAYER {
     BULLET bullets[MAX_BULLETS];
     int shot_time;
     int shoot;
+    int keypressed[4];
 } PLAYER;
 
 
@@ -323,10 +335,13 @@ ENEMY *g_spaceship_entity = NULL;
 
 enum GAMESTATE_TYPE {
         GAMESTATE_TYPE_MENU,
-        GAMESTATE_TYPE_GAMEPLAY
+        GAMESTATE_TYPE_GAMEPLAY,
+        GAMESTATE_TYPE_HISCORE,
+        GAMESTATE_TYPE_OPTIONS
 };
 
 static int g_gamestate = GAMESTATE_TYPE_MENU;
+void new_game(void);
 
 typedef struct MENU {
     int menu_id;
@@ -349,15 +364,23 @@ typedef struct MENU_CURSOR {
 
 #define MAX_MENU 16
 
+
+
+static void menu_start_game_click(struct MENU *menu, void *args);
+static void menu_hiscore_click(struct MENU *menu, void *args);
+
 MENU game_menu[MAX_MENU] = {
-        {1, "START GAME\0", NULL, 0, NULL,0,0},
-        {2, "HI-SCORE\0", NULL, 0, NULL,0,0},
+        {1, "START GAME\0", menu_start_game_click, 0, NULL,0,0},
+        {2, "HI-SCORE\0", menu_hiscore_click, 0, NULL,0,0},
         {3, "OPTIONS\0", NULL, 1, NULL,0,0},
         {4, "QUIT\0", NULL, 0, NULL,0,0}
 };
 
 
 MENU_CURSOR g_menu_cursor = {0};
+
+
+
 
 
 void menu_update(MENU *menu_list, int opt);
@@ -398,6 +421,34 @@ struct RENDER_ARGS {
          ALLEGRO_BITMAP *particles_buffer;
 };
 
+
+int  g_demo_start = FALSE;
+void demo_update(void);
+void demo_draw(struct RENDER_ARGS *args);
+
+typedef struct HISCORE {
+    char name[20];
+    int score;
+}HISCORE;
+
+FILE *hiscore_fp =  NULL;
+#define MAX_HISCORE 10
+HISCORE hiscore[MAX_HISCORE] = {
+        {"CIROBAIABA\0",   99999},
+        {"ZE DA MANGA\0",  99998},
+        {"NICK\0",         99997},
+        {"ROGER DEIOAH\0", 99996},
+        {"MR CODEMAN\0",   99994},
+        {"JRCL123\0",      99993},
+        {"TANDE\0",        99992},
+};
+
+
+ALLEGRO_BITMAP *hiscore_bitmap = NULL;
+
+void hiscore_init(void);
+void hiscore_update(void);
+void hiscore_draw(void);
 
 int allegro_init(char *error_message) {
     
@@ -931,6 +982,9 @@ void new_game(void){
     walk_time  = WALK_TIME_DELAY_PHASE1;
     
     
+    memset(player.keypressed, 0, sizeof(player.keypressed));
+    
+    
     
     for(int y = 0; y < ENEMY_ROW_Y;y++){
         for(int x = 0; x < ENEMY_ROW_X;x++){
@@ -1089,7 +1143,7 @@ void enemies_update_bullet(void){
                            }
                            
                            
-                           if(rect_collision(player.x, player.y,32,32, bullet->x, bullet->y, 8,8) && player.alive){
+                           if(!g_demo_start && rect_collision(player.x, player.y,32,32, bullet->x, bullet->y, 8,8) && player.alive){
 
                                 if(player.life > 0){
                                     
@@ -1232,7 +1286,7 @@ void player_update_shot(void){
            }
            
            
-           if( g_spaceship_entity->alive && g_spaceship_entity && rect_collision(player.bullets[i].x, player.bullets[i].y, 8,8, g_spaceship_entity->x, g_spaceship_entity->y, 32,32)){
+           if(g_spaceship_entity->alive && g_spaceship_entity && rect_collision(player.bullets[i].x, player.bullets[i].y, 8,8, g_spaceship_entity->x, g_spaceship_entity->y, 32,32)){
                 g_spaceship_entity->alive = FALSE;
                 g_ship_active = FALSE;
                 score_add(score_list, 1000,  g_spaceship_entity->x, g_spaceship_entity->y);
@@ -1274,10 +1328,16 @@ void player_update(void){
     if(player.alive){
         if(player_keys[ALLEGRO_KEY_A] || player_keys[ALLEGRO_KEY_LEFT]){
             player.x -= 2.0;
+            player.keypressed[0] = TRUE;
+        }else {
+            player.keypressed[0] = FALSE;
         }
         
         if(player_keys[ALLEGRO_KEY_D] || player_keys[ALLEGRO_KEY_RIGHT]){
             player.x +=  2.0;
+            player.keypressed[1] = TRUE;
+        }else {
+            player.keypressed[1] = FALSE;
         }
         
         if(player_keys[ALLEGRO_KEY_SPACE] && !player.shoot && !gameover){
@@ -1285,6 +1345,9 @@ void player_update(void){
             player.shot_time = 25;
             play(SFX_LASER);
         }
+    
+
+
     }
     
 }
@@ -1393,11 +1456,15 @@ void enemies_update(void){
                         return;
                  }
                     
-                // colide with player
                 
                 
                 if(rect_collision(player.x,player.y, 32,32, enemies[y][x].x,enemies[y][x].y,32,32)){
-                        do_gameover();
+                        if(!g_demo_start){
+                            do_gameover();
+                            
+                        }else{
+                            new_game();
+                        }
                         return;
                 }
                 
@@ -1528,9 +1595,13 @@ void particle_create(PARTICLE *p, int x, int y, double vx,  double vy, int color
 
 void particle_draw(ALLEGRO_BITMAP *bmp, PARTICLE *p, int ox, int oy, const ALLEGRO_COLOR color){
     
-    UNUSED(bmp);
+ 
 
     ALLEGRO_VERTEX vtx[DEFAULT_PARTICLES] = {0};
+    
+    
+    if(bmp)
+        al_set_target_bitmap(bmp);
     
     
     for(int i = 0; i < DEFAULT_PARTICLES; i++){
@@ -1557,7 +1628,8 @@ void particle_draw(ALLEGRO_BITMAP *bmp, PARTICLE *p, int ox, int oy, const ALLEG
     
     al_draw_prim(vtx, NULL, NULL, 0, DEFAULT_PARTICLES, ALLEGRO_PRIM_POINT_LIST);
 
-
+    if(bmp)
+        al_set_target_backbuffer(display);
     
     
 }
@@ -1698,21 +1770,63 @@ void menu_update(MENU *menu_list, int opt){
         
     }
 }
+
+void demo_init(void){
+    new_game();
+}
+
+int64_t g_record_actual_frame = 0;
+
+void demo_update(void){
+        player_update_shot();
+        enemies_update_bullet();
+        enemies_update();
+        //player_update();
+        pickup_update();
+
+}
+
+void demo_draw(struct RENDER_ARGS *args){
+    
+                al_set_target_bitmap(buffer);
+                al_clear_to_color(al_map_rgb(0, 0, 0));
+                al_draw_bitmap(stars_bg,0,0,0);
+                al_draw_bitmap(args->particles_buffer,0,0,0);
+                draw_spaceship();
+                draw_enemies(enemies,0,0);
+                //draw_player(player.x, player.y);
+                player_draw_shot();
+                pickup_draw();
+                enemies_draw_bullets();
+                //draw_life_bar();
+                score_draw_text();
+                //al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,20, 0, "SCORE: %08d", player.score);
+                //al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,35, 0, "LIVES %02d", player.lives);     
+                particle_draw(NULL, particles,0,-8.0, al_map_rgb(255, 168, 0));
+                al_set_target_backbuffer(display);
+                
+                al_draw_bitmap(buffer, 0,0,0);
+}
+
+
+
+
 void menu_draw(MENU *menu_list){
     
     
+    
+    ALLEGRO_COLOR blue = al_premul_rgba(52, 73, 94, 0.1);
+    ALLEGRO_COLOR white = al_premul_rgba(52, 73, 94, 0.1);
+    
     ALLEGRO_VERTEX menu_bg[3] = {
         {0,0,0,1,1, al_map_rgb(52, 73, 94)},
-        {0, al_get_display_height(display),0,1,1, al_map_rgb(52, 73, 94)},
-        {al_get_display_width(display), al_get_display_height(display),0,1,1, al_map_rgb(52, 73, 94)}
+        {0, al_get_display_height(display),0,1,1, blue},
+        {al_get_display_width(display), al_get_display_height(display),0,1,1, white}
     };
     
     
 
     al_draw_prim(menu_bg, NULL, NULL, 0, 3, ALLEGRO_PRIM_TRIANGLE_FAN);
-   
-    
-    
    
     
     for(int i = 0; i < MAX_MENU; i++){
@@ -1739,7 +1853,8 @@ void gameplay_update(void){
                     
         if(player_keys[ALLEGRO_KEY_R]){
             if(gameover) gameover = 0;
-            new_game();
+            //new_game();
+            g_gamestate = GAMESTATE_TYPE_MENU;
         }
 
         if(player.life <= 0){
@@ -1758,6 +1873,8 @@ void gameplay_update(void){
         score_update_text();
         pickup_update();
         update_spaceship();
+        
+
 
         for(int i = 0; i  < DEFAULT_PARTICLES; i++){
               if(particles[i].ttl) particle_update(&particles[i]);
@@ -1814,11 +1931,13 @@ void gameplay_draw(struct RENDER_ARGS *args){
                 score_draw_text();
                 al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,20, 0, "SCORE: %08d", player.score);
                 al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,35, 0, "LIVES %02d", player.lives);     
-                particle_draw(args->particles_buffer, particles,0,-8.0, al_map_rgb(255, 168, 0));
+                particle_draw(NULL, particles,0,-8.0, al_map_rgb(255, 168, 0));
                 
                 al_set_target_backbuffer(display);
                 
                 al_draw_bitmap(buffer, 0,0,0);
+                
+                
 }
 
 
@@ -1845,10 +1964,26 @@ int main(int argc, char **argv)
     
     int close = 0;
     int redraw = 0;
+    
+    key_mutex = al_create_mutex();
+    
+    if(!key_mutex){
+            al_show_native_message_box(display, "Error", "Mutex Error", "Keyboard Mutex cannot be created!", NULL, 0);
+            free(g_spaceship_entity);
+            g_spaceship_entity = NULL;
+            font_destroy();
+            stars_destroy();
+            destroy_audio();
+            allegro_destroy();
+            return 1;
+            
+    }
+    
     init_audio();
     load_sprites();
     font_init();
     
+    hiscore_init();
     stars_init();
     new_game();
    
@@ -1872,6 +2007,7 @@ int main(int argc, char **argv)
     
     struct RENDER_ARGS render_args;
     render_args.particles_buffer = particles_buffer;
+    
 
     while(!close){
         ALLEGRO_EVENT e;
@@ -1883,13 +2019,26 @@ int main(int argc, char **argv)
             al_set_clipping_rectangle(0, 0, screen_width, screen_height);
             al_clear_to_color(al_map_rgb(0, 0, 0));
             
-            if(g_gamestate == 0){
+            
+            
+            
+            if(g_gamestate == GAMESTATE_TYPE_MENU){
+
+                    
+                    if(g_demo_start) 
+                        demo_draw(&render_args);
                     menu_draw(game_menu);
             }
             
-            if(g_gamestate == 1){
+            if(g_gamestate == GAMESTATE_TYPE_GAMEPLAY){
                 gameplay_draw(&render_args);             
             }
+            
+            
+            if(g_gamestate == GAMESTATE_TYPE_HISCORE){
+                hiscore_draw();
+            }
+            
             al_flip_display();
             redraw = 0;
         } 
@@ -1910,9 +2059,32 @@ int main(int argc, char **argv)
                 player_released_keys[e.keyboard.keycode] = TRUE;
                 break;
                 
+            case ALLEGRO_EVENT_KEY_CHAR:
+                {
+                    if(keybuffer_counter > 255) keybuffer_counter = 0;
+                    
+                    al_lock_mutex(key_mutex);
+                    keybuffer[keybuffer_counter] = e.keyboard.keycode;
+                    al_unlock_mutex(key_mutex);
+                }
+                break;
+                
             case ALLEGRO_EVENT_TIMER:
             {
+                
+                if(g_gamestate == GAMESTATE_TYPE_HISCORE){
+                    hiscore_update();
+                }
+                
                 if(g_gamestate == GAMESTATE_TYPE_MENU){
+                    if(!g_demo_start){
+                        demo_init();
+                        g_demo_start = TRUE;
+                    }
+                    
+                    
+                    if(g_demo_start) 
+                        demo_update();
                     menu_update(game_menu, g_menu_cursor.opt);
                 }
                 
@@ -1928,7 +2100,7 @@ int main(int argc, char **argv)
     }
     
 
-    
+
     al_destroy_bitmap(particles_buffer);
     free(g_spaceship_entity);
     g_spaceship_entity = NULL;
@@ -1938,4 +2110,125 @@ int main(int argc, char **argv)
     allegro_destroy();
     
 	return 0;
+}
+
+
+static void menu_start_game_click(struct MENU *menu, void *args){
+    UNUSED(menu); UNUSED(args);
+    
+    new_game();
+    g_gamestate = GAMESTATE_TYPE_GAMEPLAY;
+}
+
+
+static void menu_hiscore_click(struct MENU *menu, void *args){
+    UNUSED(menu); UNUSED(args);
+    g_gamestate = GAMESTATE_TYPE_HISCORE;
+}
+
+void hiscore_init(void){
+
+    
+    int lines = 0;
+    int line_height = 0;
+    
+    for(int i = 0; i < 25;i++){
+        if(hiscore[i].score > 0) lines++;
+    }
+    
+    line_height = lines * al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]) + 128;
+    hiscore_bitmap = al_create_bitmap(al_get_display_width(display),  line_height );
+    
+    if(!hiscore_bitmap){
+        return;
+    }
+    
+    struct _stat st;
+    
+    if(_stat("hiscore.dat", &st) < 0){
+        hiscore_fp = fopen("hiscore.dat", "wb+");
+        
+        if(!hiscore_fp){
+            return;
+        }
+        
+        for(int i = 0; i < MAX_HISCORE;i++){
+            fwrite(hiscore[i].name, sizeof(hiscore[i].name),1, hiscore_fp);
+            fwrite(&hiscore[i].score, sizeof(int),1, hiscore_fp);
+        }
+        
+        fwrite("END\r\n",5,1,hiscore_fp);
+        fclose(hiscore_fp);
+    }
+    
+    
+    hiscore_fp = fopen("hiscore.dat", "rb+");
+    memset(hiscore, 0, sizeof(hiscore));
+        
+    int c = 0;
+    while(!feof(hiscore_fp)){
+        char name[20];
+        int score;
+        
+        
+        
+        fread(name, 20,1, hiscore_fp);
+        fread(&score,sizeof(int),1, hiscore_fp);
+        
+        if(score > 0){
+            snprintf(hiscore[c].name,20,"%s", name);
+            hiscore[c].score = score;
+            c++;
+        }
+    }
+
+
+    fclose(hiscore_fp);
+    
+    
+
+}
+
+void hiscore_update(void){
+    
+     if(keybuffer[keybuffer_counter] != '\0'){
+         
+         memset(keybuffer, 0, 255);
+         g_gamestate = GAMESTATE_TYPE_MENU;
+     }
+     return;
+    
+}
+void hiscore_draw(void){
+    
+ 
+    
+    for(int i = 0; i < MAX_HISCORE; i++){
+        
+        int h = al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]);
+        
+        if(hiscore[i].score > 0){
+            al_draw_textf(font_list[FONT_PIXEL_MENU_BIG], al_map_rgb_f(1,1,1),
+            10,
+            200 + h*i,
+            0,
+            "%s", hiscore[i].name
+            );
+            
+            
+            al_draw_textf(font_list[FONT_PIXEL_MENU_BIG], al_map_rgb_f(1,1,1),
+            (float)al_get_bitmap_width(hiscore_bitmap)/2 + 400,
+            200 + h*i,
+            0,
+            "%05d", hiscore[i].score
+            );
+            
+        }
+    }
+    //al_set_target_backbuffer(display);
+    
+    //al_draw_bitmap(hiscore_bitmap,0,0,0);
+    
+    
+    return;
 }
