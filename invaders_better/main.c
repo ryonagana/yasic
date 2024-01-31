@@ -15,6 +15,7 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 
+#include "miniz.h"
 
 
 #define TRUE  (1ul)
@@ -28,12 +29,16 @@
 ALLEGRO_DISPLAY *display = NULL;
 ALLEGRO_EVENT_QUEUE *queue = NULL;
 ALLEGRO_TIMER *timer = NULL;
+ALLEGRO_TIMER *menu_timer = NULL;
 ALLEGRO_BITMAP *buffer  = NULL;
 ALLEGRO_FONT *debug_font = NULL;
 
 
 ALLEGRO_MIXER *mixer = NULL;
 ALLEGRO_VOICE *voice = NULL;
+
+
+static  int g_close_game = 0;
 
 
 ALLEGRO_MUTEX *key_mutex = NULL;
@@ -196,9 +201,10 @@ ALLEGRO_SAMPLE *sfx_list[MAX_SFX] = {0};
 
 
 static int gameover = 0;
+static int g_game_started  = FALSE;
 static int player_keys[ALLEGRO_KEY_MAX] = {0};
 static int player_released_keys[ALLEGRO_KEY_MAX]  = {0};
-static int enemy_direction = 1; //1 or -1
+static int enemy_direction = 1;
 static int line = 0;
 static int  enemy_shoot_time = 70;
 
@@ -368,12 +374,15 @@ typedef struct MENU_CURSOR {
 
 static void menu_start_game_click(struct MENU *menu, void *args);
 static void menu_hiscore_click(struct MENU *menu, void *args);
+static void menu_quit_click(struct MENU *menu, void *args);
+
 
 MENU game_menu[MAX_MENU] = {
         {1, "START GAME\0", menu_start_game_click, 0, NULL,0,0},
-        {2, "HI-SCORE\0", menu_hiscore_click, 0, NULL,0,0},
-        {3, "OPTIONS\0", NULL, 1, NULL,0,0},
-        {4, "QUIT\0", NULL, 0, NULL,0,0}
+        {2, "CONTINUE GAME\0", menu_start_game_click, 0, NULL,0,0},
+        {3, "HI-SCORE\0", menu_hiscore_click, 0, NULL,0,0},
+        {4, "OPTIONS\0", NULL, 1, NULL,0,0},
+        {5, "QUIT\0", menu_quit_click, 0, NULL,0,0}
 };
 
 
@@ -434,13 +443,18 @@ typedef struct HISCORE {
 FILE *hiscore_fp =  NULL;
 #define MAX_HISCORE 10
 HISCORE hiscore[MAX_HISCORE] = {
-        {"CIROBAIABA\0",   99999},
-        {"ZE DA MANGA\0",  99998},
-        {"NICK\0",         99997},
-        {"ROGER DEIOAH\0", 99996},
-        {"MR CODEMAN\0",   99994},
-        {"JRCL123\0",      99993},
-        {"TANDE\0",        99992},
+        {"DAN_THE_MAN\0",       99999},
+        {"DUNK\0",              99998},
+        {"NICK\0",              997},
+        {"ROGER\0",             99996},
+        {"CODEMAN\0",           99995},
+        {"JVLLPM\0",            99993},
+        {"TANDE\0",             99991},
+        {"MANBEARPIG\0",        99990},
+        {"TAIRY HESTICLES\0",   1},
+        
+        {"CHAMPZ0RD\0",         994},
+
 };
 
 
@@ -449,6 +463,32 @@ ALLEGRO_BITMAP *hiscore_bitmap = NULL;
 void hiscore_init(void);
 void hiscore_update(void);
 void hiscore_draw(void);
+int hiscore_load_file(char *filename, HISCORE *hsc);
+int hiscore_save_file(const char *output_name);
+int hiscore_sort(HISCORE *hsc);
+
+
+int hiscore_compress(FILE *f);
+int hiscore_decompress(FILE *f);
+
+
+void hiscore_create_default(FILE *f, HISCORE *hsc);
+void hiscore_create_default_memory(void **dest);
+
+
+//rot13
+int rot13(int c);
+int rot13basis(int c, int basis);
+
+
+typedef struct MOUSECOORD {
+    int x,y;
+    float z;
+    unsigned int buttons;
+} MOUSECOORD;
+
+
+static MOUSECOORD g_mouse;
 
 int allegro_init(char *error_message) {
     
@@ -822,6 +862,8 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
         error++;
     }
     
+    menu_timer = al_create_timer(1.0/30.0);
+    
     debug_font = al_create_builtin_font();
     
     if(NOT_VALID_PTR(debug_font)){
@@ -842,7 +884,9 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
     al_register_event_source(queue, al_get_mouse_event_source());
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_timer_event_source(timer));
+    al_register_event_source(queue, al_get_timer_event_source(menu_timer));
     al_start_timer(timer);
+    al_start_timer(menu_timer);
     
     
    
@@ -980,6 +1024,7 @@ void new_game(void){
     player.lives = 3;
     line = 0;
     walk_time  = WALK_TIME_DELAY_PHASE1;
+    g_game_started = TRUE;
     
     
     memset(player.keypressed, 0, sizeof(player.keypressed));
@@ -1833,6 +1878,9 @@ void menu_draw(MENU *menu_list){
         
         if(menu_list[i].menu_id <= 0) continue;
         
+        if(menu_list[i].menu_id == 2 && !g_game_started)
+            continue;
+        
         int px = al_get_display_width(display) / 2   - al_get_text_width(font_list[FONT_PIXEL_MENU_BIG], menu_list[i].opt_name);
         int py = al_get_display_height(display) / 2  - al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]);
         
@@ -1850,7 +1898,14 @@ void menu_draw(MENU *menu_list){
 
 
 void gameplay_update(void){
-                    
+    
+        if(player_keys[ALLEGRO_KEY_ESCAPE]){
+            //if(gameover) gameover = 0;
+            //new_game();
+            g_gamestate = GAMESTATE_TYPE_MENU;
+        }
+    
+    
         if(player_keys[ALLEGRO_KEY_R]){
             if(gameover) gameover = 0;
             //new_game();
@@ -1962,7 +2017,7 @@ int main(int argc, char **argv)
         exit(1);
     }
     
-    int close = 0;
+
     int redraw = 0;
     
     key_mutex = al_create_mutex();
@@ -2009,7 +2064,11 @@ int main(int argc, char **argv)
     render_args.particles_buffer = particles_buffer;
     
 
-    while(!close){
+    while(!g_close_game){
+        
+        
+        
+        
         ALLEGRO_EVENT e;
         
         al_wait_for_event(queue, &e);
@@ -2047,7 +2106,7 @@ int main(int argc, char **argv)
         
         switch(e.type){
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                close =  TRUE;
+                g_close_game =  TRUE;
                 break;
                 
             case ALLEGRO_EVENT_KEY_DOWN:
@@ -2069,27 +2128,64 @@ int main(int argc, char **argv)
                 }
                 break;
                 
+            case ALLEGRO_EVENT_MOUSE_AXES:
+                {
+                    g_mouse.x = e.mouse.x;
+                    g_mouse.y = e.mouse.y;
+                }
+                break;
+                
+            case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                {
+                    g_mouse.buttons |= e.mouse.button;
+                }
+                break;
+            
+            case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+                {
+                    g_mouse.buttons &= ~e.mouse.button;
+                }
+                break;
             case ALLEGRO_EVENT_TIMER:
             {
                 
                 if(g_gamestate == GAMESTATE_TYPE_HISCORE){
-                    hiscore_update();
+                    al_stop_timer(timer);
+                    al_start_timer(menu_timer);
+                    if(e.timer.source == menu_timer){
+                        hiscore_update();
+                    }
                 }
                 
                 if(g_gamestate == GAMESTATE_TYPE_MENU){
+
+                    
                     if(!g_demo_start){
                         demo_init();
                         g_demo_start = TRUE;
                     }
                     
+                    if(!g_game_started){
+                        if(e.timer.source == menu_timer){
+                            demo_update();
+                        }
+                    }else {
+                        if(e.timer.source == timer){
+                            demo_update();
+                        }
+                    }
                     
-                    if(g_demo_start) 
-                        demo_update();
                     menu_update(game_menu, g_menu_cursor.opt);
+                    
+                    
                 }
                 
                 if(g_gamestate == GAMESTATE_TYPE_GAMEPLAY){
-                    gameplay_update();
+                        al_stop_timer(menu_timer);
+                        al_start_timer(timer);
+                    if(e.timer.source == timer){
+                        gameplay_update();
+                    }
                 }
                 
                 
@@ -2115,8 +2211,9 @@ int main(int argc, char **argv)
 
 static void menu_start_game_click(struct MENU *menu, void *args){
     UNUSED(menu); UNUSED(args);
-    
-    new_game();
+    if(!g_game_started){
+        new_game();
+    }
     g_gamestate = GAMESTATE_TYPE_GAMEPLAY;
 }
 
@@ -2126,11 +2223,30 @@ static void menu_hiscore_click(struct MENU *menu, void *args){
     g_gamestate = GAMESTATE_TYPE_HISCORE;
 }
 
+static void menu_quit_click(struct MENU *menu, void *args){
+    UNUSED(menu); UNUSED(args);
+    g_close_game = TRUE;
+    
+}
+
+
+typedef struct HISCORE_HDR {
+        char magic[5];
+        mz_ulong uncompressed_size;
+        mz_ulong compressed_size;
+        int type_compress;
+        int strategy;
+}HISCORE_HDR;
+
+
 void hiscore_init(void){
 
     
     int lines = 0;
     int line_height = 0;
+
+
+    
     
     for(int i = 0; i < 25;i++){
         if(hiscore[i].score > 0) lines++;
@@ -2143,65 +2259,207 @@ void hiscore_init(void){
         return;
     }
     
-    struct _stat st;
     
-    if(_stat("hiscore.dat", &st) < 0){
-        hiscore_fp = fopen("hiscore.dat", "wb+");
+    if(!hiscore_load_file("hiscore.dat", hiscore)){
+        FILE *f = fopen("hiscore.dat", "wb+");
+        if(!f) return;
         
-        if(!hiscore_fp){
-            return;
-        }
+        hiscore_create_default(f, hiscore);
+       
+        fclose(f);
         
-        for(int i = 0; i < MAX_HISCORE;i++){
-            fwrite(hiscore[i].name, sizeof(hiscore[i].name),1, hiscore_fp);
-            fwrite(&hiscore[i].score, sizeof(int),1, hiscore_fp);
-        }
+        hiscore_sort(hiscore);
+        hiscore_save_file("hiscore.dat");
         
-        fwrite("END\r\n",5,1,hiscore_fp);
-        fclose(hiscore_fp);
+        hiscore_load_file("hiscore.dat", hiscore);
+        
+    
+        
     }
     
-    
-    hiscore_fp = fopen("hiscore.dat", "rb+");
-    memset(hiscore, 0, sizeof(hiscore));
-        
-    int c = 0;
-    while(!feof(hiscore_fp)){
-        char name[20];
-        int score;
-        
-        
-        
-        fread(name, 20,1, hiscore_fp);
-        fread(&score,sizeof(int),1, hiscore_fp);
-        
-        if(score > 0){
-            snprintf(hiscore[c].name,20,"%s", name);
-            hiscore[c].score = score;
-            c++;
-        }
-    }
-
-
-    fclose(hiscore_fp);
-    
-    
+    hiscore_load_file("hiscore.dat", hiscore);
+    hiscore_sort(hiscore);
+    hiscore_save_file("hiscore.dat");
+    return;
 
 }
 
+long hiscore_size(void){
+    struct _stat st;
+    
+    if(_stat("hiscore.dat",&st) < 0){
+        return -1;
+    }
+    return st.st_size;
+    
+}
+
+
+int hiscore_compress(FILE *f){
+    
+     FILE *out = NULL;
+     unsigned char *unc_data = NULL;
+     unsigned char *dest_data = NULL;
+     mz_ulong unc_len = 0;
+    
+    if(ftell(f) != 0){
+        fseek(f,0, SEEK_SET);
+    }
+    
+    // skip header
+    HISCORE_HDR header;
+    fread(&header, sizeof(HISCORE_HDR),1,f);
+    
+    if(strncmp(header.magic, "HSC1\0",5) != 0){
+        return -1;
+    }
+    
+   
+    unc_data = malloc(header.uncompressed_size);
+    dest_data =  malloc(header.compressed_size);
+    unc_len = header.uncompressed_size;
+    
+    fread(unc_data, sizeof(HISCORE) * MAX_HISCORE,1,f);
+    
+    int status = compress(dest_data, &header.compressed_size, unc_data, unc_len);
+    
+    
+    out = fopen("hiscore.cdata", "wb+");
+    fwrite(dest_data,header.compressed_size,1,out);
+    fclose(out);
+
+    
+    if(status != Z_OK){
+        free(unc_data);
+        return Z_ERRNO;
+    } 
+    
+    
+    free(unc_data);
+    return Z_OK;
+    
+    
+}
+
+
+void hiscore_create_default(FILE *f, HISCORE *hsc){
+    if(f){
+        
+        HISCORE_HDR header;
+        snprintf(header.magic,5,"%s","HSC1\0");
+        header.uncompressed_size = hiscore_size();
+        header.compressed_size = 0;
+        header.type_compress = Z_BEST_COMPRESSION;
+        header.strategy = Z_DEFAULT_STRATEGY;
+        
+        fwrite(&header, sizeof(HISCORE_HDR),1, f);
+        
+        for(int i = 0; i < MAX_HISCORE;i++){
+            fwrite(hsc[i].name, 20,1,f);
+            fwrite(&hsc[i].score, sizeof(int),1,f);
+        }
+    
+    
+        fwrite("\\ENDHSC\0",9,1,f);
+        
+        fseek(f,0, SEEK_SET);
+        long size = 0;
+        fseek(f,0,SEEK_END);
+        size = ftell(f);
+        
+        header.uncompressed_size = size - sizeof(HISCORE_HDR);
+        header.compressed_size = compressBound(size);
+        fseek(f,0,SEEK_SET);
+    }
+    
+}
+
+
+void hiscore_create_default_memory(void **dest){
+    if(! (*dest)){
+        *dest = malloc(sizeof(HISCORE) * MAX_HISCORE);
+        memset(*dest, 0x0, sizeof(HISCORE) * MAX_HISCORE);
+    }
+    
+    for(int i = 0; i < MAX_HISCORE;i++){
+        memcpy(*dest,&hiscore[i], sizeof(HISCORE));
+    }
+    
+}
+
+int hiscore_load_file(char *filename, HISCORE *hsc){
+    struct _stat st;
+    FILE *fp = NULL;
+    
+    char filename_buffer[255];
+    snprintf(filename_buffer, 255,"%s", filename);
+    
+    if(_stat(filename_buffer, &st) < 0){
+        return 0;
+    }
+    
+    fp = fopen(filename_buffer, "rb+");
+    if(!fp) 
+        return 0;
+        
+    HISCORE_HDR header;
+    
+    fread(&header, sizeof(HISCORE_HDR),1,fp);
+    
+    if(strncmp(header.magic, "HSC1\0",5) != 0){
+        return 0;
+    }
+
+   int counter = 0;
+   
+   do{
+       HISCORE h;
+       fread(&h, sizeof(HISCORE),1,fp);
+       snprintf(hsc[counter].name,20, "%s", h.name);
+       hsc[counter].score = h.score;
+       counter++;
+       
+   }while(!feof(fp) || counter == MAX_HISCORE);
+
+    return 1;
+    
+ 
+}
+int hiscore_save_file(const char *output_name){
+    char fbuff[255];
+    
+    snprintf(fbuff, 255, "%s", output_name);
+    
+    FILE *f = fopen(fbuff,"wb+");
+    if(!f) return 0;
+    
+    for(int i = 0; i < MAX_HISCORE; i++){
+        fwrite(&hiscore[i], sizeof(HISCORE),1, f);
+    }
+    fclose(f);
+    return 0;
+}
+
+
+
+
+
 void hiscore_update(void){
     
-     if(keybuffer[keybuffer_counter] != '\0'){
+     if(keybuffer[keybuffer_counter] != '\0' || g_mouse.buttons & 1 || g_mouse.buttons & 2){
          
          memset(keybuffer, 0, 255);
          g_gamestate = GAMESTATE_TYPE_MENU;
      }
+     
+     
      return;
     
 }
 void hiscore_draw(void){
     
- 
+    
+    al_draw_bitmap(stars_bg,0,0,0);
     
     for(int i = 0; i < MAX_HISCORE; i++){
         
@@ -2231,4 +2489,41 @@ void hiscore_draw(void){
     
     
     return;
+}
+
+
+void hiscore_swap(HISCORE *a, HISCORE *b){
+        HISCORE *tmp = NULL;
+        tmp = a;
+        a = b;
+        b = tmp;
+ 
+}
+
+int hiscore_sort(HISCORE *hsc){
+    static int last_score = 0;
+    
+    for(int i = MAX_HISCORE; i > 0;i--){
+        if(last_score > hsc[i].score){  
+            last_score = hiscore[i].score;
+            hiscore_swap(&hsc[i], &hsc[i-1]);
+        }
+    }
+    
+    return 1;
+}
+
+int rot13(int c){
+
+    if('a' <= c && c <= 'z'){
+            return rot13basis(c,'a');
+    }else if('A' <= c && c <='Z'){
+            return rot13basis(c,'A');
+    }
+
+    return c;
+}
+
+int rot13basis(int c, int basis){
+    return (((c-basis)+13)%26)+basis;
 }

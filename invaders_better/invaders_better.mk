@@ -14,7 +14,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Web Master
-Date                   :=1/30/2024
+Date                   :=1/31/2024
 CodeLitePath           :="C:/Program Files/CodeLite"
 MakeDirCommand         :=mkdir
 LinkerName             :=C:/msys64/mingw64/bin/g++.exe
@@ -54,8 +54,8 @@ LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)D:\libs\alle
 AR       := C:/msys64/mingw64/bin/ar.exe -r
 CXX      := C:/msys64/mingw64/bin/g++.exe
 CC       := C:/msys64/mingw64/bin/gcc.exe
-CXXFLAGS :=  -gdwarf-2 -O0 -Wall $(Preprocessors)
-CFLAGS   := -Wextra -Werror -Wno-unused-function -Wno-switch -Wuninitialized -Wstrict-prototypes -gdwarf-2 -O0 -Wall $(Preprocessors)
+CXXFLAGS :=   $(Preprocessors)
+CFLAGS   := -Wextra -Werror -Wno-unused-function -Wno-switch -Wuninitialized -Wstrict-prototypes -O0 -gdwarf-2 -std=c11 -Wall -Wno-type-limits $(Preprocessors)
 ASFLAGS  := 
 AS       := C:/msys64/mingw64/bin/as.exe
 
@@ -64,7 +64,7 @@ AS       := C:/msys64/mingw64/bin/as.exe
 ## User defined environment variables
 ##
 CodeLiteDir:=C:\Program Files\CodeLite
-Objects0=$(IntermediateDirectory)/main.c$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/miniz.c$(ObjectSuffix) $(IntermediateDirectory)/main.c$(ObjectSuffix) 
 
 
 
@@ -95,6 +95,11 @@ PreBuild:
 ##
 ## Objects
 ##
+$(IntermediateDirectory)/miniz.c$(ObjectSuffix): miniz.c 
+	$(CC) $(SourceSwitch) "D:/projetos/c/invaders/invaders_better/miniz.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/miniz.c$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/miniz.c$(PreprocessSuffix): miniz.c
+	$(CC) $(CFLAGS) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/miniz.c$(PreprocessSuffix) miniz.c
+
 $(IntermediateDirectory)/main.c$(ObjectSuffix): main.c 
 	$(CC) $(SourceSwitch) "D:/projetos/c/invaders/invaders_better/main.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/main.c$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/main.c$(PreprocessSuffix): main.c
