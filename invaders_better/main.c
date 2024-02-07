@@ -70,13 +70,6 @@ typedef struct PARTICLE {
     int color;
 }PARTICLE;
 
-typedef struct PARTICLE_VERTEX {
-    int u,v;
-    float x,y;
-    int ttl;
-
-}PARTICLE_VERTEX;
-
 
 
 PARTICLE particles[DEFAULT_PARTICLES] = {0};
@@ -128,6 +121,73 @@ typedef struct ENEMY {
 
 } ENEMY;
 
+
+enum {
+    PICKUP_DEFAULT_CANNON,
+    PICKUP_DOUBLE_SHOOT,
+    PICKUP_SHIELD,
+    PICKUP_TOTAL
+};
+
+
+typedef struct PICKUP_INFO {
+    int shot_time;
+    float dmg;
+    int pierce;
+    int ricochet;
+    int no_damage;
+    int shot_num;
+    int ammo;
+}PICKUP_INFO;
+
+typedef struct  PICKUP {
+    int type;
+    float x,y;
+    float vx,vy;
+    int alive;
+    PICKUP_INFO *info;
+}PICKUP;
+#define MAX_PICKUP 6
+
+
+static PICKUP pickup[MAX_PICKUP];
+static PICKUP_INFO g_pickup_info_list[MAX_PICKUP] = {
+    
+    //DEFAULT
+    {
+        25,
+        1,
+        FALSE,
+        FALSE,
+        FALSE,
+        1,
+        -1 
+    },
+    //PICKUP_DOUBLE_SHOOT
+    {
+        75,
+        1.5,
+        FALSE,
+        FALSE,
+        FALSE,
+        2,
+        10
+    },
+    
+    //PICKUP_SHIELD
+    {
+        0,
+        1.5,
+        FALSE,
+        FALSE,
+        TRUE,
+        1,
+        -1
+    }
+    
+};
+
+
 typedef struct PLAYER {
     float x,y;
     float vx,vy;
@@ -140,7 +200,13 @@ typedef struct PLAYER {
     int shot_time;
     int shoot;
     int keypressed[4];
+    PICKUP *pickup;
+    int ammo;
 } PLAYER;
+
+
+void pickup_add(ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X], int index_x, int index_y, int id);
+void pickup_add_to_player(PLAYER *p, int id);
 
 
 
@@ -158,25 +224,13 @@ typedef struct EFFECT {
 }EFFECT;
 
 
-typedef struct  PICKUP {
-    int type;
-    float x,y;
-    float vx,vy;
-    int alive;
-}PICKUP;
 
-#define MAX_PICKUP 12
 
-enum {
-    PICKUP_DOUBLE_SHOOT,
-    PICKUP_SHIELD,
-    PICKUP_TOTAL
-};
+
 
 
 static PLAYER player;
 static ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X];
-static PICKUP pickup[MAX_PICKUP];
 
 
 
@@ -444,11 +498,11 @@ FILE *hiscore_fp =  NULL;
 #define MAX_HISCORE 10
 HISCORE hiscore[MAX_HISCORE] = {
         {"DAN_THE_MAN\0",       99999},
-        {"DUNK\0",              99998},
+        {"DRUNKBOY\0",              99998},
         {"NICK\0",              997},
         {"ROGER\0",             99996},
         {"CODEMAN\0",           99995},
-        {"JVLLPM\0",            99993},
+        {"JARVIS\0",            99993},
         {"TANDE\0",             99991},
         {"MANBEARPIG\0",        99990},
         {"TAIRY HESTICLES\0",   1},
@@ -633,6 +687,8 @@ enum {
         SFX_WALK,
         SFX_HIT,
         SFX_POWERUP,
+        SFX_POWERUP2,
+        SFX_POWERUP3,
         SFX_SHIP,
         
         SFX_TOTAL
@@ -648,6 +704,8 @@ int init_audio(void){
     sfx_list[SFX_WALK] = al_load_sample("assets//sfx//walk.wav");
     sfx_list[SFX_HIT] = al_load_sample("assets//sfx//hit.wav");
     sfx_list[SFX_POWERUP] = al_load_sample("assets//sfx//powerUp.wav");
+    sfx_list[SFX_POWERUP2] = al_load_sample("assets//sfx//powerUp2.wav");
+    sfx_list[SFX_POWERUP3] = al_load_sample("assets//sfx//powerUp3.wav");
     sfx_list[SFX_SHIP] =  al_load_sample("assets//sfx//ship.wav");
     
     if(SND_PTR_FAILED(sfx_list[0])){
@@ -703,14 +761,12 @@ void destroy_audio(void){
 
 
 PICKUP *getFreePickup(void){
-    
-    uint32_t c;
-    
-    for(c = 0; c < MAX_PICKUP ;c++){
-        if(!pickup[c].alive) break;
-    }
-    return &pickup[c];
-    
+        int c = 0;
+        
+        while(pickup[++c].alive && c == MAX_PICKUP);
+        if(c == MAX_PICKUP) return NULL;
+        
+        return &pickup[c];
 }
 
 
@@ -728,7 +784,20 @@ void pickup_add(ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X], int index_x, int index_
     p->alive = TRUE;
     p->vx = 1.0;
     p->vy = 1.0;
+    p->info = &g_pickup_info_list[id];
+    player.ammo = p->info->ammo;
     
+}
+
+void pickup_add_to_player(PLAYER *p, int id){
+    PICKUP *tmp_pickup = getFreePickup();
+    p->pickup = tmp_pickup;
+    p->pickup->type = id;
+    p->pickup->info = &g_pickup_info_list[id];
+    if(g_pickup_info_list[id].ammo > 0){
+        p->ammo = g_pickup_info_list[id].ammo;
+    }
+
 }
 
 
@@ -739,6 +808,9 @@ void pickup_update(void){
         //float dx = pickup[i].x - player.x;
         //float dy = pickup[i].y -  al_get_display_height(display) - 300;
         //double a = atan2(dy,dx);
+        
+        
+
         
         
         if(pickup[i].x > al_get_display_width(display)){
@@ -783,7 +855,7 @@ void pickup_draw(void){
 }
 
 
-BULLET *create_shot(BULLET *bullets, float x, float y, float vx, float vy){
+BULLET *create_shot(BULLET *bullets, const float x, const float y, const float vx, const float vy){
     
     BULLET *bullet = getFreeBullet(bullets);
     
@@ -987,7 +1059,7 @@ TEXT* score_free(TEXT score[10]){
     return &score[c];
 }
 
-void score_add(TEXT *score, int num, float x, float y){
+void score_add(TEXT *score, const int num, const float x, const float y){
     
 
     TEXT *s = score_free(score);
@@ -1022,9 +1094,19 @@ void new_game(void){
     player.shot_time = 0;
     player.life = 100.0;
     player.lives = 3;
+    //player.actual_pickup = PICKUP_DEFAULT_CANNON;
+    player.shot_time = 25;
     line = 0;
     walk_time  = WALK_TIME_DELAY_PHASE1;
     g_game_started = TRUE;
+    
+    pickup_add_to_player(&player, PICKUP_DOUBLE_SHOOT);
+    
+    //player.pickup = getFreePickup();
+    //player.pickup->type = PICKUP_DOUBLE_SHOOT;
+    //player.pickup->info = &g_pickup_info_list[PICKUP_DOUBLE_SHOOT];
+  
+    
     
     
     memset(player.keypressed, 0, sizeof(player.keypressed));
@@ -1331,6 +1413,16 @@ void player_update_shot(void){
            }
            
            
+           
+            if(player.pickup->type == PICKUP_DOUBLE_SHOOT){
+                for(int bullet_index = 0; bullet_index < player.pickup->info->shot_num;bullet_index++){
+                    player.bullets[bullet_index%1].x += .5;
+                    player.bullets[bullet_index].x -= .5;
+                }
+            }
+           
+           
+           
            if(g_spaceship_entity->alive && g_spaceship_entity && rect_collision(player.bullets[i].x, player.bullets[i].y, 8,8, g_spaceship_entity->x, g_spaceship_entity->y, 32,32)){
                 g_spaceship_entity->alive = FALSE;
                 g_ship_active = FALSE;
@@ -1349,6 +1441,9 @@ void player_update_shot(void){
     }else {
       player.shoot = FALSE;
     }
+    
+    
+
     
     player.shot_time--;
     return;
@@ -1386,12 +1481,41 @@ void player_update(void){
         }
         
         if(player_keys[ALLEGRO_KEY_SPACE] && !player.shoot && !gameover){
-            create_shot(player.bullets, player.x, player.y,0.0,1.0);
-            player.shot_time = 25;
-            play(SFX_LASER);
+            
+            if(!player.pickup){
+                create_shot(player.bullets, player.x, player.y,0.0,1.0);
+                player.shot_time = 25;
+                play(SFX_LASER);
+                return;
+            }
+            
+            if(player.ammo > 0){
+                player.ammo--;
+            }else {
+                pickup_add_to_player(&player, PICKUP_DEFAULT_CANNON);
+            }
+            
+            switch(player.pickup->type){
+                
+                case PICKUP_DEFAULT_CANNON:
+                    create_shot(player.bullets, player.x, player.y,0.0,1.0);
+                    player.shot_time = player.pickup->info->shot_time;
+                    play(SFX_LASER);
+                    break;
+                    
+                case PICKUP_DOUBLE_SHOOT:
+                    {
+                        
+                        for(int i = 0; i < player.pickup->info->shot_num; i++){
+                            create_shot(player.bullets, player.x, player.y,0.0,1.0);
+                            play(SFX_LASER);
+                        }
+                        
+                        player.shot_time = player.pickup->info->shot_time;
+                    }
+                    break;
+            }
         }
-    
-
 
     }
     
@@ -1422,6 +1546,12 @@ const float explosion_speed[4] = {
 int last_pickup = -1;
 
 void enemies_update(void){
+    
+    int sounds[3] = {
+        SFX_POWERUP,
+        SFX_POWERUP2,
+        SFX_POWERUP3
+    };
     
     int phase = WALK_TIME_DELAY_PHASE1;
     for(int y = 0; y < ENEMY_ROW_Y; y++){
@@ -1483,12 +1613,28 @@ void enemies_update(void){
                         last_pickup = pickup;
                         
                         
-                        if(pickup_chance < 6){
+                        if(pickup_chance == 8){
                             //int pickup = game_rand_range(0, PICKUP_TOTAL);
                             pickup_add(enemies,x,y, PICKUP_DOUBLE_SHOOT);
                             player.score += 50;
                             score_add(score_list, 50, enemies[y][x].x,enemies[y][x].y-50);
-                            play(SFX_POWERUP);
+                            
+
+                            
+                            int rand_snd = game_rand_range(0,2);
+                            play(sounds[rand_snd]);
+                            
+                            
+                        }
+                        
+                        
+                        if(pickup_chance == 4){
+                            //int pickup = game_rand_range(0, PICKUP_TOTAL);
+                            pickup_add(enemies,x,y, PICKUP_SHIELD);
+                            player.score += 50;
+                            score_add(score_list, 50, enemies[y][x].x,enemies[y][x].y-50);
+                            int rand_snd = game_rand_range(0,2);
+                            play(sounds[rand_snd]);
                             
                             
                         }
@@ -1985,7 +2131,9 @@ void gameplay_draw(struct RENDER_ARGS *args){
                 draw_life_bar();
                 score_draw_text();
                 al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,20, 0, "SCORE: %08d", player.score);
-                al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,35, 0, "LIVES %02d", player.lives);     
+                al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,35, 0, "LIVES %02d", player.lives); 
+                al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,55, 0, "AMMO %02d", player.ammo <= 0 ? 0 : player.ammo);
+    
                 particle_draw(NULL, particles,0,-8.0, al_map_rgb(255, 168, 0));
                 
                 al_set_target_backbuffer(display);
@@ -2184,6 +2332,11 @@ int main(int argc, char **argv)
                         al_stop_timer(menu_timer);
                         al_start_timer(timer);
                     if(e.timer.source == timer){
+                        
+                        if(g_demo_start){
+                            g_demo_start = FALSE;
+                        }
+                        
                         gameplay_update();
                     }
                 }
@@ -2196,8 +2349,8 @@ int main(int argc, char **argv)
     }
     
 
-
-    al_destroy_bitmap(particles_buffer);
+    if(particles_buffer)
+        al_destroy_bitmap(particles_buffer);
     free(g_spaceship_entity);
     g_spaceship_entity = NULL;
     font_destroy();
@@ -2483,10 +2636,6 @@ void hiscore_draw(void){
             
         }
     }
-    //al_set_target_backbuffer(display);
-    
-    //al_draw_bitmap(hiscore_bitmap,0,0,0);
-    
     
     return;
 }
@@ -2511,19 +2660,4 @@ int hiscore_sort(HISCORE *hsc){
     }
     
     return 1;
-}
-
-int rot13(int c){
-
-    if('a' <= c && c <= 'z'){
-            return rot13basis(c,'a');
-    }else if('A' <= c && c <='Z'){
-            return rot13basis(c,'A');
-    }
-
-    return c;
-}
-
-int rot13basis(int c, int basis){
-    return (((c-basis)+13)%26)+basis;
 }
