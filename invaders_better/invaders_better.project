@@ -32,6 +32,8 @@
         <IncludePath Value="D:\libs\allegro5.2.9.1-x64-static\include"/>
         <IncludePath Value="D:\projetos\libs\liballegro-5.2.9-git-release-static/include"/>
         <Preprocessor Value="DEBUG"/>
+        <Preprocessor Value="DEBUG_PLAYER_UPDATE"/>
+        <Preprocessor Value="PHYSFS_DATAFILES_OLD"/>
       </Compiler>
       <Linker Options="-m64;-static;-static-libstdc++;-static-libgcc" Required="yes">
         <LibraryPath Value="D:\libs\allegro5.2.9.1-x64-static\lib"/>
@@ -54,6 +56,9 @@
         <Library Value="zlib"/>
         <Library Value="comdlg32"/>
         <Library Value="sharpyuv"/>
+        <Library Value="physfs"/>
+        <Library Value="vorbisfile"/>
+        <Library Value="vorbis"/>
         <Library Value="ogg"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>

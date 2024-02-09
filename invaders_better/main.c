@@ -14,6 +14,8 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_physfs.h>
+#include <physfs.h>
 
 #include "miniz.h"
 
@@ -25,6 +27,9 @@
 #define UNUSED(x) (void)x
 #define ENEMY_ROW_X 10
 #define ENEMY_ROW_Y 5
+
+
+#define GAME_DATAFILES "gamedata.dat"
 
 ALLEGRO_DISPLAY *display = NULL;
 ALLEGRO_EVENT_QUEUE *queue = NULL;
@@ -69,6 +74,9 @@ typedef struct PARTICLE {
     int ttl;
     int color;
 }PARTICLE;
+
+
+
 
 
 
@@ -120,6 +128,11 @@ typedef struct ENEMY {
     int shoot_time;
 
 } ENEMY;
+
+
+static int enemy_wave = 1;
+static int enemy_wave_time = 0;
+static int enemy_wave_time_total = 0;
 
 
 enum {
@@ -341,23 +354,23 @@ const DIFFICULTY_PARAMS difficulty[DIFF_COUNT] = {
     
     {
         DIFF_NORMAL,
-        4.2,
-        80,
-        3.0f
+        3.8,
+        90,
+        2.5f
     },
     
     {
         DIFF_HARD,
-        6.5,
+        4.5,
         80,
-        3.0f
+        2.5f
     },
     
     {
         DIFF_NIGHTMARE,
-        8.0,
-        60,
-        4.00
+        6.0,
+        70,
+        3.00
     }
     
 };
@@ -397,11 +410,16 @@ enum GAMESTATE_TYPE {
         GAMESTATE_TYPE_MENU,
         GAMESTATE_TYPE_GAMEPLAY,
         GAMESTATE_TYPE_HISCORE,
-        GAMESTATE_TYPE_OPTIONS
+        GAMESTATE_TYPE_OPTIONS,
+        GAMESTATE_TYPE_GAMEOVER
 };
 
 static int g_gamestate = GAMESTATE_TYPE_MENU;
-void new_game(void);
+void new_game(int start);
+
+void gameover_init(void);
+void gameover_update(void);
+void gameover_draw(void);
 
 typedef struct MENU {
     int menu_id;
@@ -596,6 +614,8 @@ int allegro_init(char *error_message) {
         sprintf(error_message, "Image Not Loaded!\n");
     }
     
+
+    
     
    voice = al_create_voice(44100, ALLEGRO_AUDIO_DEPTH_INT16, ALLEGRO_CHANNEL_CONF_2);
    
@@ -690,6 +710,9 @@ enum {
         SFX_POWERUP2,
         SFX_POWERUP3,
         SFX_SHIP,
+        SFX_ENEMY_SHOOT,
+        SFX_EXPLOSION4,
+        SFX_COLLISION,
         
         SFX_TOTAL
 };
@@ -707,6 +730,9 @@ int init_audio(void){
     sfx_list[SFX_POWERUP2] = al_load_sample("assets//sfx//powerUp2.wav");
     sfx_list[SFX_POWERUP3] = al_load_sample("assets//sfx//powerUp3.wav");
     sfx_list[SFX_SHIP] =  al_load_sample("assets//sfx//ship.wav");
+    sfx_list[SFX_EXPLOSION4] = al_load_sample("assets//sfx//big_explosion.ogg");
+    sfx_list[SFX_ENEMY_SHOOT] = al_load_sample("assets//sfx//fire_small.ogg");
+    sfx_list[SFX_COLLISION] = al_load_sample("assets//sfx//collision.ogg");
     
     if(SND_PTR_FAILED(sfx_list[0])){
         error++;
@@ -1084,23 +1110,61 @@ void score_update_text(void){
 }
 
 
-void new_game(void){
+void new_game(int start){
     
-    gameover = 0;
-    player.x = al_get_display_width(display) / 2 - 32;
-    player.y = al_get_display_height(display) - 50;
+    if(start){
+        gameover = 0;
+        player.x = al_get_display_width(display) / 2 - 32;
+        player.y = al_get_display_height(display) - 50;
+        player.direction = 1;
+        player.alive = TRUE;
+        player.shot_time = 0;
+        player.life = 100.0;
+        player.lives = 3;
+        //player.actual_pickup = PICKUP_DEFAULT_CANNON;
+        player.shot_time = 25;
+        line = 0;
+        walk_time  = WALK_TIME_DELAY_PHASE1;
+        g_game_started = TRUE;
+        
+        pickup_add_to_player(&player, PICKUP_DOUBLE_SHOOT);
+        
+        if(enemy_wave == 1){
+            enemy_wave_time = 200;
+            enemy_wave_time_total = enemy_wave_time;
+        }
+        
+            
+        for(int y = 0; y < ENEMY_ROW_Y;y++){
+            for(int x = 0; x < ENEMY_ROW_X;x++){
+                
+                int rand_type = game_rand(100);
+                
+                enemies[y][y].type =   rand_type > 50 ? 1 : 2;
+                enemies[y][x].x = x * TILE * 1.5;
+                enemies[y][x].y = y * TILE * 1.5;
+                enemies[y][x].alive = 1;
+                enemies[y][x].type = 1;
+                enemies[y][x].life = 1;
+                memset(enemies[y][x].bullets, 0, sizeof(enemies[y][x].bullets));
+                
+            }
+          
+        }
+        
+        return;
+    }
+    
+    
+    player.x = (float)al_get_display_width(display) / 2 - 32;
+    player.y = (float)al_get_display_height(display) - 50;
     player.direction = 1;
     player.alive = TRUE;
     player.shot_time = 0;
     player.life = 100.0;
-    player.lives = 3;
-    //player.actual_pickup = PICKUP_DEFAULT_CANNON;
-    player.shot_time = 25;
-    line = 0;
     walk_time  = WALK_TIME_DELAY_PHASE1;
     g_game_started = TRUE;
-    
-    pickup_add_to_player(&player, PICKUP_DOUBLE_SHOOT);
+    pickup_add_to_player(&player, PICKUP_DEFAULT_CANNON);
     
     //player.pickup = getFreePickup();
     //player.pickup->type = PICKUP_DOUBLE_SHOOT;
@@ -1136,7 +1200,7 @@ void new_game(void){
 
 
 void do_gameover(void){
-    gameover = 1;
+     g_gamestate = GAMESTATE_TYPE_GAMEOVER;
     
     for(int y = 0; y < ENEMY_ROW_Y;y++){
         for(int x = 0; x < ENEMY_ROW_X;x++){
@@ -1372,6 +1436,7 @@ void enemies_update_bullet(void){
                                
                    b->x = e->x +  cos(b->angle * DEG2RAD) * difficulty[game_difficulty].speed_multiplier;
                    b->y = e->y +  sin(b->angle * DEG2RAD) * difficulty[game_difficulty].speed_multiplier;
+                   play(SFX_ENEMY_SHOOT);
                     
                 }
                 
@@ -1479,6 +1544,17 @@ void player_update(void){
         }else {
             player.keypressed[1] = FALSE;
         }
+        
+#ifdef DEBUG_PLAYER_UPDATE
+        if(player_keys[ALLEGRO_KEY_K]){
+            player_keys[ALLEGRO_KEY_K] = FALSE;
+            for(int enemy_y = 0; enemy_y < ENEMY_ROW_Y;enemy_y++){
+                 for(int enemy_x = 0; enemy_x < ENEMY_ROW_X;enemy_x++){
+                     enemies[enemy_y][enemy_x].alive = FALSE;
+                 }
+            }
+        }
+#endif
         
         if(player_keys[ALLEGRO_KEY_SPACE] && !player.shoot && !gameover){
             
@@ -1654,7 +1730,7 @@ void enemies_update(void){
                             do_gameover();
                             
                         }else{
-                            new_game();
+                            new_game(FALSE);
                         }
                         return;
                 }
@@ -1963,7 +2039,7 @@ void menu_update(MENU *menu_list, int opt){
 }
 
 void demo_init(void){
-    new_game();
+    new_game(TRUE);
 }
 
 int64_t g_record_actual_frame = 0;
@@ -2046,15 +2122,12 @@ void menu_draw(MENU *menu_list){
 void gameplay_update(void){
     
         if(player_keys[ALLEGRO_KEY_ESCAPE]){
-            //if(gameover) gameover = 0;
-            //new_game();
             g_gamestate = GAMESTATE_TYPE_MENU;
         }
     
     
         if(player_keys[ALLEGRO_KEY_R]){
             if(gameover) gameover = 0;
-            //new_game();
             g_gamestate = GAMESTATE_TYPE_MENU;
         }
 
@@ -2112,12 +2185,41 @@ void gameplay_update(void){
             
             g_ship_counter = 0;
         }
+        
+        
+        if(enemy_wave > 25 && game_difficulty <= DIFF_HARD){
+            game_difficulty = DIFF_HARD;
+        }
+        
+        if(enemy_wave > 50 && game_difficulty <= DIFF_HARD){
+            game_difficulty = DIFF_HARD;
+        }
+        
+        if(enemy_wave > 80  && game_difficulty <= DIFF_HARD){
+            game_difficulty = DIFF_NIGHTMARE;
+        }
+        
+        
+        
+        if(enemy_count() <= 0){
+            enemy_wave++;
+            al_stop_timer(timer);
+            new_game(FALSE);
+            al_start_timer(timer);
+            enemy_wave_time = 200;
+            enemy_wave_time_total = enemy_wave_time;
+        }
 }
 
 void gameplay_draw(struct RENDER_ARGS *args){
       
     
                 al_set_target_bitmap(buffer);
+                
+            
+                
+                
+ 
                 
                 al_clear_to_color(al_map_rgb(0, 0, 0));
                 al_draw_bitmap(stars_bg,0,0,0);
@@ -2135,6 +2237,33 @@ void gameplay_draw(struct RENDER_ARGS *args){
                 al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,55, 0, "AMMO %02d", player.ammo <= 0 ? 0 : player.ammo);
     
                 particle_draw(NULL, particles,0,-8.0, al_map_rgb(255, 168, 0));
+                
+
+                if(enemy_wave_time > 0){
+                    
+                    float wave_x = 0.0;
+                    float wave_y = 0.0;
+                    float alpha =  (float)enemy_wave_time_total / enemy_wave_time;
+                    
+                    ALLEGRO_COLOR trans_color = al_premul_rgba_f(1,1,1, alpha);
+                    char buf[25];
+                    sprintf(buf, "WAVE: %d", enemy_wave);
+                    
+                    al_draw_text(font_list[FONT_PIXEL_MENU_BIG], 
+                    trans_color,
+                    wave_x+((float)al_get_display_width(display) / 2) - al_get_text_width(font_list[FONT_PIXEL_MENU_BIG], buf),
+                    -wave_y+((float)al_get_display_height(display) / 2),
+                    0,
+                    buf
+                    );
+                    
+                    wave_y += 0.9;
+                    enemy_wave_time--;
+                    
+                }
+
+
+             
                 
                 al_set_target_backbuffer(display);
                 
@@ -2159,6 +2288,24 @@ int main(int argc, char **argv)
     }
     
     al_change_directory(".");
+    
+#ifdef PHYSFS_DATAFILES
+        if(!PHYSFS_init(argv[0])){
+            al_show_native_message_box(display, "Error!", "PHYSFS Error:", "Error Trying to init pshyfs", NULL, 0);
+            exit(-1);
+            return 0;
+        }
+        
+        if(!PHYSFS_mount(GAME_DATAFILES,NULL, 1)){
+            al_show_native_message_box(display, "Error!", "PHYSFS Error:", "Error to find gamedatafiles.dat", NULL, 0);
+            exit(-1);
+            return 0;
+        }
+        
+        al_set_physfs_file_interface();
+        
+        
+#endif
     
     if(allegro_create_display_context(0,0,0,1, "INVADERS!") > 0){
         fprintf(stderr, "Error: failed to load display context");
@@ -2188,7 +2335,7 @@ int main(int argc, char **argv)
     
     hiscore_init();
     stars_init();
-    new_game();
+    new_game(TRUE);
    
     
     g_spaceship_entity = al_malloc(sizeof(ENEMY));
@@ -2341,6 +2488,10 @@ int main(int argc, char **argv)
                     }
                 }
                 
+                if(g_gamestate == GAMESTATE_TYPE_GAMEPLAY){
+                     
+                 }
+                
                 
                 redraw = 1;
             }
@@ -2365,7 +2516,7 @@ int main(int argc, char **argv)
 static void menu_start_game_click(struct MENU *menu, void *args){
     UNUSED(menu); UNUSED(args);
     if(!g_game_started){
-        new_game();
+        new_game(TRUE);
     }
     g_gamestate = GAMESTATE_TYPE_GAMEPLAY;
 }
@@ -2579,18 +2730,22 @@ int hiscore_load_file(char *filename, HISCORE *hsc){
  
 }
 int hiscore_save_file(const char *output_name){
+    
     char fbuff[255];
     
+    memset(fbuff,0,sizeof(fbuff));
     snprintf(fbuff, 255, "%s", output_name);
     
-    FILE *f = fopen(fbuff,"wb+");
+    ALLEGRO_FILE *f = al_fopen(fbuff, "wb");
     if(!f) return 0;
     
     for(int i = 0; i < MAX_HISCORE; i++){
-        fwrite(&hiscore[i], sizeof(HISCORE),1, f);
+        al_fwrite(f, &hiscore[i], sizeof(HISCORE));
     }
-    fclose(f);
-    return 0;
+    
+    al_fclose(f);
+    return 1;
+    
 }
 
 
@@ -2660,4 +2815,15 @@ int hiscore_sort(HISCORE *hsc){
     }
     
     return 1;
+}
+
+
+void gameover_init(void){
+    
+}
+void gameover_update(void){
+    
+}
+void gameover_draw(void){
+    
 }

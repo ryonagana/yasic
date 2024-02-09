@@ -8,3 +8,5 @@ build-*
 .codelite
 hiscore.dat
 *.dem
+gamedata.dat
+hiscore.dat
