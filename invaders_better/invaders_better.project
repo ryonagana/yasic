@@ -36,8 +36,8 @@
         <Preprocessor Value="PHYSFS_DATAFILES_OLD"/>
       </Compiler>
       <Linker Options="-m64;-static;-static-libstdc++;-static-libgcc" Required="yes">
-        <LibraryPath Value="D:\libs\allegro5.2.9.1-x64-static\lib"/>
-        <LibraryPath Value="D:\projetos\libs\liballegro-5.2.9-git-release-static/lib"/>
+        <LibraryPath Value="..\vendor\allegro5.2.9.1-x64-static\lib"/>
+        <LibraryPath Value="..\vendor\liballegro-5.2.9-git-release-static/lib"/>
         <Library Value="allegro_monolith-static"/>
         <Library Value="winmm"/>
         <Library Value="shlwapi"/>
@@ -96,13 +96,12 @@
       </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="gcc-13.1.0" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="-O2;-Wall" C_Options="-O2;-std=c11;-Wall;-Wno-type-limits" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
-        <IncludePath Value="D:\libs\allegro5.2.9.1-x64-static\include"/>
-        <Preprocessor Value="NDEBUG"/>
+        <IncludePath Value="..\vendor\liballegro-5.2.9-git-release-static\include"/>
       </Compiler>
       <Linker Options="-m64;-static;-static-libstdc++;-static-libgcc" Required="yes">
-        <LibraryPath Value="D:\libs\allegro5.2.9.1-x64-static\lib"/>
+        <LibraryPath Value="..\vendor\liballegro-5.2.9-git-release-static\lib"/>
         <Library Value="allegro_monolith-static"/>
         <Library Value="winmm"/>
         <Library Value="shlwapi"/>
@@ -121,6 +120,9 @@
         <Library Value="zlib"/>
         <Library Value="comdlg32"/>
         <Library Value="sharpyuv"/>
+        <Library Value="physfs"/>
+        <Library Value="vorbisfile"/>
+        <Library Value="vorbis"/>
         <Library Value="ogg"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>

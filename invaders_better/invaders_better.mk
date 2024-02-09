@@ -5,7 +5,7 @@
 ## Debug
 ProjectName            :=invaders_better
 ConfigurationName      :=Debug
-WorkspaceConfiguration :=Static
+WorkspaceConfiguration :=Static_Mingw32_x64
 WorkspacePath          :=D:/projetos/c/invaders
 ProjectPath            :=D:/projetos/c/invaders/invaders_better
 IntermediateDirectory  :=../build-$(WorkspaceConfiguration)/invaders_better
@@ -45,7 +45,7 @@ IncludePCH             :=
 RcIncludePath          := 
 Libs                   := $(LibrarySwitch)allegro_monolith-static $(LibrarySwitch)winmm $(LibrarySwitch)shlwapi $(LibrarySwitch)ole32 $(LibrarySwitch)user32 $(LibrarySwitch)opengl32 $(LibrarySwitch)gdi32 $(LibrarySwitch)gdiplus $(LibrarySwitch)webp $(LibrarySwitch)dsound $(LibrarySwitch)flac $(LibrarySwitch)psapi $(LibrarySwitch)dumb $(LibrarySwitch)freetype $(LibrarySwitch)png16 $(LibrarySwitch)zlib $(LibrarySwitch)comdlg32 $(LibrarySwitch)sharpyuv $(LibrarySwitch)physfs $(LibrarySwitch)vorbisfile $(LibrarySwitch)vorbis $(LibrarySwitch)ogg 
 ArLibs                 :=  "allegro_monolith-static" "winmm" "shlwapi" "ole32" "user32" "opengl32" "gdi32" "gdiplus" "webp" "dsound" "flac" "psapi" "dumb" "freetype" "png16" "zlib" "comdlg32" "sharpyuv" "physfs" "vorbisfile" "vorbis" "ogg" 
-LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)D:\libs\allegro5.2.9.1-x64-static\lib $(LibraryPathSwitch)D:\projetos\libs\liballegro-5.2.9-git-release-static/lib 
+LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)..\vendor\allegro5.2.9.1-x64-static\lib $(LibraryPathSwitch)..\vendor\liballegro-5.2.9-git-release-static/lib 
 
 ##
 ## Common variables

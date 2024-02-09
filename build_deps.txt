@@ -2,9 +2,7 @@ allegro_monolith-static
 winmm
 shlwapi
 ole32
-shell32
 user32
-stdc++
 opengl32
 gdi32
 gdiplus
@@ -17,8 +15,8 @@ freetype
 png16
 zlib
 comdlg32
+sharpyuv
+physfs
+vorbisfile
 vorbis
 ogg
-opus
-sharpyuv
-vorbis

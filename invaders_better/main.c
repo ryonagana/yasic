@@ -765,7 +765,7 @@ void play_sound(int id, float volume, float pan, float speed, ALLEGRO_PLAYMODE m
 }
 
 ALLEGRO_SAMPLE_ID play(int id){
-    ALLEGRO_SAMPLE_ID sample_id;
+    ALLEGRO_SAMPLE_ID sample_id = {0};
     if(sfx_list[id]){
         al_play_sample(sfx_list[id], 1.0,0.0,1.0, ALLEGRO_PLAYMODE_ONCE, &sample_id);
         return sample_id;
@@ -2549,10 +2549,11 @@ void hiscore_init(void){
     int lines = 0;
     int line_height = 0;
 
+    
 
     
     
-    for(int i = 0; i < 25;i++){
+    for(int i = 0; i < MAX_HISCORE;i++){
         if(hiscore[i].score > 0) lines++;
     }
     

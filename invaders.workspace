@@ -2,15 +2,15 @@
 <CodeLite_Workspace Name="invaders" Database="" Version="10000">
   <Project Name="invaders_better" Path="invaders_better/invaders_better.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug">
+    <WorkspaceConfiguration Name="Static_Mingw32_x64">
       <Environment/>
       <Project Name="invaders_better" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release">
+    <WorkspaceConfiguration Name="Release_Mingw32_(Shared)">
       <Environment/>
       <Project Name="invaders_better" ConfigName="Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Static">
+    <WorkspaceConfiguration Name="Debug_Mingw32_(Shared)">
       <Environment/>
       <Project Name="invaders_better" ConfigName="Debug"/>
     </WorkspaceConfiguration>
