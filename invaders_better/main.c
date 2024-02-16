@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
 
 
@@ -133,6 +132,9 @@ typedef struct ENEMY {
 static int enemy_wave = 1;
 static int enemy_wave_time = 0;
 static int enemy_wave_time_total = 0;
+
+
+void wave_reset(void);
 
 
 enum {
@@ -1120,14 +1122,18 @@ void new_game(int start){
         player.alive = TRUE;
         player.shot_time = 0;
         player.life = 100.0;
-        player.lives = 3;
+        player.lives = 1;
         //player.actual_pickup = PICKUP_DEFAULT_CANNON;
         player.shot_time = 25;
         line = 0;
         walk_time  = WALK_TIME_DELAY_PHASE1;
         g_game_started = TRUE;
         
-        pickup_add_to_player(&player, PICKUP_DOUBLE_SHOOT);
+        pickup_add_to_player(&player, PICKUP_DEFAULT_CANNON);
+        
+        if(start){
+            wave_reset();
+        }
         
         if(enemy_wave == 1){
             enemy_wave_time = 200;
@@ -1201,6 +1207,8 @@ void new_game(int start){
 
 void do_gameover(void){
      g_gamestate = GAMESTATE_TYPE_GAMEOVER;
+     enemy_wave = 0 ;
+     enemy_wave_time_total = 0;
     
     for(int y = 0; y < ENEMY_ROW_Y;y++){
         for(int x = 0; x < ENEMY_ROW_X;x++){
@@ -1209,6 +1217,8 @@ void do_gameover(void){
                 }
         }
     }
+    
+    wave_reset();
 }
 
 
@@ -2393,6 +2403,11 @@ int main(int argc, char **argv)
                 hiscore_draw();
             }
             
+            if(g_gamestate == GAMESTATE_TYPE_GAMEOVER){
+                gameover_draw();
+            }
+            
+            
             al_flip_display();
             redraw = 0;
         } 
@@ -2415,11 +2430,14 @@ int main(int argc, char **argv)
                 
             case ALLEGRO_EVENT_KEY_CHAR:
                 {
-                    if(keybuffer_counter > 255) keybuffer_counter = 0;
+                    if(g_gamestate == GAMESTATE_TYPE_HISCORE || g_gamestate == GAMESTATE_TYPE_GAMEOVER){
+                        if(keybuffer_counter > 255) keybuffer_counter = 0;
+                        
+                        al_lock_mutex(key_mutex);
+                        keybuffer[keybuffer_counter] = e.keyboard.keycode;
+                        al_unlock_mutex(key_mutex);
+                    }
                     
-                    al_lock_mutex(key_mutex);
-                    keybuffer[keybuffer_counter] = e.keyboard.keycode;
-                    al_unlock_mutex(key_mutex);
                 }
                 break;
                 
@@ -2488,8 +2506,9 @@ int main(int argc, char **argv)
                     }
                 }
                 
-                if(g_gamestate == GAMESTATE_TYPE_GAMEPLAY){
-                     
+                if(g_gamestate == GAMESTATE_TYPE_GAMEOVER){
+                    do_gameover(); 
+                    gameover_update();
                  }
                 
                 
@@ -2500,8 +2519,10 @@ int main(int argc, char **argv)
     }
     
 
-    if(particles_buffer)
+    if(particles_buffer){
         al_destroy_bitmap(particles_buffer);
+    }
+    
     free(g_spaceship_entity);
     g_spaceship_entity = NULL;
     font_destroy();
@@ -2823,8 +2844,38 @@ void gameover_init(void){
     
 }
 void gameover_update(void){
-    
+     if(keybuffer[keybuffer_counter] != '\0' || g_mouse.buttons & 1 || g_mouse.buttons & 2){
+         
+         memset(keybuffer, 0, 255);
+         g_gamestate = GAMESTATE_TYPE_HISCORE;
+         new_game(TRUE);
+     }
+     
+    return;
 }
 void gameover_draw(void){
     
+    char text[255];
+    
+    snprintf(text,255,"GAME OVER");
+    
+    int size = al_get_text_width(font_list[FONT_PIXEL_MENU_BIG], text);
+    
+
+    
+    
+    al_draw_text(font_list[FONT_PIXEL_MENU_BIG], al_map_rgb_f(1,0,0), al_get_display_width(display) / 2 - size,0,0, "GAME OVER!");
+   
+   
+   
+}
+
+
+
+
+
+void wave_reset(void){
+    enemy_wave = 1;
+    enemy_wave_time = 0;
+    enemy_wave_time_total = 0;
 }
