@@ -28,7 +28,7 @@
 #define ENEMY_ROW_Y 5
 
 
-#define GAME_DATAFILES "gamedata.dat"
+#define GAME_DATAFILES "game.pk0"
 
 ALLEGRO_DISPLAY *display = NULL;
 ALLEGRO_EVENT_QUEUE *queue = NULL;
@@ -79,7 +79,8 @@ typedef struct PARTICLE {
 
 
 
-PARTICLE particles[DEFAULT_PARTICLES] = {0};
+PARTICLE particles[MAX_PARTICLES] = {0};
+
 
 
 
@@ -332,6 +333,7 @@ typedef struct DIFFICULTY_PARAMS {
     float speed_multiplier;
     int enemy_shot_time;
     float shot_speed;
+    int enemies_num_shoot;
 
 }DIFFICULTY_PARAMS;
 
@@ -340,35 +342,40 @@ const DIFFICULTY_PARAMS difficulty[DIFF_COUNT] = {
         DIFF_NOVICE,
         2.2,
         100,
-        2.0
+        2.0,
+        1
     },
     
     {
         DIFF_EASY,
         3.2,
         100,
-        2.0
+        2.0,
+        1
     },
     
     {
         DIFF_NORMAL,
         3.8,
         90,
-        2.5f
+        2.5f,
+        2
     },
     
     {
         DIFF_HARD,
         4.5,
         80,
-        2.5f
+        2.5f,
+        4
     },
     
     {
         DIFF_NIGHTMARE,
         6.0,
         70,
-        3.00
+        3.00,
+        4
     }
     
 };
@@ -451,20 +458,16 @@ MENU game_menu[MAX_MENU] = {
         {1, "START GAME\0", menu_start_game_click, 0, NULL,0,0},
         {2, "CONTINUE GAME\0", menu_start_game_click, 0, NULL,0,0},
         {3, "HI-SCORE\0", menu_hiscore_click, 0, NULL,0,0},
-        {4, "OPTIONS\0", NULL, 1, NULL,0,0},
-        {5, "QUIT\0", menu_quit_click, 0, NULL,0,0}
+        {4, "ABOUT\0", NULL, 1, NULL,0,0},
+        {5, "OPTIONS\0", NULL, 1, NULL,0,0},
+        {6, "QUIT\0", menu_quit_click, 0, NULL,0,0}
 };
 
 
 MENU_CURSOR g_menu_cursor = {0};
 
-
-
-
-
 void menu_update(MENU *menu_list, int opt);
 void menu_draw(MENU *menu_list);
-
 
 ENEMY* getFreeEnemy(void){
     for(int i = 0; i < ENEMY_ROW_Y; i++){
@@ -514,7 +517,7 @@ FILE *hiscore_fp =  NULL;
 #define MAX_HISCORE 10
 HISCORE hiscore[MAX_HISCORE] = {
         {"DAN_THE_MAN\0",       99999},
-        {"DRUNKBOY\0",              99998},
+        {"DRUNKBOY\0",          99998},
         {"NICK\0",              997},
         {"ROGER\0",             99996},
         {"CODEMAN\0",           99995},
@@ -735,7 +738,10 @@ enum {
 
 int init_audio(void){
     int error = 0;
+
+    
     #define SND_PTR_FAILED(x) (!x||x == NULL)
+    
     sfx_list[SFX_EXPLOSION1] = al_load_sample("assets//sfx//explosion01.wav");
     sfx_list[SFX_EXPLOSION2] = al_load_sample("assets//sfx//explosion02.wav");
     sfx_list[SFX_EXPLOSION3] = al_load_sample("assets//sfx//explosion03.wav");
@@ -750,19 +756,19 @@ int init_audio(void){
     sfx_list[SFX_ENEMY_SHOOT] = al_load_sample("assets//sfx//fire_small.ogg");
     sfx_list[SFX_COLLISION] = al_load_sample("assets//sfx//collision.ogg");
     
-    if(SND_PTR_FAILED(sfx_list[0])){
-        error++;
-    }
+    int i;
     
-    if(SND_PTR_FAILED(sfx_list[1])){
-        error++;
+    for(i = 0; i < SFX_TOTAL-1; i++){
+        if(SND_PTR_FAILED(sfx_list[i])){
+            error++;
+        }
     }
-    
-    if(SND_PTR_FAILED(sfx_list[2])){
-        error++;
-    }
-    
+  
     #undef SND_PTR_FAILED
+    
+    if(error){
+        al_show_native_message_box(display,"Error Loading Sounds!", "Error:", "Error Loading Sounds: Sounds is Missing!", NULL,0);
+    }
     
     return error;
 }
@@ -907,6 +913,12 @@ void pickup_update(void){
             pickup_add_item_by_id(&pickup[i], &player);
             pickup[i].alive = FALSE;
             play(SFX_POWERUP);
+        }
+        
+        if(rect_collision(player.bullets[i].x, player.bullets[i].y, 8,8, pickup[i].x, pickup[i].y,32,32)){
+            particle_explosion(particles,pickup[i].x, pickup[i].y, 30,50,30);
+            pickup[i].alive = FALSE;
+            play(SFX_EXPLOSION4);
         }
         
         
@@ -1450,56 +1462,43 @@ void enemies_update_bullet(void){
         if(enemy_shoot_time > 0){
             enemy_shoot_time--;
         }else {
+            
+            
             int enemy_index_x =  game_rand_range(0, ENEMY_ROW_X);
             int enemy_index_y =  game_rand_range(0, ENEMY_ROW_Y);
             
             ENEMY *e = &enemies[enemy_index_y][enemy_index_x];
             
-            if(e->alive){
-                int rnd = 0;
-                
-                switch(difficulty[game_difficulty].type){
-                    case DIFF_NOVICE:
-                        rnd = game_rand_range(1,1);
-                        break;
-                        
-                    case DIFF_EASY:
-                        rnd = game_rand_range(1,2);
-                        break;
-                        
-                    case DIFF_NORMAL:
-                        rnd = game_rand_range(2,3);
-                        break;
-                        
-                    case DIFF_HARD:
-                        rnd = game_rand_range(2,4);
-                        break;
-                    case DIFF_NIGHTMARE:
-                        rnd = game_rand_range(1,6);
-                        break;
-                }
-                
-                for(int i = 0; i < rnd; i++){
-                    
-                    
-                    
+            
+            if(!e->alive){
+                return;
+            }
+    
+                for(int i = 0; i < difficulty[game_difficulty].enemies_num_shoot; i++){
                     BULLET *b = create_shot(e->bullets, e->x, e->y, 1.0, 1.0);
+                    
+                    if(b == NULL){
+                        return;
+                    }
+                    
                     b->color = al_map_rgb(255,0, 0);
                     
                    float dx = player.x - b->x;
                    float dy = player.y - b->y;
+                 
                    
                    double player_angle = atan2(dy, dx);
+                   
                    b->angle = RAD2DEG * player_angle;
                                
-                   b->x = e->x +  cos(b->angle * DEG2RAD) * difficulty[game_difficulty].speed_multiplier;
-                   b->y = e->y +  sin(b->angle * DEG2RAD) * difficulty[game_difficulty].speed_multiplier;
+                   b->x = e->x + cos(b->angle * DEG2RAD) * difficulty[game_difficulty].speed_multiplier;
+                   b->y = e->y + sin(b->angle * DEG2RAD) * difficulty[game_difficulty].speed_multiplier;
                    play(SFX_ENEMY_SHOOT);
                     
                 }
                 
                 enemy_shoot_time =  difficulty[game_difficulty].enemy_shot_time;
-            }
+            
             
             
         }
@@ -1543,6 +1542,8 @@ void player_update_shot(void){
                     player.bullets[bullet_index].x -= .5;
                 }
             }
+           
+           
            
            
            
@@ -1753,7 +1754,7 @@ void enemies_update(void){
                         last_pickup = pickup;
                         
                         
-                        if(pickup_chance == 8){
+                        if(pickup_chance <= 18){
                             //int pickup = game_rand_range(0, PICKUP_TOTAL);
                             player.score += 50;
                             score_add(score_list, 50, enemies[y][x].x,enemies[y][x].y-50);
@@ -1777,7 +1778,7 @@ void enemies_update(void){
                         */
                         
                       
-                        particle_explosion(particles, enemies[y][x].x, enemies[y][x].y, 80, 50, 10);
+                        particle_explosion(particles, enemies[y][x].x, enemies[y][x].y, 30, 50, 10);
                         
                  
 
@@ -2212,7 +2213,7 @@ void gameplay_update(void){
         
 
 
-        for(int i = 0; i  < DEFAULT_PARTICLES; i++){
+        for(int i = 0; i  < MAX_PARTICLES; i++){
               if(particles[i].ttl) particle_update(&particles[i]);
         }
 
@@ -2391,7 +2392,10 @@ int main(int argc, char **argv)
             
     }
     
-    init_audio();
+    if(init_audio() > 0){
+        exit(1);
+    }
+    
     load_sprites();
     font_init();
     
@@ -2422,8 +2426,6 @@ int main(int argc, char **argv)
     
 
     while(!g_close_game){
-        
-        
         
         
         ALLEGRO_EVENT e;
