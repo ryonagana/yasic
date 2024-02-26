@@ -18,5 +18,9 @@
       <Environment/>
       <Project Name="invaders_better" ConfigName="Debug"/>
     </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Static_MinGW32_Release">
+      <Environment/>
+      <Project Name="invaders_better" ConfigName="Release"/>
+    </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

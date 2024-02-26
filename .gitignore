@@ -12,3 +12,5 @@ gamedata.dat
 hiscore.dat
 *.dataDebug*
 bin*
+game.pk0
+*.pk0

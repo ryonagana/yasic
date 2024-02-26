@@ -19,9 +19,15 @@
 #include "miniz.h"
 
 
-#define TRUE  (1ul)
+#define VERSION_MAJOR 0
+#define VERSION_MINOR 1
+#define VERSION_BUILD 0
 
+#define VERSION_STR VERSION_MAJOR "." VERSION_MINOR "." VERSION_BUILD
+
+#define TRUE  (1ul)
 #define FALSE (0l)
+
 #define TILE 32
 
 #define UNUSED(x) (void)x
@@ -80,7 +86,7 @@ typedef struct PARTICLE {
 
 
 
-PARTICLE particles[MAX_PARTICLES] = {0};
+static PARTICLE particles[MAX_PARTICLES] = {0};
 
 
 
@@ -417,7 +423,8 @@ enum GAMESTATE_TYPE {
         GAMESTATE_TYPE_GAMEPLAY,
         GAMESTATE_TYPE_HISCORE,
         GAMESTATE_TYPE_OPTIONS,
-        GAMESTATE_TYPE_GAMEOVER
+        GAMESTATE_TYPE_GAMEOVER,
+        GAMESTATE_TYPE_USER_HISCORE
 };
 
 static int g_gamestate = GAMESTATE_TYPE_MENU;
@@ -526,8 +533,7 @@ HISCORE hiscore[MAX_HISCORE] = {
         {"TANDE\0",             99991},
         {"MANBEARPIG\0",        99990},
         {"TAIRY HESTICLES\0",   1},
-        
-        {"CHAMPZ0RD\0",         994},
+        {"\0",         0},
 
 };
 
@@ -540,7 +546,8 @@ void hiscore_draw(void);
 int hiscore_load_file(char *filename, HISCORE *hsc);
 int hiscore_save_file(const char *output_name);
 int hiscore_sort(HISCORE *hsc);
-
+void hiscore_user_input(void);
+void hiscore_user_input_update(ALLEGRO_EVENT *e);
 
 int hiscore_compress(FILE *f);
 int hiscore_decompress(FILE *f);
@@ -581,6 +588,20 @@ void powerup_draw(void);
 //effects;
 void powerup_effect_shield(struct POWERUP *powerup, struct PLAYER *p);
 static POWERUP  powerup_list[MAX_POWERUPS];
+
+double angle_distance_rad(double x1, double y1, double x2, double y2);
+
+
+inline double angle_distance_rad(double x1, double y1, double x2, double y2){
+    double dx,dy;
+    
+    dx = x2 - x1;
+    dy = y2 - y1;
+    
+    return  atan2(dy,dx);
+}
+
+#define INVERT_ANGLE(angle) (angle *= -1)
 
 int allegro_init(char *error_message) {
     
@@ -831,20 +852,16 @@ void pickup_add(ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X], int index_x, int index_
     if(p == NULL) {
         return;
     }
+
+    double angle = angle_distance_rad( enemies[index_y][index_x].x, enemies[index_y][index_x].y, player.x, player.y);
     
-    float dx = enemies[index_y][index_x].x - player.x;
-    float dy = enemies[index_y][index_x].y - player.y;
-    
-    double angle = atan2(dy,dx);
-    
-    p->x =  enemies[index_y][index_x].x + cos(angle * RAD2DEG);
-    p->y =  enemies[index_y][index_x].y + sin(angle * RAD2DEG);
+    p->x =  enemies[index_y][index_x].x + cos(angle);
+    p->y =  enemies[index_y][index_x].y + sin(angle);
     p->type = id;
     p->alive = TRUE;
     p->vx = 1.0;
     p->vy = 1.0;
-    //p->info = &g_pickup_info_list[id];
-    //player.ammo = p->info->ammo;
+
     
 }
 
@@ -885,14 +902,6 @@ void pickup_update(void){
     for(int i = 0; i < PICKUP_TOTAL; i++){
         if(!pickup[i].alive) continue;
         
-        //float dx = pickup[i].x - player.x;
-        //float dy = pickup[i].y -  al_get_display_height(display) - 300;
-        //double a = atan2(dy,dx);
-        
-        
-
-        
-        
         if(pickup[i].x > al_get_display_width(display)){
             pickup[i].alive = FALSE;
         }
@@ -922,10 +931,13 @@ void pickup_update(void){
             play(SFX_EXPLOSION4);
         }
         
+        double angle = angle_distance_rad(pickup[i].x, pickup[i].y, player.x, player.y);
         
+        pickup[i].x += cos(angle) * pickup[i].vx;
+        pickup[i].y += sin(angle) *  pickup[i].vy;
         
-        pickup[i].x += pickup[i].vx;
-        pickup[i].y += pickup[i].vy;
+        //pickup[i].x += pickup[i].vx;
+        //pickup[i].y += pickup[i].vy;
     }
 }
 
@@ -970,6 +982,99 @@ void allegro_get_desktop_size(int adapter, int *w, int *h){
 
 
 int allegro_create_display_context(int width, int height, int fullscreen, int vsync, const char *title){
+    
+    int flags = 0;
+    int error = 0;
+    int w,h;
+    
+    vsync = vsync > 0 ? 2 : 0;
+    al_set_new_display_option(ALLEGRO_VSYNC, vsync, ALLEGRO_REQUIRE);
+    
+    if(fullscreen){
+        flags |= ALLEGRO_FULLSCREEN_WINDOW;
+    }else {
+         flags |= ALLEGRO_WINDOWED;
+    }
+    
+    
+    flags =  ALLEGRO_OPENGL_FORWARD_COMPATIBLE|ALLEGRO_EVENT_DISPLAY_EXPOSE;
+    
+
+    
+    if(strlen(title) > 0 || title != NULL){
+        al_set_new_window_title(title);
+    }else {
+        al_set_new_window_title("Game Window");
+    }
+    
+    if(width > 0 && height > 0){
+        w = width;
+        h = height;
+    }else {
+        allegro_get_desktop_size(0, &w, &h);
+    }
+    
+    al_set_new_display_flags(flags);    
+    al_set_new_bitmap_flags(ALLEGRO_VIDEO_BITMAP);
+    display = al_create_display(w,h);
+    
+    #define NOT_VALID_PTR(x) (x == NULL || !x ? 1 : 0)
+    
+    
+    if(NOT_VALID_PTR(display)){
+        error++;
+    }
+    
+    queue = al_create_event_queue();
+    
+    if(NOT_VALID_PTR(queue)){
+        error++;
+    }
+    
+    timer = al_create_timer(1.0/FPS);
+    
+    if(NOT_VALID_PTR(timer)){
+        error++;
+    }
+    
+    menu_timer = al_create_timer(1.0/30.0);
+    
+    if(NOT_VALID_PTR(menu_timer)){
+        error++;
+    }
+    
+    debug_font = al_create_builtin_font();
+    
+        
+    if(NOT_VALID_PTR(debug_font)){
+        error++;
+    }
+    
+    buffer = al_create_bitmap(w, h);
+    
+    if(NOT_VALID_PTR(buffer)){
+        error++;
+    }
+    
+    
+    //Register Events
+    al_register_event_source(queue, al_get_display_event_source(display));
+    al_register_event_source(queue, al_get_mouse_event_source());
+    al_register_event_source(queue, al_get_keyboard_event_source());
+    al_register_event_source(queue, al_get_timer_event_source(timer));
+    al_register_event_source(queue, al_get_timer_event_source(menu_timer));
+    al_start_timer(timer);
+    al_start_timer(menu_timer);
+    
+    
+    #undef NOT_VALID_PTR
+    
+    al_clear_to_color(al_map_rgb_f(1,0,0));
+    al_flip_display();
+    
+    return error;
+    
+    /*
     int error = 0;
     int flags = 0;
     
@@ -1057,6 +1162,8 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
     al_flip_display();
     
     return error;
+    */
+    
 }
 
 void allegro_destroy(void){
@@ -1276,9 +1383,10 @@ void do_gameover(void){
                 if(enemies[y][x].alive){
                     enemies[y][x].alive = false;
                 }
+                
         }
     }
-    
+    g_gamestate = GAMESTATE_TYPE_USER_HISCORE;
     wave_reset();
 }
 
@@ -1288,11 +1396,11 @@ void draw_life_bar(void){
     
     float total = fabs(player.life/100.0);
     
-    float w = al_get_display_width(display) * total;
+    float w = 300 * total;
     
 
-    al_draw_filled_rectangle(0, 0, w, 15 , al_map_rgb_f(0,0,1));
-    al_draw_multiline_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb(0,255,0), w/2,0, 0,20,0,"%.2f",  fabs(player.life/100.0) * 100);
+    al_draw_filled_rectangle(0, 0, w, 15 , al_map_rgb_f(1,0,0));
+    al_draw_multiline_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb(255,255,255), w/2,0, 0,20,0,"%.2f",  fabs(player.life/100.0) * 100);
 }
 
 void draw_debug(void){
@@ -1433,8 +1541,10 @@ void enemies_update_bullet(void){
                                     }
                                     
                                     bullet->alive = FALSE;
+                                    particle_explosion(particles, (int)bullet->x, (int)bullet->y, 200,100, 200);
                                     play(SFX_HIT);
                                 }
+
                            }
                            
                            if(bullet->x >= al_get_display_width(display)){
@@ -1484,16 +1594,12 @@ void enemies_update_bullet(void){
                     
                     b->color = al_map_rgb(255,0, 0);
                     
-                   float dx = player.x - b->x;
-                   float dy = player.y - b->y;
-                 
-                   
-                   double player_angle = atan2(dy, dx);
-                   
-                   b->angle = RAD2DEG * player_angle;
+
+                   double player_angle = angle_distance_rad(b->x, b->y, player.x, player.y); //atan2(dy, dx);
+                   b->angle = player_angle * RAD2DEG; 
                                
-                   b->x = e->x + cos(b->angle * DEG2RAD) * difficulty[game_difficulty].speed_multiplier;
-                   b->y = e->y + sin(b->angle * DEG2RAD) * difficulty[game_difficulty].speed_multiplier;
+                   b->x = e->x + cos(player_angle) * difficulty[game_difficulty].speed_multiplier;
+                   b->y = e->y + sin(player_angle) * difficulty[game_difficulty].speed_multiplier;
                    play(SFX_ENEMY_SHOOT);
                     
                 }
@@ -2003,15 +2109,12 @@ PARTICLE *particle_free(PARTICLE *p, int max){
 
 void particle_explosion(PARTICLE *plist, int x, int y, int spread, int particle_count, int life){
     int i;
-    PARTICLE *p;
-    
-    float angle, speed;
-    
-    
-    
+    PARTICLE *p = NULL;
     
     for(i = 0;i < particle_count;i++){
-        p = particle_free(plist, DEFAULT_PARTICLES);
+        p = particle_free(plist, MAX_PARTICLES);
+        float angle, speed;
+        
         if(p != NULL){
             
             speed = game_rand_range(1,3) + 0.5;
@@ -2019,9 +2122,9 @@ void particle_explosion(PARTICLE *plist, int x, int y, int spread, int particle_
             
             particle_create(p, x + game_rand(spread) - spread / 2, 
                                y + game_rand(spread) - spread / 2,
-                               cos(angle * DEG2RAD) * speed,  //speed/100.0 - 0.5,
+                               cos(angle * DEG2RAD) * speed, 
                                sin(angle * DEG2RAD) * speed,
-                                rand()%4 + 1,
+                                game_rand_range(1,4),
                                (life ? life : 70 -  game_rand(50))
                             );
         }
@@ -2163,17 +2266,16 @@ void menu_draw(MENU *menu_list){
         
         if(menu_list[i].menu_id <= 0) continue;
         
-        if(menu_list[i].menu_id == 2 && !g_game_started)
-            continue;
+
         
         int px = al_get_display_width(display) / 2   - al_get_text_width(font_list[FONT_PIXEL_MENU_BIG], menu_list[i].opt_name);
         int py = al_get_display_height(display) / 2  - al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]);
         
-        int text_size = al_get_text_width(font_list[FONT_PIXEL_MENU_BIG], menu_list[i].opt_name);
-        int text_line_size = al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]);
+        //int text_size = al_get_text_width(font_list[FONT_PIXEL_MENU_BIG], menu_list[i].opt_name);
+        //int text_line_size = al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]);
         
         al_draw_textf(font_list[FONT_PIXEL_MENU_BIG], al_map_rgb_f(1,1,1),  px,  py + i * 64, 0, "%s", menu_list[i].opt_name);
-        al_draw_rectangle(menu_list[i].x,menu_list[i].y, menu_list[i].x + text_size, menu_list[i].y + text_line_size, al_map_rgb_f(1,0,0),1);
+        //al_draw_rectangle(menu_list[i].x,menu_list[i].y, menu_list[i].x + text_size, menu_list[i].y + text_line_size, al_map_rgb_f(1,0,0),1);
       
         
     }
@@ -2280,11 +2382,7 @@ void gameplay_draw(struct RENDER_ARGS *args){
     
                 al_set_target_bitmap(buffer);
                 
-            
-                
-                
- 
-                
+        
                 al_clear_to_color(al_map_rgb(0, 0, 0));
                 al_draw_bitmap(stars_bg,0,0,0);
                 al_draw_bitmap(args->particles_buffer,0,0,0);
@@ -2309,7 +2407,7 @@ void gameplay_draw(struct RENDER_ARGS *args){
                     float wave_y = 0.0;
                     float alpha =  (float)enemy_wave_time_total / enemy_wave_time;
                     
-                    ALLEGRO_COLOR trans_color = al_premul_rgba_f(1,1,1, alpha);
+                    ALLEGRO_COLOR trans_color = al_premul_rgba_f(1,0,0, alpha);
                     char buf[25];
                     sprintf(buf, "WAVE: %d", enemy_wave);
                     
@@ -2337,7 +2435,7 @@ void gameplay_draw(struct RENDER_ARGS *args){
 }
 
 
-    
+
 
 int main(int argc, char **argv)
 {
@@ -2360,7 +2458,7 @@ int main(int argc, char **argv)
         }
         
         if(!PHYSFS_mount(GAME_DATAFILES,NULL, 1)){
-            al_show_native_message_box(display, "Error!", "PHYSFS Error:", "Error to find gamedatafiles.dat", NULL, 0);
+            al_show_native_message_box(display, "Error!", "PHYSFS Error:", "Error to find gamedata assets", NULL, 0);
             exit(-1);
             return 0;
         }
@@ -2370,7 +2468,7 @@ int main(int argc, char **argv)
         
 #endif
     
-    if(allegro_create_display_context(0,0,0,1, "INVADERS!") > 0){
+    if(allegro_create_display_context(800,600,0,2, "INVADERS!") > 0){
         fprintf(stderr, "Error: failed to load display context");
         exit(1);
     }
@@ -2461,6 +2559,10 @@ int main(int argc, char **argv)
                 gameover_draw();
             }
             
+            if(g_gamestate == GAMESTATE_TYPE_USER_HISCORE){
+                hiscore_user_input();
+            }
+            
             
             al_flip_display();
             redraw = 0;
@@ -2484,14 +2586,20 @@ int main(int argc, char **argv)
                 
             case ALLEGRO_EVENT_KEY_CHAR:
                 {
-                    if(g_gamestate == GAMESTATE_TYPE_HISCORE || g_gamestate == GAMESTATE_TYPE_GAMEOVER){
-                        if(keybuffer_counter > 255) keybuffer_counter = 0;
-                        
-                        al_lock_mutex(key_mutex);
-                        keybuffer[keybuffer_counter] = e.keyboard.keycode;
-                        al_unlock_mutex(key_mutex);
-                    }
                     
+                    switch(g_gamestate){
+                        case  GAMESTATE_TYPE_USER_HISCORE:
+                        {
+                            if(keybuffer_counter < 20){
+                                al_lock_mutex(key_mutex);
+                                keybuffer[keybuffer_counter%255] = (char)e.keyboard.unichar;
+                                al_unlock_mutex(key_mutex);
+                                keybuffer_counter++;
+                            }
+                        }
+                            break;
+                    }
+
                 }
                 break;
                 
@@ -2563,7 +2671,11 @@ int main(int argc, char **argv)
                 if(g_gamestate == GAMESTATE_TYPE_GAMEOVER){
                     do_gameover(); 
                     gameover_update();
-                 }
+                }
+                
+                if(g_gamestate == GAMESTATE_TYPE_USER_HISCORE){
+                    hiscore_user_input_update(&e);
+                }
                 
                 
                 redraw = 1;
@@ -2830,10 +2942,10 @@ int hiscore_save_file(const char *output_name){
 
 void hiscore_update(void){
     
-     if(keybuffer[keybuffer_counter] != '\0' || g_mouse.buttons & 1 || g_mouse.buttons & 2){
+     if(keybuffer[keybuffer_counter] != '\0' || g_mouse.buttons & 1 || g_mouse.buttons & 2 || keybuffer[ALLEGRO_KEY_ENTER]){
          
-         memset(keybuffer, 0, 255);
          g_gamestate = GAMESTATE_TYPE_MENU;
+         memset(keybuffer,0,255);
      }
      
      
@@ -2850,7 +2962,7 @@ void hiscore_draw(void){
         int h = al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]);
         
         if(hiscore[i].score > 0){
-            al_draw_textf(font_list[FONT_PIXEL_MENU_BIG], al_map_rgb_f(1,1,1),
+            al_draw_textf(font_list[FONT_PIXEL_BIG], al_map_rgb_f(1,1,1),
             10,
             200 + h*i,
             0,
@@ -2871,6 +2983,45 @@ void hiscore_draw(void){
     return;
 }
 
+
+void hiscore_user_input(void){
+        
+    int w;
+    
+    w =  al_get_display_width(display) - (al_get_display_width(display) / 2) - 400;
+    
+    al_draw_bitmap(stars_bg,0,0,0);
+    al_draw_text(font_list[FONT_PIXEL_MENU_BIG], al_map_rgb_f(1,0,1), w-100, 100, 0,"CONGRATULATIONS YOU ACHIEVED A HISCORE!!!");
+    al_draw_textf(font_list[FONT_PIXEL_MENU_BIG], al_map_rgb_f(1,1,1), w, al_get_display_height(display) - 250, 0,"TYPE YOUR NAME : %s", keybuffer);
+    
+    
+}
+
+void hiscore_user_input_update(ALLEGRO_EVENT *e){
+    UNUSED(e);
+    
+    if(player_keys[ALLEGRO_KEY_BACKSPACE]){
+       
+        if(keybuffer_counter > 0){
+            
+            al_lock_mutex(key_mutex);
+            keybuffer[keybuffer_counter] = '\0';
+            al_unlock_mutex(key_mutex);
+            keybuffer_counter--;
+        }else {
+            keybuffer[0] = '\0';
+        }
+        
+    }
+    
+    
+    if(player_keys[ALLEGRO_KEY_ENTER]){
+        do_gameover();
+        g_gamestate = GAMESTATE_TYPE_HISCORE;
+        
+    }
+    
+}
 
 void hiscore_swap(HISCORE *a, HISCORE *b){
         HISCORE *tmp = NULL;
