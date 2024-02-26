@@ -14,7 +14,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Nicholas Oliveira
-Date                   :=25/02/24
+Date                   :=26/02/24
 CodeLitePath           :=/home/archdark/.codelite
 MakeDirCommand         :=mkdir -p
 LinkerName             :=/usr/bin/g++-13
@@ -53,7 +53,7 @@ AR       := /usr/bin/ar rcu
 CXX      := /usr/bin/g++-13
 CC       := /usr/bin/gcc-13
 CXXFLAGS :=   $(Preprocessors)
-CFLAGS   := -Wextra -Werror -Wno-unused-function -Wno-switch -Wuninitialized -Wstrict-prototypes -O0 -gdwarf-2 -std=c99 -Wall -Wno-type-limits $(Preprocessors)
+CFLAGS   := -Wextra -Werror -Wno-unused-function -Wno-switch -Wuninitialized -Wstrict-prototypes -O0 -std=c11 -Wall -gdwarf-2 -Wno-type-limits $(Preprocessors)
 ASFLAGS  := 
 AS       := /usr/bin/as
 

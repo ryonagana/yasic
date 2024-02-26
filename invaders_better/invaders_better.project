@@ -27,7 +27,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="GCC-13" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="" C_Options="-O0;-gdwarf-2;-std=c99;-Wall;-Wno-type-limits" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="" C_Options="-O0;-std=c11;-Wall;-gdwarf-2;-Wno-type-limits" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
         <IncludePath Value="D:\libs\allegro5.2.9.1-x64-static\include"/>
         <IncludePath Value="D:\projetos\libs\liballegro-5.2.9-git-release-static/include"/>

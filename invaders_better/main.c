@@ -992,7 +992,7 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
     
     al_set_new_bitmap_flags(ALLEGRO_VIDEO_BITMAP);
     
-    if(strlen(title) > 0 || title){
+    if(strlen(title) > 0 || title != NULL){
         al_set_new_window_title(title);
     }
     
@@ -2145,8 +2145,8 @@ void menu_draw(MENU *menu_list){
     
     
     
-    ALLEGRO_COLOR blue = al_premul_rgba(52, 73, 94, 0.1);
-    ALLEGRO_COLOR white = al_premul_rgba(52, 73, 94, 0.1);
+    ALLEGRO_COLOR blue = al_premul_rgba(52, 73, 94, 128);
+    ALLEGRO_COLOR white = al_premul_rgba(52, 73, 94, 128);
     
     ALLEGRO_VERTEX menu_bg[3] = {
         {0,0,0,1,1, al_map_rgb(52, 73, 94)},
@@ -2335,7 +2335,6 @@ void gameplay_draw(struct RENDER_ARGS *args){
                 
                 
 }
-
 
 
     
