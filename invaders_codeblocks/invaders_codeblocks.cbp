@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="invaders_codeblocks" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/invaders-bin" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../invaders_codeblocks" />
+				<Option object_output="obj/Debug/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Weffc++" />
+					<Add option="-pedantic" />
+					<Add option="-Wextra" />
+					<Add option="-std=c11" />
+					<Add option="-m64" />
+					<Add option="-g" />
+					<Add option="-Wextra -Werror -Wno-unused-function -Wno-switch -Wuninitialized -Wstrict-prototypes -fsanitize=address" />
+					<Add option="-DPHYSFS_DATAFILES_OLD" />
+					<Add option="-DDEBUG_PLAYER_UPDATE" />
+					<Add option="-DDEBUG" />
+				</Compiler>
+				<Linker>
+					<Add option="-m64" />
+					<Add option="-lasan" />
+					<Add option="-lallegro" />
+					<Add option="-lallegro_font" />
+					<Add option="-lallegro_ttf" />
+					<Add option="-lallegro_audio" />
+					<Add option="-lallegro_acodec" />
+					<Add option="-lallegro_image" />
+					<Add option="-lallegro_dialog" />
+					<Add option="-lallegro_primitives" />
+					<Add option="-lm" />
+					<Add option="-lphysfs" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/invaders_codeblocks" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="../invaders_better/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../invaders_better/miniz.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../invaders_better/miniz.h" />
+		<Extensions>
+			<code_completion>
+				<search_path add="/usr/local/include" />
+			</code_completion>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

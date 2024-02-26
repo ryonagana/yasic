@@ -10,4 +10,5 @@ hiscore.dat
 *.dem
 gamedata.dat
 hiscore.dat
-*.data
+*.dataDebug*
+bin*

@@ -14,5 +14,9 @@
       <Environment/>
       <Project Name="invaders_better" ConfigName="Debug"/>
     </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Linux_x64">
+      <Environment/>
+      <Project Name="invaders_better" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

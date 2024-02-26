@@ -1,0 +1,3 @@
+/home/archdark/projetos/c/yasic/invaders_better/main.c
+/home/archdark/projetos/c/yasic/invaders_better/miniz.c
+/home/archdark/projetos/c/yasic/invaders_better/miniz.h

@@ -20,6 +20,7 @@
 
 
 #define TRUE  (1ul)
+
 #define FALSE (0l)
 #define TILE 32
 
@@ -2665,9 +2666,9 @@ void hiscore_init(void){
 }
 
 long hiscore_size(void){
-    struct _stat st;
+    struct stat st;
     
-    if(_stat("hiscore.dat",&st) < 0){
+    if(stat("hiscore.dat",&st) < 0){
         return -1;
     }
     return st.st_size;
@@ -2768,13 +2769,13 @@ void hiscore_create_default_memory(void **dest){
 }
 
 int hiscore_load_file(char *filename, HISCORE *hsc){
-    struct _stat st;
+    struct stat st;
     FILE *fp = NULL;
     
     char filename_buffer[255];
     snprintf(filename_buffer, 255,"%s", filename);
     
-    if(_stat(filename_buffer, &st) < 0){
+    if(stat(filename_buffer, &st) < 0){
         return 0;
     }
     

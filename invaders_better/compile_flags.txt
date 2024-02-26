@@ -1,0 +1,17 @@
+-I/home/archdark/projetos/c/yasic/invaders_better
+-I/home/archdark/projetos/c/yasic/invaders_better/D:/libs/allegro5.2.9.1-x64-static/include
+-I/home/archdark/projetos/c/yasic/invaders_better/D:/projetos/libs/liballegro-5.2.9-git-release-static/include
+-I/usr/local/lib
+-I/usr/include/c++/13
+-I/usr/include/c++/13/x86_64-suse-linux
+-I/usr/include/c++/13/backward
+-I/usr/lib64/gcc/x86_64-suse-linux/13/include
+-I/usr/local/include
+-I/usr/lib64/gcc/x86_64-suse-linux/13/include-fixed
+-I/usr/x86_64-suse-linux/include
+-I/usr/include
+-DPHYSFS_DATAFILES_OLD
+-DDEBUG_PLAYER_UPDATE
+-DDEBUG
+-target
+x86_64-suse-linux
