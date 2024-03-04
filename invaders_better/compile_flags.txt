@@ -10,7 +10,7 @@
 -I/usr/lib64/gcc/x86_64-suse-linux/13/include-fixed
 -I/usr/x86_64-suse-linux/include
 -I/usr/include
--DPHYSFS_DATAFILES_OLD
+-DPHYSFS_DATAFILES
 -DDEBUG_PLAYER_UPDATE
 -DDEBUG
 -target

@@ -30,7 +30,7 @@
 
 #define TILE 32
 
-#define UNUSED(x) (void)x
+#define UNUSED(x) ((void)x)
 #define ENEMY_ROW_X 10
 #define ENEMY_ROW_Y 5
 
@@ -987,6 +987,8 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
     int error = 0;
     int w,h;
     
+    w=h=0;
+    
     vsync = vsync > 0 ? 2 : 0;
     al_set_new_display_option(ALLEGRO_VSYNC, vsync, ALLEGRO_REQUIRE);
     
@@ -997,16 +999,11 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
     }
     
     
-    flags =  ALLEGRO_OPENGL_FORWARD_COMPATIBLE|ALLEGRO_EVENT_DISPLAY_EXPOSE;
+    flags = ALLEGRO_OPENGL|ALLEGRO_EVENT_DISPLAY_EXPOSE;
     
 
     
-    if(strlen(title) > 0 || title != NULL){
-        al_set_new_window_title(title);
-    }else {
-        al_set_new_window_title("Game Window");
-    }
-    
+
     if(width > 0 && height > 0){
         w = width;
         h = height;
@@ -1015,10 +1012,16 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
     }
     
     al_set_new_display_flags(flags);    
-    al_set_new_bitmap_flags(ALLEGRO_VIDEO_BITMAP);
     display = al_create_display(w,h);
     
     #define NOT_VALID_PTR(x) (x == NULL || !x ? 1 : 0)
+    
+    if(strlen(title) > 0 || title != NULL){
+        al_set_new_window_title(title);
+    }else {
+        al_set_new_window_title("Game Window");
+    }
+    
     
     
     if(NOT_VALID_PTR(display)){

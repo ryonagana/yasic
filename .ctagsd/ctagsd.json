@@ -3,7 +3,7 @@
  "ignore_spec": "/.git/;/.svn/;/build/;/build-;/CPack_Packages/;/CMakeFiles/",
  "codelite_indexer": "/usr/bin/codelite-ctags",
  "limit_results": 150,
- "search_path": [".", "./include", "/usr/include", "/usr/include/c++/13", "/usr/include/c++/13/backward", "/usr/include/c++/13/x86_64-suse-linux", "/usr/lib64/gcc/x86_64-suse-linux/13/include", "/usr/lib64/gcc/x86_64-suse-linux/13/include-fixed", "/usr/local/include", "/usr/x86_64-suse-linux/include", "C:/msys64/mingw64/include", "C:/msys64/mingw64/include/c++/13.1.0", "C:/msys64/mingw64/include/c++/13.1.0/backward", "C:/msys64/mingw64/include/c++/13.1.0/x86_64-w64-mingw32", "C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/13.1.0/include", "C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/13.1.0/include-fixed", "D:/libs/allegro5.2.9.1-x64-static/include", "D:/projetos/libs/liballegro-5.2.9-git-release-static/include"],
+ "search_path": [".", "./include", "/usr/include", "/usr/include/c++/13", "/usr/include/c++/13/backward", "/usr/include/c++/13/x86_64-suse-linux", "/usr/lib64/gcc/x86_64-suse-linux/13/include", "/usr/lib64/gcc/x86_64-suse-linux/13/include-fixed", "/usr/local/include", "/usr/local/lib", "/usr/x86_64-suse-linux/include", "C:/msys64/mingw64/include", "C:/msys64/mingw64/include/c++/13.1.0", "C:/msys64/mingw64/include/c++/13.1.0/backward", "C:/msys64/mingw64/include/c++/13.1.0/x86_64-w64-mingw32", "C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/13.1.0/include", "C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/13.1.0/include-fixed", "D:/libs/allegro5.2.9.1-x64-static/include", "D:/projetos/libs/liballegro-5.2.9-git-release-static/include"],
  "types": [{
    "key": "std::unique_ptr::pointer",
    "value": "_Tp"

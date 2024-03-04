@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="invaders" Database="" Version="10000">
-  <Project Name="invaders_better" Path="invaders_better/invaders_better.project" Active="Yes"/>
+  <Project Name="invaders_win" Path="invaders_better/invaders_better.project" Active="No"/>
+  <Project Name="invaders_linux" Path="invaders_linux/invaders_linux.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Static_Mingw32_x64">
       <Environment/>
-      <Project Name="invaders_better" ConfigName="Debug"/>
+      <Project Name="invaders_win" ConfigName="Debug"/>
+      <Project Name="invaders_linux" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release_Mingw32_(Shared)">
       <Environment/>
-      <Project Name="invaders_better" ConfigName="Release"/>
+      <Project Name="invaders_win" ConfigName="Release"/>
+      <Project Name="invaders_linux" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Debug_Mingw32_(Shared)">
       <Environment/>
-      <Project Name="invaders_better" ConfigName="Debug"/>
+      <Project Name="invaders_win" ConfigName="Debug"/>
+      <Project Name="invaders_linux" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Linux_x64">
       <Environment/>
-      <Project Name="invaders_better" ConfigName="Debug"/>
+      <Project Name="invaders_win" ConfigName="Debug"/>
+      <Project Name="invaders_linux" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Static_MinGW32_Release">
       <Environment/>
-      <Project Name="invaders_better" ConfigName="Release"/>
+      <Project Name="invaders_win" ConfigName="Release"/>
+      <Project Name="invaders_linux" ConfigName="Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

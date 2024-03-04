@@ -5,22 +5,22 @@
 ## Debug
 ProjectName            :=invaders_better
 ConfigurationName      :=Debug
-WorkspaceConfiguration :=Static_Mingw32_x64
-WorkspacePath          :=D:/projetos/c/invaders
-ProjectPath            :=D:/projetos/c/invaders/invaders_better
+WorkspaceConfiguration :=Linux_x64
+WorkspacePath          :=/home/archdark/projetos/c/yasic
+ProjectPath            :=/home/archdark/projetos/c/yasic/invaders_better
 IntermediateDirectory  :=../build-$(WorkspaceConfiguration)/invaders_better
 OutDir                 :=$(IntermediateDirectory)
 CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
-User                   :=Web Master
-Date                   :=2/26/2024
-CodeLitePath           :="C:/Program Files/CodeLite"
-MakeDirCommand         :=mkdir
-LinkerName             :=C:/msys64/mingw64/bin/g++.exe
-SharedObjectLinkerName :=C:/msys64/mingw64/bin/g++.exe -shared -fPIC
+User                   :=Nicholas Oliveira
+Date                   :=03/03/24
+CodeLitePath           :=/home/archdark/.codelite
+MakeDirCommand         :=mkdir -p
+LinkerName             :=/usr/bin/g++-13
+SharedObjectLinkerName :=/usr/bin/g++-13 -shared -fPIC
 ObjectSuffix           :=.o
-DependSuffix           :=
+DependSuffix           :=.o.d
 PreprocessSuffix       :=.i
 DebugSwitch            :=-g 
 IncludeSwitch          :=-I
@@ -29,16 +29,14 @@ OutputSwitch           :=-o
 LibraryPathSwitch      :=-L
 PreprocessorSwitch     :=-D
 SourceSwitch           :=-c 
-OutputDirectory        :=D:/projetos/c/invaders/build-$(WorkspaceConfiguration)/bin
-OutputFile             :=..\build-$(WorkspaceConfiguration)\bin\$(ProjectName)
+OutputDirectory        :=/home/archdark/projetos/c/yasic/build-$(WorkspaceConfiguration)/bin
+OutputFile             :=../build-$(WorkspaceConfiguration)/bin/$(ProjectName)
 Preprocessors          :=$(PreprocessorSwitch)DEBUG $(PreprocessorSwitch)DEBUG_PLAYER_UPDATE $(PreprocessorSwitch)PHYSFS_DATAFILES 
 ObjectSwitch           :=-o 
 ArchiveOutputSwitch    := 
 PreprocessOnlySwitch   :=-E
 ObjectsFileList        :=$(IntermediateDirectory)/ObjectsList.txt
 PCHCompileFlags        :=
-RcCmpOptions           := 
-RcCompilerName         :=C:/msys64/mingw64/bin/windres.exe
 LinkOptions            :=  
 IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)D:\libs\allegro5.2.9.1-x64-static\include $(IncludeSwitch)D:\projetos\libs\liballegro-5.2.9-git-release-static/include $(IncludeSwitch)/usr/local/lib 
 IncludePCH             := 
@@ -51,20 +49,20 @@ LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)..\vendor\al
 ## Common variables
 ## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overridden using an environment variable
 ##
-AR       := C:/msys64/mingw64/bin/ar.exe -r
-CXX      := C:/msys64/mingw64/bin/g++.exe
-CC       := C:/msys64/mingw64/bin/gcc.exe
+AR       := /usr/bin/ar rcu
+CXX      := /usr/bin/g++-13
+CC       := /usr/bin/gcc-13
 CXXFLAGS :=   $(Preprocessors)
 CFLAGS   := -Wextra -Werror -Wno-unused-function -Wno-switch -Wuninitialized -Wstrict-prototypes -O0 -std=c11 -Wall -gdwarf-2 -Wno-type-limits $(Preprocessors)
 ASFLAGS  := 
-AS       := C:/msys64/mingw64/bin/as.exe
+AS       := /usr/bin/as
 
 
 ##
 ## User defined environment variables
 ##
-CodeLiteDir:=C:\Program Files\CodeLite
-Objects0=$(IntermediateDirectory)/miniz.c$(ObjectSuffix) $(IntermediateDirectory)/main.c$(ObjectSuffix) 
+CodeLiteDir:=/usr/share/codelite
+Objects0=$(IntermediateDirectory)/main.c$(ObjectSuffix) $(IntermediateDirectory)/miniz.c$(ObjectSuffix) 
 
 
 
@@ -77,17 +75,17 @@ Objects=$(Objects0)
 all: MakeIntermediateDirs $(OutputFile)
 
 $(OutputFile): $(IntermediateDirectory)/.d $(Objects) 
-	@if not exist "$(IntermediateDirectory)" $(MakeDirCommand) "$(IntermediateDirectory)"
+	@$(MakeDirCommand) "$(IntermediateDirectory)"
 	@echo "" > $(IntermediateDirectory)/.d
 	@echo $(Objects0)  > $(ObjectsFileList)
 	$(LinkerName) $(OutputSwitch)$(OutputFile) @$(ObjectsFileList) $(LibPath) $(Libs) $(LinkOptions)
 
 MakeIntermediateDirs:
-	@if not exist "$(IntermediateDirectory)" $(MakeDirCommand) "$(IntermediateDirectory)"
-	@if not exist "$(OutputDirectory)" $(MakeDirCommand) "$(OutputDirectory)"
+	@$(MakeDirCommand) "$(IntermediateDirectory)"
+	@$(MakeDirCommand) "$(OutputDirectory)"
 
 $(IntermediateDirectory)/.d:
-	@if not exist "$(IntermediateDirectory)" $(MakeDirCommand) "$(IntermediateDirectory)"
+	@$(MakeDirCommand) "$(IntermediateDirectory)"
 
 PreBuild:
 
@@ -95,16 +93,24 @@ PreBuild:
 ##
 ## Objects
 ##
-$(IntermediateDirectory)/miniz.c$(ObjectSuffix): miniz.c 
-	$(CC) $(SourceSwitch) "D:/projetos/c/invaders/invaders_better/miniz.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/miniz.c$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/miniz.c$(PreprocessSuffix): miniz.c
-	$(CC) $(CFLAGS) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/miniz.c$(PreprocessSuffix) miniz.c
+$(IntermediateDirectory)/main.c$(ObjectSuffix): main.c $(IntermediateDirectory)/main.c$(DependSuffix)
+	$(CC) $(SourceSwitch) "/home/archdark/projetos/c/yasic/invaders_better/main.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/main.c$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/main.c$(DependSuffix): main.c
+	@$(CC) $(CFLAGS) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/main.c$(ObjectSuffix) -MF$(IntermediateDirectory)/main.c$(DependSuffix) -MM main.c
 
-$(IntermediateDirectory)/main.c$(ObjectSuffix): main.c 
-	$(CC) $(SourceSwitch) "D:/projetos/c/invaders/invaders_better/main.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/main.c$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/main.c$(PreprocessSuffix): main.c
 	$(CC) $(CFLAGS) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/main.c$(PreprocessSuffix) main.c
 
+$(IntermediateDirectory)/miniz.c$(ObjectSuffix): miniz.c $(IntermediateDirectory)/miniz.c$(DependSuffix)
+	$(CC) $(SourceSwitch) "/home/archdark/projetos/c/yasic/invaders_better/miniz.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/miniz.c$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/miniz.c$(DependSuffix): miniz.c
+	@$(CC) $(CFLAGS) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/miniz.c$(ObjectSuffix) -MF$(IntermediateDirectory)/miniz.c$(DependSuffix) -MM miniz.c
+
+$(IntermediateDirectory)/miniz.c$(PreprocessSuffix): miniz.c
+	$(CC) $(CFLAGS) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/miniz.c$(PreprocessSuffix) miniz.c
+
+
+-include $(IntermediateDirectory)/*$(DependSuffix)
 ##
 ## Clean
 ##
