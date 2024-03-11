@@ -545,7 +545,8 @@ void hiscore_update(void);
 void hiscore_draw(void);
 int hiscore_load_file(char *filename, HISCORE *hsc);
 int hiscore_save_file(const char *output_name);
-int hiscore_sort(HISCORE *hsc);
+void  hiscore_sort(HISCORE *hsc);
+   
 void hiscore_user_input(void);
 void hiscore_user_input_update(ALLEGRO_EVENT *e);
 
@@ -983,109 +984,19 @@ void allegro_get_desktop_size(int adapter, int *w, int *h){
 
 int allegro_create_display_context(int width, int height, int fullscreen, int vsync, const char *title){
     
-    int flags = 0;
-    int error = 0;
-    int w,h;
-    
-    w=h=0;
-    
-    vsync = vsync > 0 ? 2 : 0;
-    al_set_new_display_option(ALLEGRO_VSYNC, vsync, ALLEGRO_REQUIRE);
-    
-    if(fullscreen){
-        flags |= ALLEGRO_FULLSCREEN_WINDOW;
-    }else {
-         flags |= ALLEGRO_WINDOWED;
-    }
     
     
-    flags = ALLEGRO_OPENGL|ALLEGRO_EVENT_DISPLAY_EXPOSE;
-    
-
-    
-
-    if(width > 0 && height > 0){
-        w = width;
-        h = height;
-    }else {
-        allegro_get_desktop_size(0, &w, &h);
-    }
-    
-    al_set_new_display_flags(flags);    
-    display = al_create_display(w,h);
-    
-    #define NOT_VALID_PTR(x) (x == NULL || !x ? 1 : 0)
-    
-    if(strlen(title) > 0 || title != NULL){
-        al_set_new_window_title(title);
-    }else {
-        al_set_new_window_title("Game Window");
-    }
-    
-    
-    
-    if(NOT_VALID_PTR(display)){
-        error++;
-    }
-    
-    queue = al_create_event_queue();
-    
-    if(NOT_VALID_PTR(queue)){
-        error++;
-    }
-    
-    timer = al_create_timer(1.0/FPS);
-    
-    if(NOT_VALID_PTR(timer)){
-        error++;
-    }
-    
-    menu_timer = al_create_timer(1.0/30.0);
-    
-    if(NOT_VALID_PTR(menu_timer)){
-        error++;
-    }
-    
-    debug_font = al_create_builtin_font();
-    
-        
-    if(NOT_VALID_PTR(debug_font)){
-        error++;
-    }
-    
-    buffer = al_create_bitmap(w, h);
-    
-    if(NOT_VALID_PTR(buffer)){
-        error++;
-    }
-    
-    
-    //Register Events
-    al_register_event_source(queue, al_get_display_event_source(display));
-    al_register_event_source(queue, al_get_mouse_event_source());
-    al_register_event_source(queue, al_get_keyboard_event_source());
-    al_register_event_source(queue, al_get_timer_event_source(timer));
-    al_register_event_source(queue, al_get_timer_event_source(menu_timer));
-    al_start_timer(timer);
-    al_start_timer(menu_timer);
-    
-    
-    #undef NOT_VALID_PTR
-    
-    al_clear_to_color(al_map_rgb_f(1,0,0));
-    al_flip_display();
-    
-    return error;
-    
-    /*
+   
     int error = 0;
     int flags = 0;
     
     #define NOT_VALID_PTR(x) (x == NULL || !x ? 1 : 0)
     
-    flags = ALLEGRO_OPENGL_3_0 | ALLEGRO_EVENT_DISPLAY_EXPOSE;
+    flags = ALLEGRO_OPENGL_3_0 | ALLEGRO_GENERATE_EXPOSE_EVENTS;
     
-    al_set_new_display_option(ALLEGRO_VSYNC, vsync, ALLEGRO_REQUIRE);
+    al_set_new_display_option(ALLEGRO_VSYNC, vsync > 0 ? 2 : 1 , ALLEGRO_REQUIRE);
+
+   
     
     if(fullscreen){
         flags |= ALLEGRO_FULLSCREEN_WINDOW;
@@ -1098,7 +1009,6 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
 
     al_set_new_display_flags(flags);
     
-    al_set_new_bitmap_flags(ALLEGRO_VIDEO_BITMAP);
     
     if(strlen(title) > 0 || title != NULL){
         al_set_new_window_title(title);
@@ -1118,17 +1028,20 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
     display = al_create_display(new_w, new_h);
     if(NOT_VALID_PTR(display)){
         error++;
+        return error;
     }
     
     queue = al_create_event_queue();
     if(NOT_VALID_PTR(queue)){
         error++;
+        return error;
     }
     
     timer = al_create_timer(1.0/FPS);
     
     if(NOT_VALID_PTR(timer)){
         error++;
+        return error;
     }
     
     menu_timer = al_create_timer(1.0/30.0);
@@ -1137,6 +1050,7 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
     
     if(NOT_VALID_PTR(debug_font)){
         error++;
+        return error;
     }
     
     
@@ -1145,6 +1059,7 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
     
     if(NOT_VALID_PTR(buffer)){
         error++;
+        return error;
     }
     
     #undef NOT_VALID_PTR
@@ -1156,16 +1071,13 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
     al_register_event_source(queue, al_get_timer_event_source(menu_timer));
     al_start_timer(timer);
     al_start_timer(menu_timer);
-    
-    
-   
-    
+       
 
     al_clear_to_color(al_map_rgb_f(0,0,0));
     al_flip_display();
     
     return error;
-    */
+   
     
 }
 
@@ -1790,7 +1702,7 @@ const float explosion_speed[4] = {
      .5f,
      1.0f,
      1.2f,
-     2.0f
+     2.0f,
 };
 
 
@@ -1856,7 +1768,7 @@ void enemies_update(void){
                         player.score += 100;
                         score_add(score_list, 100, enemies[y][x].x, enemies[y][x].y);
                         int rand = game_rand_range(0,2);
-                        int speed_index = game_rand_range(0,4);
+                        int speed_index = game_rand_range(0,3);
                         play_sound(rand,1.0,0.0, explosion_speed[speed_index], ALLEGRO_PLAYMODE_ONCE);
                         
                         int pickup_chance = game_rand_range(0,100);
@@ -2735,13 +2647,9 @@ typedef struct HISCORE_HDR {
 
 void hiscore_init(void){
 
-    
+    /*    
     int lines = 0;
     int line_height = 0;
-
-    
-
-    
     
     for(int i = 0; i < MAX_HISCORE;i++){
         if(hiscore[i].score > 0) lines++;
@@ -2767,8 +2675,7 @@ void hiscore_init(void){
         hiscore_save_file("hiscore.dat");
         
         hiscore_load_file("hiscore.dat", hiscore);
-        
-    
+        return;
         
     }
     
@@ -2776,7 +2683,7 @@ void hiscore_init(void){
     hiscore_sort(hiscore);
     hiscore_save_file("hiscore.dat");
     return;
-
+    */
 }
 
 long hiscore_size(void){
@@ -3034,17 +2941,26 @@ void hiscore_swap(HISCORE *a, HISCORE *b){
  
 }
 
-int hiscore_sort(HISCORE *hsc){
-    static int last_score = 0;
-    
-    for(int i = MAX_HISCORE; i > 0;i--){
-        if(last_score > hsc[i].score){  
-            last_score = hiscore[i].score;
-            hiscore_swap(&hsc[i], &hsc[i-1]);
+void hiscore_sort(HISCORE *hsc){
+    UNUSED(hsc);    
+    /*
+    int i,j;
+    i =0;
+    j =0;
+
+    for(i = 0; i < MAX_HISCORE; ++i){
+        for(j = i+1; i < MAX_HISCORE-1;++j){
+            if(hsc[i].score > hsc[j].score){
+                HISCORE tmp = hsc[i];
+                hsc[i] = hsc[j];
+                hsc[j] = tmp;
+                
+            }
         }
     }
-    
-    return 1;
+    */
+
+    return;
 }
 
 
