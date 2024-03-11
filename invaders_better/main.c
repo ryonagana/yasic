@@ -517,7 +517,7 @@ void demo_update(void);
 void demo_draw(struct RENDER_ARGS *args);
 
 typedef struct HISCORE {
-    char name[20];
+    char name[56];
     int score;
 }HISCORE;
 
@@ -526,7 +526,7 @@ FILE *hiscore_fp =  NULL;
 HISCORE hiscore[MAX_HISCORE] = {
         {"DAN_THE_MAN\0",       99999},
         {"DRUNKBOY\0",          99998},
-        {"NICK\0",              997},
+        {"NICKAUM\0",              997},
         {"ROGER\0",             99996},
         {"CODEMAN\0",           99995},
         {"JARVIS\0",            99993},
@@ -1976,7 +1976,6 @@ void particle_draw(ALLEGRO_BITMAP *bmp, PARTICLE *p, int ox, int oy, const ALLEG
             
         }
     }
-    
     al_draw_prim(vtx, NULL, NULL, 0, DEFAULT_PARTICLES, ALLEGRO_PRIM_POINT_LIST);
 
     if(bmp)
@@ -2015,10 +2014,15 @@ void particle_clear_buffer(PARTICLE *plist, ALLEGRO_BITMAP *bmp,  ALLEGRO_COLOR 
 }
 
 PARTICLE *particle_free(PARTICLE *p, int max){
+   
+    
    int i = 0;
-   while(p[i].ttl && i < max) i++;
+   while(p[i].ttl && i != max) i++;
    if(i == max) return NULL;
    return &p[i];
+   
+   
+  
 }
 
 
@@ -2646,37 +2650,58 @@ typedef struct HISCORE_HDR {
 
 
 void hiscore_init(void){
-
-    /*    
+    
     int lines = 0;
-    int line_height = 0;
+    int height = 0;
     
-    for(int i = 0; i < MAX_HISCORE;i++){
-        if(hiscore[i].score > 0) lines++;
+    for(int i = 0; i < MAX_HISCORE-1;++i){
+        if(hiscore[i].score != 0) lines++;
     }
     
-    line_height = lines * al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]) + 128;
-    hiscore_bitmap = al_create_bitmap(al_get_display_width(display),  line_height );
+    height = lines * al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]) + 128;
+    hiscore_bitmap = al_create_bitmap(al_get_display_width(display), height);
     
-    if(!hiscore_bitmap){
+    if(hiscore_bitmap == NULL){
+        al_show_native_message_box(display, "Error","Hiscore Failed", "Failed to create hiscore bitmap!", NULL,0);
         return;
     }
     
+    ALLEGRO_FILE *fp = al_fopen("hiscore.dat","rb+");
     
-    if(!hiscore_load_file("hiscore.dat", hiscore)){
-        FILE *f = fopen("hiscore.dat", "wb+");
-        if(!f) return;
-        
-        hiscore_create_default(f, hiscore);
-       
-        fclose(f);
-        
-        hiscore_sort(hiscore);
+    if(fp == NULL) return;
+    
+    al_fclose(fp);
+    
+    int hiscore_load = hiscore_load_file("hiscore.dat", hiscore);
+    
+    if(hiscore_load < 0){
+        //hiscore_create_default(fp, hiscore);
         hiscore_save_file("hiscore.dat");
-        
         hiscore_load_file("hiscore.dat", hiscore);
+        hiscore_sort(hiscore);
         return;
+    }
+    
+    hiscore_load_file("hiscore.dat", hiscore);
+    hiscore_sort(hiscore);
+    hiscore_save_file("hiscore.dat");
+    
+    /*
+    if(!hiscore_load_file("hiscore.dat", hiscore)){
         
+        FILE *fp = NULL;
+        
+       
+        
+        if((fp = fopen("hiscore.dat", "wb")) == NULL){
+            return;
+        }
+        
+        hiscore_create_default(fp, hiscore);
+        hiscore_save_file("hiscore.dat");
+        hiscore_load_file("hiscore.dat", hiscore);
+        hiscore_sort(hiscore);
+        return;
     }
     
     hiscore_load_file("hiscore.dat", hiscore);
@@ -2684,6 +2709,7 @@ void hiscore_init(void){
     hiscore_save_file("hiscore.dat");
     return;
     */
+    
 }
 
 long hiscore_size(void){
@@ -2789,60 +2815,63 @@ void hiscore_create_default_memory(void **dest){
     
 }
 
+
 int hiscore_load_file(char *filename, HISCORE *hsc){
-    struct stat st;
-    FILE *fp = NULL;
     
-    char filename_buffer[255];
-    snprintf(filename_buffer, 255,"%s", filename);
+    ALLEGRO_FILE *fp = NULL;
+    char buf[255];
     
-    if(stat(filename_buffer, &st) < 0){
-        return 0;
+    snprintf(buf,255,"%s", filename);
+    
+    if((fp = al_fopen(buf,"rb+")) == NULL){
+        return -1;
     }
     
-    fp = fopen(filename_buffer, "rb+");
-    if(!fp) 
-        return 0;
-        
     HISCORE_HDR header;
     
-    fread(&header, sizeof(HISCORE_HDR),1,fp);
+    al_fread(fp, &header, sizeof(HISCORE_HDR));
     
-    if(strncmp(header.magic, "HSC1\0",5) != 0){
-        return 0;
+    if(header.uncompressed_size != al_fsize(fp)){
+        return -2;
     }
-
-   int counter = 0;
-   
-   do{
-       HISCORE h;
-       fread(&h, sizeof(HISCORE),1,fp);
-       snprintf(hsc[counter].name,20, "%s", h.name);
-       hsc[counter].score = h.score;
-       counter++;
-       
-   }while(!feof(fp) || counter == MAX_HISCORE);
-
-    return 1;
     
+    al_fread(fp, hsc, sizeof(HISCORE) * MAX_HISCORE);
+    
+    al_fclose(fp);
+    return 0;
+
  
 }
 int hiscore_save_file(const char *output_name){
     
-    char fbuff[255];
+    ALLEGRO_FILE *fp = NULL;
+    struct stat st;
+    char buf[255];
     
-    memset(fbuff,0,sizeof(fbuff));
-    snprintf(fbuff, 255, "%s", output_name);
+    sprintf(buf, "%s", output_name);
     
-    ALLEGRO_FILE *f = al_fopen(fbuff, "wb");
-    if(!f) return 0;
-    
-    for(int i = 0; i < MAX_HISCORE; i++){
-        al_fwrite(f, &hiscore[i], sizeof(HISCORE));
+    if( (fp = al_fopen(buf, "wb+")) == NULL){
+        return -1;
     }
     
-    al_fclose(f);
-    return 1;
+    HISCORE_HDR hdr;
+    
+    if(stat(buf, &st) < 0){
+        return -1;
+    }
+    
+    sprintf(hdr.magic, "HSC");
+    hdr.compressed_size = st.st_size;
+    hdr.uncompressed_size = 0;
+    hdr.strategy = 1;
+    hdr.type_compress = 1;
+    
+    al_fwrite(fp, &hdr, sizeof(HISCORE_HDR));
+    al_fwrite(fp, &hiscore, sizeof(HISCORE) * MAX_HISCORE);
+    
+    al_fclose(fp);
+    return 0;
+
     
 }
 
@@ -2881,7 +2910,7 @@ void hiscore_draw(void){
             
             
             al_draw_textf(font_list[FONT_PIXEL_MENU_BIG], al_map_rgb_f(1,1,1),
-            (float)al_get_bitmap_width(hiscore_bitmap)/2 + 400,
+            (float)al_get_bitmap_width(hiscore_bitmap)/2,
             200 + h*i,
             0,
             "%05d", hiscore[i].score
@@ -2941,25 +2970,37 @@ void hiscore_swap(HISCORE *a, HISCORE *b){
  
 }
 
-void hiscore_sort(HISCORE *hsc){
-    UNUSED(hsc);    
-    /*
-    int i,j;
-    i =0;
-    j =0;
+void hiscore_revert_array(HISCORE *hsc){
+    
+    HISCORE h[MAX_HISCORE] = {0};
+    
+    for(int i =  MAX_HISCORE-1; i >= 0; i--){
+        h[i] = hsc[i];
+    }
+    
+    
+    memcpy(hsc, &h, sizeof(HISCORE) * MAX_HISCORE);
+    
+}
 
-    for(i = 0; i < MAX_HISCORE; ++i){
-        for(j = i+1; i < MAX_HISCORE-1;++j){
+void hiscore_sort(HISCORE *hsc){
+
+    
+    int i,j;
+
+    for(i = 0; i < MAX_HISCORE-1; ++i){
+        for(j = i+1; j < MAX_HISCORE-1;++j){
             if(hsc[i].score > hsc[j].score){
                 HISCORE tmp = hsc[i];
                 hsc[i] = hsc[j];
                 hsc[j] = tmp;
+               //hiscore_swap(&hsc[i], &hsc[j]);
                 
             }
         }
     }
-    */
 
+    hiscore_revert_array(hsc);
     return;
 }
 

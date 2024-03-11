@@ -3,12 +3,12 @@
 ## any manual changes will be erased      
 ##
 ## Debug
-ProjectName            :=invaders_linux
+ProjectName            :=invaders_win
 ConfigurationName      :=Debug
 WorkspaceConfiguration :=Static_Mingw32_x64
 WorkspacePath          :=D:/projetos/c/invaders
-ProjectPath            :=D:/projetos/c/invaders/invaders_linux
-IntermediateDirectory  :=../build-$(WorkspaceConfiguration)/invaders_linux
+ProjectPath            :=D:/projetos/c/invaders/invaders_better
+IntermediateDirectory  :=../build-$(WorkspaceConfiguration)/invaders_better
 OutDir                 :=$(IntermediateDirectory)
 CurrentFileName        :=
 CurrentFilePath        :=
@@ -30,8 +30,8 @@ LibraryPathSwitch      :=-L
 PreprocessorSwitch     :=-D
 SourceSwitch           :=-c 
 OutputDirectory        :=D:/projetos/c/invaders/build-$(WorkspaceConfiguration)/bin
-OutputFile             :=..\build-$(WorkspaceConfiguration)\bin\$(ProjectName)_lnx
-Preprocessors          :=
+OutputFile             :=..\build-$(WorkspaceConfiguration)\bin\$(ProjectName)
+Preprocessors          :=$(PreprocessorSwitch)DEBUG $(PreprocessorSwitch)DEBUG_PLAYER_UPDATE 
 ObjectSwitch           :=-o 
 ArchiveOutputSwitch    := 
 PreprocessOnlySwitch   :=-E
@@ -40,12 +40,12 @@ PCHCompileFlags        :=
 RcCmpOptions           := 
 RcCompilerName         :=C:/msys64/mingw64/bin/windres.exe
 LinkOptions            :=  
-IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)/usr/include 
+IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)D:\projetos\libs\liballegro-5.2.9-git-release-static\include 
 IncludePCH             := 
 RcIncludePath          := 
-Libs                   := $(LibrarySwitch)allegro $(LibrarySwitch)allegro_font $(LibrarySwitch)allegro_audio $(LibrarySwitch)allegro_acodec $(LibrarySwitch)allegro_ttf $(LibrarySwitch)allegro_dialog $(LibrarySwitch)allegro_primitives $(LibrarySwitch)allegro_physfs $(LibrarySwitch)allegro_image $(LibrarySwitch)physfs $(LibrarySwitch)m 
-ArLibs                 :=  "allegro" "allegro_font" "allegro_audio" "allegro_acodec" "allegro_ttf" "allegro_dialog" "allegro_primitives" "allegro_physfs" "allegro_image" "physfs" "m" 
-LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)/usr/lib64 
+Libs                   := $(LibrarySwitch)allegro_monolith-static $(LibrarySwitch)winmm $(LibrarySwitch)shlwapi $(LibrarySwitch)ole32 $(LibrarySwitch)user32 $(LibrarySwitch)opengl32 $(LibrarySwitch)gdi32 $(LibrarySwitch)gdiplus $(LibrarySwitch)webp $(LibrarySwitch)dsound $(LibrarySwitch)flac $(LibrarySwitch)psapi $(LibrarySwitch)dumb $(LibrarySwitch)freetype $(LibrarySwitch)png16 $(LibrarySwitch)zlib $(LibrarySwitch)comdlg32 $(LibrarySwitch)sharpyuv $(LibrarySwitch)physfs $(LibrarySwitch)vorbisfile $(LibrarySwitch)vorbis $(LibrarySwitch)ogg 
+ArLibs                 :=  "allegro_monolith-static" "winmm" "shlwapi" "ole32" "user32" "opengl32" "gdi32" "gdiplus" "webp" "dsound" "flac" "psapi" "dumb" "freetype" "png16" "zlib" "comdlg32" "sharpyuv" "physfs" "vorbisfile" "vorbis" "ogg" 
+LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)..\vendor\liballegro-5.2.9-git-release-static/lib 
 
 ##
 ## Common variables
@@ -54,8 +54,8 @@ LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)/usr/lib64
 AR       := C:/msys64/mingw64/bin/ar.exe -r
 CXX      := C:/msys64/mingw64/bin/g++.exe
 CC       := C:/msys64/mingw64/bin/gcc.exe
-CXXFLAGS :=  -g -O0 -Wall $(Preprocessors)
-CFLAGS   :=  -g -O0 -Wall -Wextra -Wextra -Werror -Wno-unused-function -Wno-switch -Wuninitialized -Wstrict-prototypes $(Preprocessors)
+CXXFLAGS :=   $(Preprocessors)
+CFLAGS   := -Wextra -Werror -Wno-unused-function -Wno-switch -Wuninitialized -Wstrict-prototypes -O0 -std=c11 -Wall -gdwarf-2 -Wno-type-limits $(Preprocessors)
 ASFLAGS  := 
 AS       := C:/msys64/mingw64/bin/as.exe
 
@@ -64,7 +64,7 @@ AS       := C:/msys64/mingw64/bin/as.exe
 ## User defined environment variables
 ##
 CodeLiteDir:=C:\Program Files\CodeLite
-Objects0=$(IntermediateDirectory)/up_invaders_better_miniz.c$(ObjectSuffix) $(IntermediateDirectory)/up_invaders_better_main.c$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/miniz.c$(ObjectSuffix) $(IntermediateDirectory)/main.c$(ObjectSuffix) 
 
 
 
@@ -95,15 +95,15 @@ PreBuild:
 ##
 ## Objects
 ##
-$(IntermediateDirectory)/up_invaders_better_miniz.c$(ObjectSuffix): ../invaders_better/miniz.c 
-	$(CC) $(SourceSwitch) "D:/projetos/c/invaders/invaders_better/miniz.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_invaders_better_miniz.c$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/up_invaders_better_miniz.c$(PreprocessSuffix): ../invaders_better/miniz.c
-	$(CC) $(CFLAGS) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_invaders_better_miniz.c$(PreprocessSuffix) ../invaders_better/miniz.c
+$(IntermediateDirectory)/miniz.c$(ObjectSuffix): miniz.c 
+	$(CC) $(SourceSwitch) "D:/projetos/c/invaders/invaders_better/miniz.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/miniz.c$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/miniz.c$(PreprocessSuffix): miniz.c
+	$(CC) $(CFLAGS) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/miniz.c$(PreprocessSuffix) miniz.c
 
-$(IntermediateDirectory)/up_invaders_better_main.c$(ObjectSuffix): ../invaders_better/main.c 
-	$(CC) $(SourceSwitch) "D:/projetos/c/invaders/invaders_better/main.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_invaders_better_main.c$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/up_invaders_better_main.c$(PreprocessSuffix): ../invaders_better/main.c
-	$(CC) $(CFLAGS) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_invaders_better_main.c$(PreprocessSuffix) ../invaders_better/main.c
+$(IntermediateDirectory)/main.c$(ObjectSuffix): main.c 
+	$(CC) $(SourceSwitch) "D:/projetos/c/invaders/invaders_better/main.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/main.c$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/main.c$(PreprocessSuffix): main.c
+	$(CC) $(CFLAGS) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/main.c$(PreprocessSuffix) main.c
 
 ##
 ## Clean

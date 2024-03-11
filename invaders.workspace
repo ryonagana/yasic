@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="invaders" Database="" Version="10000">
-  <Project Name="invaders_win" Path="invaders_better/invaders_better.project" Active="No"/>
-  <Project Name="invaders_linux" Path="invaders_linux/invaders_linux.project" Active="Yes"/>
+  <Project Name="invaders_win" Path="invaders_better/invaders_better.project" Active="Yes"/>
+  <Project Name="invaders_linux" Path="invaders_linux/invaders_linux.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Static_Mingw32_x64">
       <Environment/>
-      <Project Name="invaders_win" ConfigName="Debug"/>
       <Project Name="invaders_linux" ConfigName="Debug"/>
+      <Project Name="invaders_win" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release_Mingw32_(Shared)">
       <Environment/>
