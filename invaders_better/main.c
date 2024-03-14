@@ -228,6 +228,7 @@ typedef struct PLAYER {
     int shoot;
     int keypressed[4];
     PICKUP *pickup;
+    PICKUP items[10];
     int ammo;
 } PLAYER;
 
@@ -446,6 +447,11 @@ void gameover_init(void);
 void gameover_update(void);
 void gameover_draw(void);
 
+enum MENU_TYPE{
+        MENU_TYPE_SINGLE_BUTTON,
+        MENU_TYPE_SUBMENU
+};
+
 typedef struct MENU {
     int menu_id;
     char opt_name[255];
@@ -476,7 +482,7 @@ static void menu_quit_click(struct MENU *menu, void *args);
 
 MENU game_menu[MAX_MENU] = {
         {1, "START GAME\0", menu_start_game_click, 0, NULL,0,0},
-        {2, "CONTINUE GAME\0", menu_start_game_click, 0, NULL,0,0},
+        {2, "CONTINUE GAME\0", NULL, 0, NULL,0,0},
         {3, "HI-SCORE\0", menu_hiscore_click, 0, NULL,0,0},
         {4, "ABOUT\0", NULL, 1, NULL,0,0},
         {5, "OPTIONS\0", NULL, 1, NULL,0,0},
@@ -2067,85 +2073,80 @@ void particle_explosion(PARTICLE *plist, int x, int y, int spread, int particle_
 
 void menu_update(MENU *menu_list, int opt){
 
-    ALLEGRO_MOUSE_STATE mouse;
-
-    al_get_mouse_state(&mouse);
-
-    static int sound_played = 0;
-    int counter = al_get_timer_count(timer) / 60 % 4;
-
-    int w = al_get_display_width (display);
-    int h = al_get_display_height(display);
-
+    UNUSED(opt);
+    int w,h,i;
     int height = 32;
+    static int sound_played = 0;
+
+    w =  al_get_display_width (display);
+    h =  al_get_display_height(display);
+
 
     if(w >= 1360 && h >= 768){
         height = 64;
     }
 
-    for(int i = 0; i < MAX_MENU; i++){
 
+    for(i = 0; i < MAX_MENU-1;i++){
 
-        if(menu_list[i].menu_id <= 0) continue;
+        if(menu_list[i].menu_id <= 0)
+            continue;
 
-        int px = al_get_display_width(display) / 2   - al_get_text_width(font_list[FONT_PIXEL_MENU_BIG], menu_list[i].opt_name);
-        int py = al_get_display_height(display) / 2  - al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]);
-
-
-        int text_size = al_get_text_width(font_list[FONT_PIXEL_MENU_BIG], menu_list[i].opt_name);
+        int px             = al_get_display_width(display) / 2   - al_get_text_width(font_list[FONT_PIXEL_MENU_BIG], menu_list[i].opt_name);
+        int py             = al_get_display_height(display) / 2  - al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]);
+        int text_size      = al_get_text_width(font_list[FONT_PIXEL_MENU_BIG], menu_list[i].opt_name);
         int text_line_size = al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]);
-
-
-
 
         menu_list[i].x = px;
         menu_list[i].y = py + i * height;
 
-        if(!sound_played && counter >= 3 && rect_collision(mouse.x, mouse.y,32,32, menu_list[i].x, menu_list[i].y, text_size, text_line_size)){
-            play_sound(SFX_LASER,1.0f, 0.0, 0.5f, ALLEGRO_PLAYMODE_ONCE);
-            sound_played = 1;
+        if(rect_collision(g_mouse.x, g_mouse.y,16,16, menu_list[i].x, menu_list[i].y, text_size, text_line_size)){
+            if((g_mouse.buttons & 1)){
+                g_menu_cursor.opt = menu_list[i].menu_id;
+                continue;
+            }
+
+            if(!sound_played && menu_list[i].menu_id == opt){
+                //play_sound(SFX_LASER, 1.0f,1.0f, 1.0f * 0.2 * opt , ALLEGRO_PLAYMODE_ONCE);
+                sound_played = 1;
+            }
         }
-
-        if(counter > 3){
-            sound_played = 0;
-        }
-
-
-
-        if((mouse.buttons & 1) && rect_collision(mouse.x, mouse.y,32,32, menu_list[i].x, menu_list[i].y, text_size, text_line_size)){
-            g_menu_cursor.opt = menu_list[i].menu_id;
-
-        }
-
-
 
         if(menu_list[i].menu_id == opt){
 
-            if(menu_list[i].type > 0){
-                    for(int j = 0; j < MAX_MENU; j++){
-                            if(menu_list[i].next_page && menu_list[i].next_page[j].menu_id == opt){
-                                menu_list[i].next_page[j].menu_callback(&menu_list[i].next_page[j], NULL);
-                                g_menu_cursor.opt = 0;
-                                return;
-                            }
+            /* check if it has sub menu */
+            if(menu_list[i].type != MENU_TYPE_SINGLE_BUTTON){
+                for(int j = 0; j < MAX_MENU; j++){
+                    if(menu_list[i].next_page && menu_list[i].next_page[j].menu_id == opt){
+                        menu_list[i].next_page[j].menu_callback(&menu_list[i].next_page[j], NULL);
+                        g_menu_cursor.opt = 0;
+                        return;
                     }
-            }else {
-                if(!menu_list[i].menu_callback){
-                    printf("MENU CALLBACK NULL\n");
-                    g_menu_cursor.opt = 0;
-                    continue;
                 }
 
-                menu_list[i].menu_callback(& menu_list[i], NULL);
-                g_menu_cursor.opt = 0;
+
             }
 
-            return;
+            if(menu_list[i].menu_callback == NULL){
+                fprintf(stderr, "MENU NULL\n");
+                g_menu_cursor.opt = 0;
+                continue;
+
+            }else {
+                menu_list[i].menu_callback(&menu_list[i], NULL);
+                g_menu_cursor.opt = 0;
+                continue;
+
+            }
+
+
         }
 
-
-
     }
+
+    sound_played = 0;
+    return;
+
 }
 
 void demo_init(void){
@@ -2210,7 +2211,7 @@ void menu_draw(MENU *menu_list){
     ALLEGRO_FONT *fnt = NULL;
     int space_height = 32;
 
-    if(w >= 1360 && h >= 760){
+    if(w >= 1360 && h >= 768){
         fnt = font_list[FONT_PIXEL_MENU_BIG];
         space_height = 64;
     }else {
@@ -2476,29 +2477,22 @@ int main(int argc, char **argv)
     struct RENDER_ARGS render_args;
     render_args.particles_buffer = particles_buffer;
 
-    ALLEGRO_TIMEOUT tm;
-
-
 
     while(!g_close_game){
 
 
         ALLEGRO_EVENT e;
 
-        al_init_timeout(&tm,0.1);
 
-        al_wait_for_event_until(queue, &e, &tm);
 
-        if(redraw && al_event_queue_is_empty(queue)){
+
+
+       if(redraw && al_event_queue_is_empty(queue)){
 
             al_set_clipping_rectangle(0, 0, screen_width, screen_height);
             al_clear_to_color(al_map_rgb(0, 0, 0));
 
-
-
-
             if(g_gamestate == GAMESTATE_TYPE_MENU){
-
 
                     if(g_demo_start)
                         demo_draw(&render_args);
@@ -2508,7 +2502,6 @@ int main(int argc, char **argv)
             if(g_gamestate == GAMESTATE_TYPE_GAMEPLAY){
                 gameplay_draw(&render_args);
             }
-
 
             if(g_gamestate == GAMESTATE_TYPE_HISCORE){
                 hiscore_draw();
@@ -2522,112 +2515,120 @@ int main(int argc, char **argv)
                 hiscore_user_input();
             }
 
-
             al_flip_display();
             redraw = 0;
         }
 
 
 
-        switch(e.type){
-            case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                g_close_game =  TRUE;
-                break;
 
-            case ALLEGRO_EVENT_KEY_DOWN:
-                player_keys[e.keyboard.keycode] = TRUE;
-                player_released_keys[e.keyboard.keycode] = FALSE;
-                break;
-            case ALLEGRO_EVENT_KEY_UP:
-                player_keys[e.keyboard.keycode] = FALSE;
-                player_released_keys[e.keyboard.keycode] = TRUE;
-                break;
+        do {
 
-            case ALLEGRO_EVENT_KEY_CHAR:
-                {
+            al_wait_for_event(queue, &e);
 
-                    switch(g_gamestate){
-                        case  GAMESTATE_TYPE_USER_HISCORE:
-                        {
-                            if(keybuffer_counter < 20){
-                                al_lock_mutex(key_mutex);
-                                keybuffer[keybuffer_counter%255] = (char)e.keyboard.unichar;
-                                al_unlock_mutex(key_mutex);
-                                keybuffer_counter++;
+            switch(e.type){
+                case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                    g_close_game =  TRUE;
+                    break;
+
+                case ALLEGRO_EVENT_KEY_DOWN:
+                    player_keys[e.keyboard.keycode] = TRUE;
+                    player_released_keys[e.keyboard.keycode] = FALSE;
+                    break;
+
+                case ALLEGRO_EVENT_KEY_UP:
+                    player_keys[e.keyboard.keycode] = FALSE;
+                    player_released_keys[e.keyboard.keycode] = TRUE;
+                    break;
+
+                case ALLEGRO_EVENT_KEY_CHAR:
+                    {
+
+                        switch(g_gamestate){
+                            case  GAMESTATE_TYPE_USER_HISCORE:
+                            {
+                                if(keybuffer_counter < 20){
+                                    al_lock_mutex(key_mutex);
+                                    keybuffer[keybuffer_counter%255] = (char)e.keyboard.unichar;
+                                    al_unlock_mutex(key_mutex);
+                                    keybuffer_counter++;
+                                }
                             }
-                        }
-                            break;
-                    }
-
-                }
-                break;
-
-            case ALLEGRO_EVENT_MOUSE_AXES:
-                {
-                    g_mouse.x = e.mouse.x;
-                    g_mouse.y = e.mouse.y;
-                }
-                break;
-
-            case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                {
-                    g_mouse.buttons |= e.mouse.button;
-                }
-                break;
-
-            case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
-                {
-                    g_mouse.buttons &= ~e.mouse.button;
-                }
-                break;
-            case ALLEGRO_EVENT_TIMER:
-            {
-
-                if(g_gamestate == GAMESTATE_TYPE_HISCORE){
-                    hiscore_update();
-                }
-
-                if(g_gamestate == GAMESTATE_TYPE_MENU){
-
-
-                    if(!g_demo_start){
-                        demo_init();
-                        g_demo_start = TRUE;
-                    }
-
-                    if(!g_game_started){
-                        demo_update();
-                    }
-
-                    menu_update(game_menu, g_menu_cursor.opt);
-
-
-                }
-
-                if(g_gamestate == GAMESTATE_TYPE_GAMEPLAY){
-
-                        if(g_demo_start){
-                            g_demo_start = FALSE;
+                                break;
                         }
 
-                        gameplay_update();
+                    }
+                    break;
 
+                case ALLEGRO_EVENT_MOUSE_AXES:
+                    {
+                        g_mouse.x = e.mouse.x;
+                        g_mouse.y = e.mouse.y;
+                    }
+                    break;
+
+                case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                    {
+                        g_mouse.buttons |= e.mouse.button;
+                    }
+                    break;
+
+                case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+                    {
+                        g_mouse.buttons &= ~e.mouse.button;
+                    }
+                    break;
+                case ALLEGRO_EVENT_TIMER:
+                {
+
+                    if(g_gamestate == GAMESTATE_TYPE_HISCORE){
+                        hiscore_update();
+                    }
+
+                    if(g_gamestate == GAMESTATE_TYPE_MENU){
+
+
+                        if(!g_demo_start){
+                            demo_init();
+                            g_demo_start = TRUE;
+                        }
+
+                        if(!g_game_started){
+                            demo_update();
+                        }
+
+                        menu_update(game_menu, g_menu_cursor.opt);
+
+
+                    }
+
+                    if(g_gamestate == GAMESTATE_TYPE_GAMEPLAY){
+
+                            if(g_demo_start){
+                                g_demo_start = FALSE;
+                            }
+
+                            gameplay_update();
+
+                    }
+
+                    if(g_gamestate == GAMESTATE_TYPE_GAMEOVER){
+                        do_gameover();
+                        gameover_update();
+                    }
+
+                    if(g_gamestate == GAMESTATE_TYPE_USER_HISCORE){
+                        hiscore_user_input_update(&e);
+                    }
+
+
+                    redraw = 1;
                 }
-
-                if(g_gamestate == GAMESTATE_TYPE_GAMEOVER){
-                    do_gameover();
-                    gameover_update();
-                }
-
-                if(g_gamestate == GAMESTATE_TYPE_USER_HISCORE){
-                    hiscore_user_input_update(&e);
-                }
-
-
-                redraw = 1;
+                    break;
             }
-                break;
-        }
+
+
+        }while(!al_event_queue_is_empty(queue));
     }
 
 
@@ -3075,9 +3076,10 @@ void powerup_update(void){
 
         POWERUP *powerup = &powerup_list[i];
 
-        if(rect_collision(player.x, player.y, 32, 32, powerup->x, powerup->y, 16,16)){
+        if(rect_collision(player.x, player.y, 32, 32, powerup->x, powerup->y, 32,32)){
             powerup->effect(powerup, &player);
             powerup->alive = FALSE;
+            particle_explosion(particles, player.x, player.y, 100,500,30, al_map_rgb_f(1,1,1));
 
         }
 
