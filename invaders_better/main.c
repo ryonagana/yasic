@@ -30,20 +30,15 @@
 #define TILE 32
 
 #define UNUSED(x) ((void)x)
+
 #define ENEMY_ROW_X 10
 #define ENEMY_ROW_Y 5
-
-
-
-
-
 #define GAME_DATAFILES "game.pk0"
 #define HISCORE_DATA "hiscore.dat"
 
 ALLEGRO_DISPLAY *display = NULL;
 ALLEGRO_EVENT_QUEUE *queue = NULL;
 ALLEGRO_TIMER *timer = NULL;
-//ALLEGRO_TIMER *menu_timer = NULL;
 ALLEGRO_BITMAP *buffer  = NULL;
 ALLEGRO_FONT *debug_font = NULL;
 
@@ -155,64 +150,89 @@ static int enemy_wave_time_total = 0;
 void wave_reset(void);
 
 
-enum PICKUP_WEAPON {
-    PICKUP_DEFAULT_CANNON,
-    PICKUP_DOUBLE_SHOOT,
-    PICKUP_TOTAL
+enum ITEMINFO_FLAG {
+
+    ITEMINFO_FLAG_DEFSHOOT = (1<<1),
+    ITEMINFO_FLAG_PIERCE   = (1<<2),
+    ITEMINFO_FLAG_RICOCHET = (1<<3),
+    ITEMINFO_FLAG_INFINITE_AMMO = (1<<4),
+    ITEMINFO_FLAG_INSTAKILL     = (1<<16)
+
 };
 
-enum PICKUP_TYPE {
-    PICKUP_TYPE_WEAPON,
-    PICKUP_TYPE_POWERUP
+enum ITEM_ID {
+    ITEM_ID_DEFAULT_CANNON,
+    ITEM_ID_DOUBLE_CANNON,
+    ITEM_ID_COUNT
 };
 
-typedef struct PICKUP_INFO {
-    int shot_time;
-    float dmg;
-    int pierce;
-    int ricochet;
-    int no_damage;
-    int shot_num;
+struct ITEM;
+
+typedef struct ITEMINFO {
+    int id;
+    int flags;
+    char name[25];
+    int delay;
     int ammo;
-    int pickup_type;
-}PICKUP_INFO;
+    int shots;
+    void (*effect_callback)(struct ITEM *item);
 
-typedef struct  PICKUP {
-    int type;
-    float x,y;
-    float vx,vy;
-    int alive;
-    PICKUP_INFO *info;
-}PICKUP;
-#define MAX_PICKUP 6
+}ITEMINFO;
 
 
-static PICKUP pickup[MAX_PICKUP];
-static PICKUP_INFO g_pickup_info_list[MAX_PICKUP] = {
+typedef struct ITEM {
+    ITEMINFO info;
+    float x;
+    float y;
+    float vx;
+    float vy;
+    int active;
+    int ttl;
 
-    //DEFAULT
+
+}ITEM;
+
+void item_effect_get_default_cannon(ITEM *item);
+void item_effect_get_double_cannon(ITEM *item);
+
+static ITEMINFO item_info_list[ITEM_ID_COUNT] = {
     {
-        25,
-        1,
-        FALSE,
-        FALSE,
-        FALSE,
-        1,
-        -1,
-        PICKUP_TYPE_WEAPON
+       ITEM_ID_DEFAULT_CANNON,
+       ITEMINFO_FLAG_DEFSHOOT | ITEMINFO_FLAG_INFINITE_AMMO,
+       "Default Laser Cannon",
+       40,
+       0,
+       1,
+       item_effect_get_default_cannon
     },
-    //PICKUP_DOUBLE_SHOOT
+
     {
-        75,
-        1.5,
-        FALSE,
-        FALSE,
-        FALSE,
-        2,
-        10,
-        PICKUP_TYPE_WEAPON
+       ITEM_ID_DOUBLE_CANNON,
+       ITEMINFO_FLAG_DEFSHOOT,
+       "Double Laser Cannon",
+       80,
+       0,
+       2,
+       item_effect_get_double_cannon
     }
+
 };
+
+#define MAX_ITEM_LIST 8
+
+typedef struct PLAYER PLAYER;
+
+static ITEM item_list[MAX_ITEM_LIST];
+
+
+ITEM *item_get_free(ITEM list[MAX_ITEM_LIST]);
+void item_spawn(float x, float y, int id);
+void item_add_player(ITEM* list, int id);
+void item_init(void);
+void item_update(void);
+void item_draw(void);
+
+
 
 
 typedef struct PLAYER {
@@ -227,15 +247,13 @@ typedef struct PLAYER {
     int shot_time;
     int shoot;
     int keypressed[4];
-    PICKUP *pickup;
-    PICKUP items[PICKUP_TOTAL];
+    ITEM items[ITEM_ID_COUNT];
+    ITEM *item_use;
     int ammo;
 } PLAYER;
 
-
+void player_init(PLAYER *p);
 void player_shoot(void);
-
-
 void pickup_add(ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X], int index_x, int index_y, int id);
 void pickup_add_to_player(PLAYER *p, int id);
 
@@ -575,30 +593,6 @@ typedef struct MOUSECOORD {
 
 static MOUSECOORD g_mouse;
 
-enum POWERUP_TYPE {
-    POWERUP_SHIELD,
-    POWERUP_COUNT
-};
-
-typedef struct POWERUP {
-    int id;
-    float x;
-    float y;
-    int alive;
-    void (*effect)(struct POWERUP *powerup, struct PLAYER *p);
-}POWERUP;
-
-#define MAX_POWERUPS POWERUP_COUNT
-
-POWERUP *powerup_get_free(void);
-void powerup_create(int id, float x, float y);
-
-void powerup_update(void);
-void powerup_draw(void);
-
-//effects;
-void powerup_effect_shield(struct POWERUP *powerup, struct PLAYER *p);
-static POWERUP  powerup_list[MAX_POWERUPS];
 
 double angle_distance_rad(double x1, double y1, double x2, double y2);
 
@@ -841,135 +835,6 @@ void destroy_audio(void){
 }
 
 
-PICKUP *getFreePickup(void){
-
-
-    int c;
-    for(c = 0; c < MAX_PICKUP; c++){
-        if(pickup[c].alive) continue;
-        break;
-    }
-
-    if(c == MAX_PICKUP) return NULL;
-
-    return &pickup[c];
-}
-
-
-void pickup_add(ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X], int index_x, int index_y, int id){
-
-    PICKUP *p = getFreePickup();
-
-    if(p == NULL) {
-        return;
-    }
-
-    double angle = angle_distance_rad( enemies[index_y][index_x].x, enemies[index_y][index_x].y, player.x, player.y);
-
-    p->x =  enemies[index_y][index_x].x + cos(angle);
-    p->y =  enemies[index_y][index_x].y + sin(angle);
-    p->type = id;
-    p->alive = TRUE;
-    p->vx = 1.0;
-    p->vy = 1.0;
-
-
-}
-
-void pickup_add_to_player(PLAYER *p, int id){
-    PICKUP *tmp_pickup = getFreePickup();
-
-    if(tmp_pickup == NULL) return;
-
-    p->pickup = tmp_pickup;
-    p->pickup->type = id;
-    p->pickup->info = &g_pickup_info_list[id];
-    if(g_pickup_info_list[id].ammo > 0){
-        p->ammo = g_pickup_info_list[id].ammo;
-    }
-
-}
-
-
-
-void pickup_add_item_by_id(PICKUP *pickup, PLAYER *p){
-
-    switch(pickup->type){
-        case PICKUP_DOUBLE_SHOOT:
-            pickup_add_to_player(p, PICKUP_DOUBLE_SHOOT);
-            break;
-
-        case PICKUP_DEFAULT_CANNON:
-            pickup_add_to_player(p, PICKUP_DEFAULT_CANNON);
-            break;
-
-    }
-
-    return;
-}
-
-
-void pickup_update(void){
-    for(int i = 0; i < PICKUP_TOTAL; i++){
-        if(!pickup[i].alive) continue;
-
-        if(pickup[i].x > al_get_display_width(display)){
-            pickup[i].alive = FALSE;
-        }
-
-        if(pickup[i].x < 0){
-            pickup[i].alive = FALSE;
-        }
-
-        if(pickup[i].y > al_get_display_height(display)){
-            pickup[i].alive = FALSE;
-        }
-
-        if(pickup[i].y < 0){
-            pickup[i].alive = FALSE;
-        }
-
-
-        if(rect_collision(pickup[i].x,pickup[i].y,16,16, player.x,player.y,32,32)){
-            pickup_add_item_by_id(&pickup[i], &player);
-            pickup[i].alive = FALSE;
-            particle_explosion(particles, pickup[i].x, pickup[i].y, 60,30,180, COLOR_WHITE);
-            play(SFX_POWERUP);
-        }
-
-        if(rect_collision(player.bullets[i].x, player.bullets[i].y, 16,16, pickup[i].x, pickup[i].y,32,32)){
-            particle_explosion(particles,pickup[i].x, pickup[i].y, 30,50,30, COLOR_RED);
-            pickup[i].alive = FALSE;
-            score_add(score_list,-1000, pickup[i].x, pickup[i].y, COLOR_WHITE);
-            player.score -= 1000;
-            play(SFX_EXPLOSION4);
-        }
-
-        double angle = angle_distance_rad(pickup[i].x, pickup[i].y, player.x, player.y);
-
-        pickup[i].x += cos(angle) * pickup[i].vx;
-        pickup[i].y += sin(angle) *  pickup[i].vy;
-
-        //pickup[i].x += pickup[i].vx;
-        //pickup[i].y += pickup[i].vy;
-    }
-}
-
-
-void pickup_draw(void){
-    for(int i = 0; i < MAX_PICKUP; i++){
-        if(!pickup[i].alive) continue;
-
-        switch(pickup[i].type){
-            case PICKUP_DOUBLE_SHOOT:
-                al_draw_bitmap(sprites[SPR_DSHOT], pickup[i].x, pickup[i].y,0);
-                break;
-        }
-
-    }
-}
-
-
 BULLET *create_shot(BULLET *bullets, const float x, const float y, const float vx, const float vy){
 
     BULLET *bullet = getFreeBullet(bullets);
@@ -1057,7 +922,6 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
         return error;
     }
 
-    //menu_timer = al_create_timer(1.0/30.0);
 
     debug_font = al_create_builtin_font();
 
@@ -1223,31 +1087,18 @@ void score_update_text(void){
 void new_game(int start){
 
     if(start){
-        gameover = 0;
-        player.x = al_get_display_width(display) / 2 - 32;
-        player.y = al_get_display_height(display) - 50;
-        player.direction = 1;
-        player.alive = TRUE;
-        player.shot_time = 0;
-        player.life = 100.0;
-        player.lives = 1;
-        //player.actual_pickup = PICKUP_DEFAULT_CANNON;
-        player.shot_time = 25;
+        player_init(&player);
         line = 0;
         walk_time  = WALK_TIME_DELAY_PHASE1;
         g_game_started = TRUE;
+        wave_reset();
 
-        pickup_add_to_player(&player, PICKUP_DEFAULT_CANNON);
-
-        if(start){
-            wave_reset();
-        }
+        memset(player.keypressed, 0, sizeof(player.keypressed));
 
         if(enemy_wave == 1){
             enemy_wave_time = 200;
             enemy_wave_time_total = enemy_wave_time;
         }
-
 
         for(int y = 0; y < ENEMY_ROW_Y;y++){
             for(int x = 0; x < ENEMY_ROW_X;x++){
@@ -1269,34 +1120,15 @@ void new_game(int start){
         return;
     }
 
-
-    player.x = (float)al_get_display_width(display) / 2 - 32;
-    player.y = (float)al_get_display_height(display) - 50;
-    player.direction = 1;
-    player.alive = TRUE;
-    player.shot_time = 0;
-    player.life = 100.0;
-    walk_time  = WALK_TIME_DELAY_PHASE1;
-    g_game_started = TRUE;
-    pickup_add_to_player(&player, PICKUP_DEFAULT_CANNON);
-
-    //player.pickup = getFreePickup();
-    //player.pickup->type = PICKUP_DOUBLE_SHOOT;
-    //player.pickup->info = &g_pickup_info_list[PICKUP_DOUBLE_SHOOT];
-
-
-
-
+    player_init(&player);
     memset(player.keypressed, 0, sizeof(player.keypressed));
-
-
 
     for(int y = 0; y < ENEMY_ROW_Y;y++){
         for(int x = 0; x < ENEMY_ROW_X;x++){
 
-            int rand_type = game_rand(100);
+            int rand_type = game_rand_range(1,100);
 
-            enemies[y][y].type =   rand_type > 50 ? 1 : 2;
+            enemies[y][y].type =   rand_type < 30 ? 1 : 2;
             enemies[y][x].x = x * TILE * 1.5;
             enemies[y][x].y = y * TILE * 1.5;
             enemies[y][x].alive = 1;
@@ -1307,9 +1139,6 @@ void new_game(int start){
         }
 
     }
-
-    //update_time = al_get_time();
-
 }
 
 
@@ -1565,6 +1394,28 @@ void enemies_set_down(ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X]){
 }
 
 
+void player_init(PLAYER *p){
+
+    p->x = al_get_display_width(display) / 2 - 32;
+    p->y = al_get_display_height(display) / 2 - 32;
+
+    p->x = al_get_display_width(display) / 2 - 32;
+    p->y = al_get_display_height(display) - 50;
+    p->direction = 1;
+    p->alive = TRUE;
+    p->shot_time = 0;
+    p->life = 100.0;
+    p->lives = 1;
+    p->shot_time = 25;
+
+    for(int i = 0; i < ITEM_ID_COUNT;i++){
+        p->items[i].active = false;
+    }
+
+    item_add_player(player.items, ITEM_ID_DEFAULT_CANNON);
+
+}
+
 void draw_player(float x, float y){
 
     al_draw_filled_triangle(x,y,x+32,y+32,x,y+32, al_map_rgb_f(1.0,0,0));
@@ -1584,10 +1435,10 @@ void player_update_shot(void){
 
 
 
-            if(player.pickup->type == PICKUP_DOUBLE_SHOOT){
-                for(int bullet_index = 0; bullet_index < player.pickup->info->shot_num;bullet_index++){
-                    player.bullets[bullet_index%1].x += sin(45 * DEG2RAD)  * .5 ;
-                    player.bullets[bullet_index].x   +=  cos(45 * DEG2RAD) * -0.5;
+            if(player.item_use->info.id == ITEM_ID_DOUBLE_CANNON){
+                for(int bullet_index = 0; bullet_index < player.item_use->info.shots;bullet_index++){
+                    player.bullets[bullet_index%1].x += sin(150 * DEG2RAD);
+                    player.bullets[bullet_index%2].y   +=  cos(30 * DEG2RAD);
                 }
             }
 
@@ -1639,43 +1490,42 @@ void player_draw_shot(void){
 void player_shoot(void){
 
 
-    if(player.pickup->info->pickup_type != PICKUP_TYPE_WEAPON) {
-        return;
+
+    ITEM *item = player.item_use;
+
+    if(!(item->info.flags & ITEMINFO_FLAG_INFINITE_AMMO)){
+        if(player.ammo > 0){
+            player.ammo--;
+        }else {
+            player.item_use = &player.items[0];
+        }
     }
 
-
-    if(player.ammo > 0){
-        player.ammo--;
-    }else {
-        player.ammo = 0;
-        pickup_add_to_player(&player, PICKUP_DEFAULT_CANNON);
+    switch(item->info.id){
+    default:
+    case ITEM_ID_DEFAULT_CANNON:
+    {
+        create_shot(player.bullets, player.x, player.y, 0,1.0);
+        play(SFX_LASER);
+        player.shot_time = item->info.delay;
     }
+        break;
 
-
-    switch(player.pickup->type){
-
-        default:
-        case PICKUP_DEFAULT_CANNON:
-
-            create_shot(player.bullets,  player.x, player.y,0.0,1.0);
-            player.shot_time = player.pickup->info->shot_time;
-            play(SFX_LASER);
-            break;
-
-        case PICKUP_DOUBLE_SHOOT:
+    case ITEM_ID_DOUBLE_CANNON:
         {
-
-            for(int i = 0; i < player.pickup->info->shot_num; i++){
-                create_shot(player.bullets, player.x, player.y,0.0,1.0);
+            for(int i = 0; i < 2; i++){
+                create_shot(player.bullets, player.x + cos(45.0 * DEG2RAD) , player.y + cos(-45.0 * DEG2RAD),0.0,1.0);
             }
 
             play(SFX_LASER);
-            player.shot_time = player.pickup->info->shot_time;
-            break;
-
-
+            player.shot_time = item->info.delay;
         }
-    }
+        break;
+
+}
+
+
+
 }
 
 void player_update(void){
@@ -1813,22 +1663,38 @@ void enemies_update(void){
                         int speed_index = game_rand_range(0,3);
                         play_sound(rand,1.0,0.0, explosion_speed[speed_index], ALLEGRO_PLAYMODE_ONCE);
 
+
+                        int item_drop_item = game_rand_range(0, ITEM_ID_COUNT);
+                        int drop_chance = game_rand_range(1,100);
+
+                        if(drop_chance <= 99){
+
+                            if(item_drop_item == ITEM_ID_DEFAULT_CANNON)
+                                return;
+
+                            score_add(score_list, 150,  enemies[y][x].x,enemies[y][x].y-50, COLOR_WHITE);
+                            player.score += 150;
+                            item_spawn( enemies[y][x].x,enemies[y][x].y, item_drop_item);
+                            int rand_snd = game_rand_range(0,2);
+                            play(sounds[rand_snd]);
+                        }
+
+                        /*
                         int pickup_chance = game_rand_range(0,100);
                         int pickup = game_rand_range(0, PICKUP_TOTAL);
                         last_pickup = pickup;
 
 
+
+
+
                         if(pickup_chance <= 18){
-                            //int pickup = game_rand_range(0, PICKUP_TOTAL);
                             player.score += 50;
                             score_add(score_list, 50, enemies[y][x].x,enemies[y][x].y-50, COLOR_WHITE);
                             pickup_add(enemies,x,y,PICKUP_DOUBLE_SHOOT);
-
                             int rand_snd = game_rand_range(0,2);
                             play(sounds[rand_snd]);
-
-
-                        }
+                        }*/
 
                         particle_explosion(particles, enemies[y][x].x, enemies[y][x].y, 30, 50, 10, COLOR_ORANGE);
                         return;
@@ -1954,12 +1820,12 @@ void stars_destroy(void){
 }
 
 
-
+/*
 void pickups_init(void){
 
     memset(pickup, 0x0, sizeof(PICKUP) * MAX_PICKUP);
 }
-
+*/
 
 void particle_create(PARTICLE *p, int x, int y, double vx,  double vy, ALLEGRO_COLOR color, int life){
         p->x = x;
@@ -2168,7 +2034,8 @@ void demo_update(void){
         enemies_update_bullet();
         enemies_update();
         //player_update();
-        pickup_update();
+        //pickup_update();
+        item_update();
 
 }
 
@@ -2182,7 +2049,7 @@ void demo_draw(struct RENDER_ARGS *args){
                 //draw_enemies(enemies,0,0);
                 //draw_player(player.x, player.y);
                 //player_draw_shot();
-                pickup_draw();
+                //pickup_draw();
                 enemies_draw_bullets();
                 //draw_life_bar();
                 score_draw_text();
@@ -2278,7 +2145,8 @@ void gameplay_update(void){
         enemies_update();
         player_update();
         score_update_text();
-        pickup_update();
+        //pickup_update();
+        item_update();
         update_spaceship();
 
 
@@ -2357,7 +2225,9 @@ void gameplay_draw(struct RENDER_ARGS *args){
                 draw_enemies(enemies,0,0);
                 draw_player(player.x, player.y);
                 player_draw_shot();
-                pickup_draw();
+                //pickup_draw();
+                item_draw();
+
                 enemies_draw_bullets();
                 draw_life_bar();
                 score_draw_text();
@@ -2463,6 +2333,7 @@ int main(int argc, char **argv)
 
     hiscore_init();
     stars_init();
+    item_init();
     new_game(TRUE);
 
 
@@ -3036,66 +2907,137 @@ void wave_reset(void){
 }
 
 
-void powerup_create(int id, float x, float y){
-    POWERUP *p = powerup_get_free();
 
-    if(p == NULL) return;
-
-    p->id = id;
-    p->alive = TRUE;
-    p->x = x;
-    p->y = y;
-
-    switch(id){
-
-        default:
-            break;
-
-        case POWERUP_SHIELD:
-            p->effect = powerup_effect_shield;
-            break;
-    }
-
-}
-
-POWERUP *powerup_get_free(void){
-    int c;
-
-    for(c = 0; c < MAX_POWERUPS;c++){
-        if(powerup_list[c].alive) continue;
+ITEM *item_get_free(ITEM list[MAX_ITEM_LIST]){
+    int i;
+    for(i = 0; i < MAX_ITEM_LIST;i++){
+        if(list[i].active) continue;
         break;
     }
 
-    if(c == MAX_POWERUPS) return NULL;
+    return &list[i];
+}
 
-    return &powerup_list[c];
+
+void item_init(void){
+
+    memset(item_list, 0, sizeof(item_list));
+
+    for(int i = 0; i < ITEM_ID_COUNT;i++){
+        player.items[i].info = item_info_list[i];
+        player.items[i].active = TRUE;
+        player.items[i].x = 0;
+        player.items[i].y = 0;
+        player.items[i].vx = 0;
+        player.items[i].vy = 0;
+        player.items[i].ttl = game_rand_range(50,250);
+        player.items[i].info.flags = 0;
+    }
 
 }
-void powerup_update(void){
 
-    for (int i = 0; i < MAX_POWERUPS; i++){
-        if(!powerup_list[i].alive) continue;
+void item_spawn(float x, float y, int id){
+    ITEM *item = item_get_free(item_list);
 
-        POWERUP *powerup = &powerup_list[i];
+    if(item == NULL)
+        return;
 
-        if(rect_collision(player.x, player.y, 32, 32, powerup->x, powerup->y, 32,32)){
-            powerup->effect(powerup, &player);
-            powerup->alive = FALSE;
-            particle_explosion(particles, player.x, player.y, 100,500,30, al_map_rgb_f(1,1,1));
+    item->x = x;
+    item->y = y;
+    item->info = item_info_list[id];
+    item->vx = 2.0;
+    item->vy = 2.0;
+    item->active = TRUE;
+    item->ttl = game_rand_range(60,150);
+}
+
+
+void item_update(void){
+
+    for(int i = 0; i < MAX_ITEM_LIST;i++){
+        if(!item_list[i].active && item_list[i].ttl <= 0) continue;
+
+        ITEM *item = &item_list[i];
+
+        if(item->x < -10 || item->x >= al_get_display_width(display)  + 10  ||
+           item->y < -10 || item->y >= al_get_display_height(display) + 10
+          ){
+             item->active = FALSE;
+        }
+
+
+
+        item->x += item->vx;
+        item->y += item->vy;
+
+
+        if(rect_collision(player.x,player.y,32,32, item->x,item->y,32,32)){
+            play(SFX_POWERUP2);
+
+            item_add_player(player.items, item->info.id);
+
+            if(item->info.effect_callback){
+                item->info.effect_callback(item);
+            }
+            item->active = FALSE;
+
+            break;
 
         }
 
-    }
-}
-void powerup_draw(void){
-
-    for (int i = 0; i < MAX_POWERUPS; i++){
-        if(!powerup_list[i].alive) continue;
+        if(item->ttl > 0){
+            item->ttl--;
+        }
 
 
     }
 }
 
-void powerup_effect_shield(POWERUP *powerup, PLAYER *p){
-    UNUSED(powerup); UNUSED(p);
+void item_draw(void){
+
+    for(int i = 0; i < MAX_ITEM_LIST;i++){
+        if(!item_list[i].active && item_list[i].ttl <= 0) continue;
+
+        ITEM *item = &item_list[i];
+
+        switch(item->info.id){
+        default:
+            case ITEM_ID_DEFAULT_CANNON:
+            break;
+
+            case ITEM_ID_DOUBLE_CANNON:
+                al_draw_bitmap(sprites[SPR_DSHOT], item->x, item->y, 0);
+            break;
+        }
+    }
+}
+
+
+void item_add_player(ITEM* list, int id){
+
+    for(int i = 0; i < ITEM_ID_COUNT;i++){
+        if(list[i].active) continue;
+
+        list[i].active = TRUE;
+        list[i].info = item_info_list[id%ITEM_ID_COUNT];
+        list[i].info.effect_callback(&list[i]);
+        player.item_use = &list[i];
+        break;
+    }
+
+
+}
+
+void item_effect_get_double_cannon(ITEM *item){
+
+    item->info.flags = ITEMINFO_FLAG_DEFSHOOT | ~ITEMINFO_FLAG_INFINITE_AMMO;
+    item->info.ammo = 10;
+    player.ammo =  item->info.ammo;
+
+}
+void item_effect_get_default_cannon(ITEM *item){
+
+    item->info.flags = ITEMINFO_FLAG_INFINITE_AMMO | ITEMINFO_FLAG_DEFSHOOT;
+
+
 }
