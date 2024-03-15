@@ -220,7 +220,7 @@ typedef struct PLAYER {
     float vx,vy;
     float life;
     int lives;
-    int score;
+    int32_t score;
     int alive;
     int direction;
     BULLET bullets[MAX_BULLETS];
@@ -228,7 +228,7 @@ typedef struct PLAYER {
     int shoot;
     int keypressed[4];
     PICKUP *pickup;
-    PICKUP items[10];
+    PICKUP items[PICKUP_TOTAL];
     int ammo;
 } PLAYER;
 
@@ -937,10 +937,11 @@ void pickup_update(void){
             play(SFX_POWERUP);
         }
 
-        if(rect_collision(player.bullets[i].x, player.bullets[i].y, 32,32, pickup[i].x, pickup[i].y,32,32)){
+        if(rect_collision(player.bullets[i].x, player.bullets[i].y, 16,16, pickup[i].x, pickup[i].y,32,32)){
             particle_explosion(particles,pickup[i].x, pickup[i].y, 30,50,30, COLOR_RED);
             pickup[i].alive = FALSE;
-            score_add(score_list,-100, pickup[i].x, pickup[i].y, COLOR_WHITE);
+            score_add(score_list,-1000, pickup[i].x, pickup[i].y, COLOR_WHITE);
+            player.score -= 1000;
             play(SFX_EXPLOSION4);
         }
 
@@ -1165,7 +1166,13 @@ void score_draw_text(void){
 
     for (int i= 0; i < 10; i++){
         if(score_list[i].ttl > 0){
-            al_draw_textf(font_list[FONT_PIXEL_BIG], score_list[i].color, score_list[i].x, score_list[i].y,0, "%s", score_list[i].text);
+            unsigned char a,r,g,b;
+            al_unmap_rgba(score_list[i].color,&r,&g,&b,&a);
+            int ttl = score_list[i].ttl;
+
+            ALLEGRO_COLOR c = al_premul_rgba(r*ttl,g*ttl,b*ttl,a*ttl);
+
+            al_draw_textf(font_list[FONT_PIXEL_BIG], c, score_list[i].x, score_list[i].y,0, "%s", score_list[i].text);
         }
     }
 
@@ -1676,6 +1683,10 @@ void player_update(void){
 
     player.x = 2.0 * -g_mouse.x;
     player.x = 2.0 * g_mouse.y;
+
+
+    if(player.score <= 0 )
+        player.score = 0;
 
 
     if((g_mouse.buttons & 1) && !player.shoot && !gameover  ){
