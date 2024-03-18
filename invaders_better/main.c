@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <math.h>
 
-
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -18,17 +17,13 @@
 
 #include "miniz.h"
 
-
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 2
 #define VERSION_BUILD 2
 
-
 #define TRUE  (1ul)
 #define FALSE (0l)
-
 #define TILE 32
-
 #define UNUSED(x) ((void)x)
 
 #define ENEMY_ROW_X 10
@@ -39,16 +34,14 @@
 ALLEGRO_DISPLAY *display = NULL;
 ALLEGRO_EVENT_QUEUE *queue = NULL;
 ALLEGRO_TIMER *timer = NULL;
+ALLEGRO_BITMAP *screen = NULL;
 ALLEGRO_BITMAP *buffer  = NULL;
 ALLEGRO_FONT *debug_font = NULL;
-
 
 ALLEGRO_MIXER *mixer = NULL;
 ALLEGRO_VOICE *voice = NULL;
 
-
 static  int g_close_game = 0;
-
 
 ALLEGRO_MUTEX *key_mutex = NULL;
 char keybuffer[255] = {0};
@@ -62,7 +55,6 @@ int keybuffer_counter = 0;
 
 #define FPS 60.0
 
-
 #define COLOR_WHITE al_map_rgb(255,255,255)
 #define COLOR_RED al_map_rgb(255,0,0)
 #define COLOR_MAGENTA al_map_rgb(255,9,255)
@@ -73,10 +65,8 @@ static int screen_height = 0;
 
 #define MAX_BULLETS 50
 
-
 #define DEFAULT_PARTICLES 2000
 #define MAX_PARTICLES     10000
-
 
 typedef struct PARTICLE {
     int x,y;
@@ -87,14 +77,7 @@ typedef struct PARTICLE {
 }PARTICLE;
 
 
-
-
-
-
 static PARTICLE particles[MAX_PARTICLES] = {0};
-//static PARTICLE player_hit_particle[MAX_PARTICLES];
-
-
 
 void particle_create(PARTICLE *p, int x, int y, double vx,  double vy, ALLEGRO_COLOR color, int life);
 void particle_update(PARTICLE *p);
@@ -102,8 +85,6 @@ void particle_reset(PARTICLE *p, int max);
 PARTICLE *particle_free(PARTICLE *p, int max);
 void particle_explosion(PARTICLE *plist, int x, int y, int spread, int particle_count, int life, ALLEGRO_COLOR color);
 void particle_clear_buffer(PARTICLE *plist, ALLEGRO_BITMAP *bmp, ALLEGRO_COLOR color);
-
-
 
 enum SPRITE_INTRO {
     SPR_INTRO_CREATOR,
@@ -141,14 +122,19 @@ typedef struct ENEMY {
 
 } ENEMY;
 
+int enemies_bullet_collision(ENEMY *e, BULLET *b);
+void enemies_update_bullet(void);
+void enemies_draw_bullets(void);
+void enemies_set_down(ENEMY[ENEMY_ROW_Y][ENEMY_ROW_X]);
+int enemies_count(void);
+void enemies_killall(void);
+void enemies_reset(void);
 
 static int enemy_wave = 1;
 static int enemy_wave_time = 0;
 static int enemy_wave_time_total = 0;
 
-
 void wave_reset(void);
-
 
 enum ITEMINFO_FLAG {
 
@@ -175,6 +161,7 @@ typedef struct ITEMINFO {
     int delay;
     int ammo;
     int shots;
+    int effect_time;
     void (*effect_callback)(struct ITEM *item);
 
 }ITEMINFO;
@@ -203,6 +190,7 @@ static ITEMINFO item_info_list[ITEM_ID_COUNT] = {
        40,
        0,
        1,
+       0,
        item_effect_get_default_cannon
     },
 
@@ -213,6 +201,7 @@ static ITEMINFO item_info_list[ITEM_ID_COUNT] = {
        80,
        0,
        2,
+       0,
        item_effect_get_double_cannon
     }
 
@@ -282,8 +271,6 @@ static TEXT score_list[10] = {0};
 
 ALLEGRO_SAMPLE *sfx_list[MAX_SFX] = {0};
 
-
-
 static int gameover = 0;
 static int g_game_started  = FALSE;
 static int player_keys[ALLEGRO_KEY_MAX] = {0};
@@ -306,7 +293,6 @@ enum SPRITE_ID {
 };
 
 
-
 enum GAME_DIFFICULTY {
     DIFF_NOVICE,
     DIFF_EASY,
@@ -316,7 +302,6 @@ enum GAME_DIFFICULTY {
 
     DIFF_COUNT
 };
-
 
 
 int game_difficulty = DIFF_NOVICE;
@@ -330,7 +315,6 @@ int game_difficulty = DIFF_NOVICE;
 
 static int walk_time = 1000;
 
-
 const char sprite_assets_path[SPRITE_MAX][255] = {
     {"assets//bg01.bmp"},
     {"assets//cannon.bmp"},
@@ -343,8 +327,6 @@ const char sprite_assets_path[SPRITE_MAX][255] = {
 };
 
 ALLEGRO_BITMAP *sprites[SPRITE_MAX] = {0};
-
-
 
 typedef struct DIFFICULTY_PARAMS {
     int type;
@@ -398,17 +380,24 @@ const DIFFICULTY_PARAMS difficulty[DIFF_COUNT] = {
 
 };
 
+typedef struct POINT {
+    float x;
+    float y;
+
+}POINT;
+
 typedef struct STAR {
-        float x,y;
-        float vx,vy;
+        POINT pos;
+        POINT vel;
         int ttl;
 }STAR;
 
-
 ALLEGRO_BITMAP *stars_bg = NULL;
 
-#define MAX_STARS 2000
-STAR stars[MAX_STARS] = {0};
+#define MAX_STARS 3000
+#define MAX_STARS_PART (int)(MAX_STARS/3)
+
+static STAR star_list[3][MAX_STARS_PART];
 
 enum FONT_ID {
 
@@ -422,8 +411,6 @@ enum FONT_ID {
 
 #define MAX_FONTS 6
 ALLEGRO_FONT *font_list[MAX_FONTS] = {0};
-
-
 
 int g_count_init_round = 0;
 int g_ship_counter = 0;
@@ -472,8 +459,6 @@ typedef struct MENU_CURSOR {
 }MENU_CURSOR;
 
 #define MAX_MENU 16
-
-
 
 static void menu_start_game_click(struct MENU *menu, void *args);
 static void menu_hiscore_click(struct MENU *menu, void *args);
@@ -563,8 +548,6 @@ TEXT* score_free(TEXT score[10]);
 void score_add(TEXT *score, const int num, const float x, const float y, ALLEGRO_COLOR color);
 void score_update_text(void);
 
-
-
 ALLEGRO_BITMAP *hiscore_bitmap = NULL;
 
 void hiscore_init(void);
@@ -592,10 +575,7 @@ typedef struct MOUSECOORD {
 } MOUSECOORD;
 
 static MOUSECOORD g_mouse;
-
-
 double angle_distance_rad(double x1, double y1, double x2, double y2);
-
 
 inline double angle_distance_rad(double x1, double y1, double x2, double y2){
     double dx,dy;
@@ -607,6 +587,8 @@ inline double angle_distance_rad(double x1, double y1, double x2, double y2){
 }
 
 #define INVERT_ANGLE(angle) (angle *= -1)
+
+int print_fade_text(ALLEGRO_FONT *fnt, float x, float y, ALLEGRO_COLOR c, float fade, const char *text, ...);
 
 int allegro_init(char *error_message) {
 
@@ -660,9 +642,6 @@ int allegro_init(char *error_message) {
         sprintf(error_message, "Image Not Loaded!\n");
     }
 
-
-
-
    voice = al_create_voice(44100, ALLEGRO_AUDIO_DEPTH_INT16, ALLEGRO_CHANNEL_CONF_2);
 
    if(voice == NULL) {
@@ -695,7 +674,6 @@ int allegro_init(char *error_message) {
     return error;
 }
 
-
 int  game_rand(int num)
 {
     return num * ((1.0 * rand())/RAND_MAX) - 1;
@@ -708,7 +686,6 @@ int game_rand_range(int n, int m)
 
 int rect_collision(float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2)
 {
-
     if(x1 + w1 >= x2 &&
        x1 <= x2 + w2 &&
        (y1 + h1) >= y2 &&
@@ -728,7 +705,6 @@ int getCountBulletsAlive(BULLET *bullets){
     int c = 0;
     while(++c < MAX_BULLETS && bullets[c].alive);
     return c;
-
 
 }
 
@@ -759,14 +735,11 @@ enum {
         SFX_ENEMY_SHOOT,
         SFX_EXPLOSION4,
         SFX_COLLISION,
-
         SFX_TOTAL
 };
 
 int init_audio(void){
     int error = 0;
-
-
     #define SND_PTR_FAILED(x) (!x||x == NULL)
 
     sfx_list[SFX_EXPLOSION1] = al_load_sample("assets//sfx//explosion01.wav");
@@ -800,9 +773,6 @@ int init_audio(void){
     return error;
 }
 
-
-
-
 void play_sound(int id, float volume, float pan, float speed, ALLEGRO_PLAYMODE mode){
     if(sfx_list[id]){
         al_play_sample(sfx_list[id], volume, pan, speed, mode, NULL);
@@ -834,7 +804,6 @@ void destroy_audio(void){
     }
 }
 
-
 BULLET *create_shot(BULLET *bullets, const float x, const float y, const float vx, const float vy){
 
     BULLET *bullet = getFreeBullet(bullets);
@@ -858,13 +827,7 @@ void allegro_get_desktop_size(int adapter, int *w, int *h){
     *h = info.y2 - info.y1;
 }
 
-
-
 int allegro_create_display_context(int width, int height, int fullscreen, int vsync, const char *title){
-
-
-
-
     int error = 0;
     int flags = 0;
 
@@ -883,10 +846,7 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
     }
 
     allegro_get_desktop_size(0, &screen_width, &screen_height);
-
-
     al_set_new_display_flags(flags);
-
 
     if(strlen(title) > 0 || title != NULL){
         al_set_new_window_title(title);
@@ -908,6 +868,8 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
         error++;
         return error;
     }
+
+    screen = al_get_backbuffer(display);
 
     queue = al_create_event_queue();
     if(NOT_VALID_PTR(queue)){
@@ -954,15 +916,13 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
     al_flip_display();
 
     return error;
-
-
 }
 
 void allegro_destroy(void){
 
     if(voice) al_destroy_voice(voice);
     if(mixer) al_destroy_mixer(mixer);
-
+    if(screen) screen = NULL;
     if(display) al_destroy_display(display);
     if(queue) al_destroy_event_queue(queue);
     if(timer) al_destroy_timer(timer);
@@ -985,7 +945,7 @@ ALLEGRO_BITMAP *al_load_bitmap_safe(const char *path){
     return b;
 }
 
-int enemy_count(void){
+int enemies_count(void){
     int count = 0;
     for(int y = 0; y < ENEMY_ROW_Y; y++){
         for(int x = 0; x < ENEMY_ROW_X;x++){
@@ -1017,14 +977,13 @@ void load_sprites(void){
     }
 }
 
-void enable_blend(void){
+void mode_blend(void){
     al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ONE);
 }
 
-void enable_solid(void){
+void mode_solid(void){
     al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO);
 }
-
 
 void score_draw_text(void){
 
@@ -1033,15 +992,11 @@ void score_draw_text(void){
             unsigned char a,r,g,b;
             al_unmap_rgba(score_list[i].color,&r,&g,&b,&a);
             int ttl = score_list[i].ttl;
-
             ALLEGRO_COLOR c = al_premul_rgba(r*ttl,g*ttl,b*ttl,a*ttl);
-
             al_draw_textf(font_list[FONT_PIXEL_BIG], c, score_list[i].x, score_list[i].y,0, "%s", score_list[i].text);
         }
     }
-
 }
-
 
 TEXT* score_free(TEXT score[10]){
     int c = 0;
@@ -1054,7 +1009,6 @@ TEXT* score_free(TEXT score[10]){
 }
 
 void score_add(TEXT *score, const int num, const float x, const float y, ALLEGRO_COLOR color){
-
 
     TEXT *s = score_free(score);
 
@@ -1073,7 +1027,6 @@ void score_add(TEXT *score, const int num, const float x, const float y, ALLEGRO
 }
 
 void score_update_text(void){
-
     for (int i= 0; i < 10; i++){
         if(score_list[i].ttl > 0){
             score_list[i].y--;
@@ -1085,7 +1038,6 @@ void score_update_text(void){
 
 
 void new_game(int start){
-
     if(start){
         player_init(&player);
         line = 0;
@@ -1159,22 +1111,15 @@ void do_gameover(void){
     wave_reset();
 }
 
-
-
 void draw_life_bar(void){
 
     float total = fabs(player.life/100.0);
-
     float w = 300 * total;
-
-
     al_draw_filled_rectangle(0, 0, w, 15 , al_map_rgb_f(1,0,0));
     al_draw_multiline_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb(255,255,255), w/2,0, 0,20,0,"%.2f",  fabs(player.life/100.0) * 100);
 }
 
 void draw_debug(void){
-
-
     al_draw_multiline_textf(debug_font, al_map_rgb_f(1.0,0,0), 0,0, 300, 20,0,
     "TOTAL ENEMIES: %d\n"
     "SHOT TIME: %d\n"
@@ -1182,7 +1127,7 @@ void draw_debug(void){
     "LINES: %d lines\n"
     "Enemy Shoot Time %d\n"
     "Player life: %.2f",
-    enemy_count(),
+    enemies_count(),
     player.shot_time,
     player.shoot ? "YES" : "No",
     line,
@@ -1190,9 +1135,27 @@ void draw_debug(void){
     player.life
 
    );
-
-
    return;
+}
+
+void enemies_killall(void){
+    for(int i = 0; i < ENEMY_ROW_Y;i++){
+        for(int j = 0; j < ENEMY_ROW_X;j++){
+            if(!enemies[i][j].alive) continue;
+            enemies[i][j].alive = FALSE;
+        }
+    }
+}
+void enemies_reset(void){
+
+    for(int i = 0; i < ENEMY_ROW_Y;i++){
+        for(int j = 0; j < ENEMY_ROW_X;j++){
+            if(!enemies[i][j].alive) continue;
+            enemies[i][j].alive = FALSE;
+            enemies[i][j].x  = 0;
+             enemies[i][j].y = 0;
+        }
+    }
 }
 
 
@@ -1227,7 +1190,6 @@ void update_spaceship(void){
     if(g_ship_active && g_spaceship_entity && g_spaceship_entity->alive){
         g_spaceship_entity->x -= 1.0;
 
-
         if(g_spaceship_entity->x < -32){
             g_spaceship_entity->alive = false;
             g_ship_active = FALSE;
@@ -1240,7 +1202,6 @@ void draw_spaceship(void){
             al_draw_bitmap(sprites[SPR_ENEMY02], g_spaceship_entity->x, g_spaceship_entity->y, 0);
     }
 }
-
 
 void enemies_draw_bullets(void){
 
@@ -1255,7 +1216,6 @@ void enemies_draw_bullets(void){
                 //al_draw_filled_rectangle(b->x,b->y,b->x+8, b->y+8, al_map_rgb(255, 159, 67));
                 al_draw_bitmap(sprites[SPR_ENEMYSHOT],b->x, b->y,0);
             }
-
         }
     }
 }
@@ -1268,19 +1228,16 @@ void enemies_update_bullet(void){
 
                 ENEMY *enemy = &enemies[y][x];
 
-
                     for(int i = 0; i < MAX_BULLETS-1;i++){
                         BULLET *bullet = &enemy->bullets[i];
 
                         if(bullet->alive){
-
                            int total = getCountBulletsAlive(enemy->bullets);
 
                            for(int i = 0; i < total; i++){
                                bullet->x += cos(bullet->angle * DEG2RAD) * difficulty[game_difficulty].shot_speed;
                                bullet->y += sin(bullet->angle * DEG2RAD) * difficulty[game_difficulty].shot_speed;
                            }
-
 
                            if(!g_demo_start && rect_collision(player.x, player.y,32,32, bullet->x, bullet->y, 8,8) && player.alive){
 
@@ -1344,12 +1301,10 @@ void enemies_update_bullet(void){
             enemy_shoot_time--;
         }else {
 
-
             int enemy_index_x =  game_rand_range(0, ENEMY_ROW_X-1);
             int enemy_index_y =  game_rand_range(0, ENEMY_ROW_Y-1);
 
             ENEMY *e = &enemies[enemy_index_y][enemy_index_x];
-
 
             if(!e->alive){
                 return;
@@ -1375,9 +1330,6 @@ void enemies_update_bullet(void){
                 }
 
                 enemy_shoot_time =  difficulty[game_difficulty].enemy_shot_time;
-
-
-
         }
 
 
@@ -1416,12 +1368,12 @@ void player_init(PLAYER *p){
 
 }
 
-void draw_player(float x, float y){
+void player_draw(float x, float y){
 
     al_draw_filled_triangle(x,y,x+32,y+32,x,y+32, al_map_rgb_f(1.0,0,0));
+
+
 }
-
-
 
 void player_update_shot(void){
     for(int i = 0; i < MAX_BULLETS; i++){
@@ -1433,18 +1385,13 @@ void player_update_shot(void){
                 player.bullets[i].alive = false;
            }
 
-
-
             if(player.item_use->info.id == ITEM_ID_DOUBLE_CANNON){
+
                 for(int bullet_index = 0; bullet_index < player.item_use->info.shots;bullet_index++){
                     player.bullets[bullet_index%1].x += sin(150 * DEG2RAD);
                     player.bullets[bullet_index%2].y   +=  cos(30 * DEG2RAD);
                 }
             }
-
-
-
-
 
            if(g_spaceship_entity->alive && g_spaceship_entity && rect_collision(player.bullets[i].x, player.bullets[i].y, 8,8, g_spaceship_entity->x, g_spaceship_entity->y, 32,32)){
                 g_spaceship_entity->alive = FALSE;
@@ -1465,9 +1412,6 @@ void player_update_shot(void){
       player.shoot = FALSE;
     }
 
-
-
-
     player.shot_time--;
     return;
 
@@ -1480,17 +1424,12 @@ void player_draw_shot(void){
 
             al_draw_line( player.bullets[i].x+4, player.y+4, player.bullets[i].x + 4, player.bullets[i].y, al_map_rgba_f(0.5,0.5,0.5,0.2),1);
             al_draw_bitmap(sprites[SPR_PLAYERSHOT], player.bullets[i].x, player.bullets[i].y,0);
-
-
         }
     }
 }
 
 
 void player_shoot(void){
-
-
-
     ITEM *item = player.item_use;
 
     if(!(item->info.flags & ITEMINFO_FLAG_INFINITE_AMMO)){
@@ -1521,11 +1460,7 @@ void player_shoot(void){
             player.shot_time = item->info.delay;
         }
         break;
-
-}
-
-
-
+    }
 }
 
 void player_update(void){
@@ -1534,6 +1469,9 @@ void player_update(void){
     player.x = 2.0 * -g_mouse.x;
     player.x = 2.0 * g_mouse.y;
 
+     if(player.x > 0 && player.x < al_get_display_width(display)-1){
+                    player.x += 2.0;
+    }
 
     if(player.score <= 0 )
         player.score = 0;
@@ -1562,11 +1500,7 @@ void player_update(void){
 #ifdef DEBUG_PLAYER_UPDATE
         if(player_keys[ALLEGRO_KEY_K]){
             player_keys[ALLEGRO_KEY_K] = FALSE;
-            for(int enemy_y = 0; enemy_y < ENEMY_ROW_Y;enemy_y++){
-                 for(int enemy_x = 0; enemy_x < ENEMY_ROW_X;enemy_x++){
-                     enemies[enemy_y][enemy_x].alive = FALSE;
-                 }
-            }
+            enemies_killall();
         }
 #endif
 
@@ -1579,7 +1513,7 @@ void player_update(void){
 }
 
 
-int  enemy_bullet_collision(ENEMY *enemy, BULLET *bullet){
+int  enemies_bullet_collision(ENEMY *enemy, BULLET *bullet){
     for(int i = 0; i < MAX_BULLETS; i++){
 
         if(rect_collision(enemy->x,enemy->y,32,32, bullet[i].x,bullet[i].y, 8,8) && bullet[i].alive){
@@ -1604,11 +1538,6 @@ int last_pickup = -1;
 
 void enemies_update(void){
 
-    int sounds[3] = {
-        SFX_POWERUP,
-        SFX_POWERUP2,
-        SFX_POWERUP3
-    };
 
     int phase = WALK_TIME_DELAY_PHASE1;
     for(int y = 0; y < ENEMY_ROW_Y; y++){
@@ -1637,7 +1566,6 @@ void enemies_update(void){
                     walk_time = phase;
                  }
 
-
                  if(enemies[y][x].x + TILE > (al_get_display_width(display) - TILE - 1)){
 
                      enemies_set_down(enemies);
@@ -1655,7 +1583,7 @@ void enemies_update(void){
                             return;
                  }
 
-                 if(enemy_bullet_collision(&enemies[y][x], player.bullets)){
+                 if(enemies_bullet_collision(&enemies[y][x], player.bullets)){
                         enemies[y][x].alive = FALSE;
                         player.score += 100;
                         score_add(score_list, 100, enemies[y][x].x, enemies[y][x].y, COLOR_RED);
@@ -1672,6 +1600,12 @@ void enemies_update(void){
                             if(item_drop_item == ITEM_ID_DEFAULT_CANNON)
                                 return;
 
+                            int sounds[3] = {
+                                SFX_POWERUP,
+                                SFX_POWERUP2,
+                                SFX_POWERUP3
+                            };
+
                             score_add(score_list, 150,  enemies[y][x].x,enemies[y][x].y-50, COLOR_WHITE);
                             player.score += 150;
                             item_spawn( enemies[y][x].x,enemies[y][x].y, item_drop_item);
@@ -1679,22 +1613,6 @@ void enemies_update(void){
                             play(sounds[rand_snd]);
                         }
 
-                        /*
-                        int pickup_chance = game_rand_range(0,100);
-                        int pickup = game_rand_range(0, PICKUP_TOTAL);
-                        last_pickup = pickup;
-
-
-
-
-
-                        if(pickup_chance <= 18){
-                            player.score += 50;
-                            score_add(score_list, 50, enemies[y][x].x,enemies[y][x].y-50, COLOR_WHITE);
-                            pickup_add(enemies,x,y,PICKUP_DOUBLE_SHOOT);
-                            int rand_snd = game_rand_range(0,2);
-                            play(sounds[rand_snd]);
-                        }*/
 
                         particle_explosion(particles, enemies[y][x].x, enemies[y][x].y, 30, 50, 10, COLOR_ORANGE);
                         return;
@@ -1717,9 +1635,7 @@ void enemies_update(void){
         }
     }
 
-
     return;
-
 }
 
 void init_intro(void){
@@ -1731,7 +1647,6 @@ void init_intro(void){
    }
 }
 
-
 void init_destroy(void){
     for(int i = 0; i < SPR_INTRO_TOTAL;i++){
         if(spr_intro[i]){
@@ -1741,58 +1656,80 @@ void init_destroy(void){
     }
 }
 
+void stars_update(void) {
 
-
-void stars_draw(ALLEGRO_BITMAP *bmp, STAR *stars, int frame_only){
-    if(bmp){
-
-       al_lock_bitmap(bmp, ALLEGRO_PIXEL_FORMAT_ANY, ALLEGRO_LOCK_WRITEONLY);
-       al_set_target_bitmap(bmp);
-        for(int i  = 0; i < MAX_STARS; i++){
-            if(frame_only){
-
-                int rnd = game_rand(100);
-
-                int rx  = game_rand_range(0, al_get_display_width(display));
-                int ry  = game_rand_range(0, al_get_display_width(display));
-
-
-                if(rnd <= 20){
-                     al_put_pixel(rx,ry, al_map_rgb(255,255,255));
-                     al_put_pixel(rx+1,ry, al_map_rgb(255,255,255));
-                     al_put_pixel(rx,ry+1, al_map_rgb(255,255,255));
-                     al_put_pixel(rx+1,ry+1, al_map_rgb(255,255,255));
-                }else if(rnd <= 30){
-
-                     al_put_pixel(rx,ry, al_map_rgb(255,255,255));
-                     al_put_pixel(rx+1,ry, al_map_rgb(255,255,255));
-                     al_put_pixel(rx+2,ry, al_map_rgb(255,255,255));
-                     al_put_pixel(rx,ry+1, al_map_rgb(255,255,255));
-                     al_put_pixel(rx,ry+2, al_map_rgb(255,255,255));
-                     al_put_pixel(rx+1,ry+1, al_map_rgb(255,255,255));
-                     al_put_pixel(rx+2,ry+2, al_map_rgb(255,255,255));
-
-
-                }else {
-                     al_put_pixel(rx,ry, al_map_rgb(255,255,255));
-                }
-
-
-                continue;
-            }else {
-                al_put_pixel(stars[i].x, stars[i].y, al_map_rgb_f(1,1,1));
+    for(int layer = 1; layer < 3;layer++){
+        for(int star = 0; star < MAX_STARS_PART;star++){
+            STAR *s = &star_list[layer][star];
+            if(s->pos.y < 0){
+                s->pos.x = game_rand_range(0, al_get_display_width(display));
+                s->pos.y = -10;
             }
+
+            s->pos.y += 4.0;
         }
-
-
-        al_set_target_backbuffer(display);
-        al_unlock_bitmap(bmp);
     }
+
+}
+
+
+
+void stars_draw(ALLEGRO_BITMAP *bmp){
+
+
+    int format = al_get_bitmap_format(bmp);
+
+
+    al_set_target_bitmap(bmp);
+    al_lock_bitmap(bmp, format, ALLEGRO_LOCK_READWRITE);
+
+    for(int stars = 0; stars < MAX_STARS_PART; stars++){
+        STAR *s = &star_list[0][stars];
+        al_put_pixel(s->pos.x, s->pos.y, al_map_rgba_f(1,1,1,0.5));
+    }
+
+    for(int stars = 0; stars < MAX_STARS_PART; stars++){
+        STAR *s = &star_list[1][stars];
+        al_put_pixel(s->pos.x, s->pos.y, al_map_rgba_f(1,0,1,0.1));
+    }
+
+
+    for(int stars = 0; stars < MAX_STARS_PART; stars++){
+        STAR *s = &star_list[2][stars];
+        al_put_pixel(s->pos.x, s->pos.y, al_map_rgba_f(1,0,0.5,0.5));
+    }
+
+
+    al_unlock_bitmap(bmp);
+    al_set_target_backbuffer(display);
+    al_draw_bitmap(bmp,0,0,0);
+
+
 }
 
 
 void stars_init(void){
 
+    for(int layer = 0; layer < 3;layer++){
+        for(int star = 0; star < MAX_STARS_PART;star++){
+            STAR *s = &star_list[layer][star];
+
+
+            s->pos.x = game_rand_range(1, al_get_display_width(display)-1);
+            s->pos.y = game_rand_range(1, al_get_display_height(display)-1);
+            s->ttl = game_rand_range(100,600);
+            s->vel.x = 1.0;
+            s->vel.y = 1.0;
+        }
+    }
+
+    stars_bg = al_create_bitmap(al_get_display_width(display), al_get_display_height(display));
+
+    if(stars_bg == NULL){
+        return;
+    }
+
+    /*
     stars_bg = al_create_bitmap(al_get_display_width(display), al_get_display_height(display));
 
     if(stars_bg == NULL){
@@ -1809,23 +1746,17 @@ void stars_init(void){
         stars[i].vy = 1.0;
         stars[i].ttl = game_rand_range(100,600);
     }
-
+    */
 }
 
 void stars_destroy(void){
+
+
     if(stars_bg) {
         al_destroy_bitmap(stars_bg);
         stars_bg = NULL;
     }
 }
-
-
-/*
-void pickups_init(void){
-
-    memset(pickup, 0x0, sizeof(PICKUP) * MAX_PICKUP);
-}
-*/
 
 void particle_create(PARTICLE *p, int x, int y, double vx,  double vy, ALLEGRO_COLOR color, int life){
         p->x = x;
@@ -1838,11 +1769,7 @@ void particle_create(PARTICLE *p, int x, int y, double vx,  double vy, ALLEGRO_C
 
 
 void particle_draw(ALLEGRO_BITMAP *bmp, PARTICLE *p, int ox, int oy, const ALLEGRO_COLOR color){
-
-
-
     ALLEGRO_VERTEX vtx[DEFAULT_PARTICLES] = {0};
-
 
     if(bmp)
         al_set_target_bitmap(bmp);
@@ -1997,8 +1924,6 @@ void menu_update(MENU *menu_list, int opt){
                         return;
                     }
                 }
-
-
             }
 
             if(menu_list[i].menu_callback == NULL){
@@ -2012,8 +1937,6 @@ void menu_update(MENU *menu_list, int opt){
                 continue;
 
             }
-
-
         }
 
     }
@@ -2033,8 +1956,7 @@ void demo_update(void){
         player_update_shot();
         enemies_update_bullet();
         enemies_update();
-        //player_update();
-        //pickup_update();
+        stars_update();
         item_update();
 
 }
@@ -2046,7 +1968,7 @@ void demo_draw(struct RENDER_ARGS *args){
                 al_draw_bitmap(stars_bg,0,0,0);
                 al_draw_bitmap(args->particles_buffer,0,0,0);
                 //draw_spaceship();
-                //draw_enemies(enemies,0,0);
+                draw_enemies(enemies,0,0);
                 //draw_player(player.x, player.y);
                 //player_draw_shot();
                 //pickup_draw();
@@ -2057,7 +1979,6 @@ void demo_draw(struct RENDER_ARGS *args){
                 //al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,35, 0, "LIVES %02d", player.lives);
                 particle_draw(NULL, particles,0,-8.0, al_map_rgb(255, 168, 0));
                 al_set_target_backbuffer(display);
-
                 al_draw_bitmap(buffer, 0,0,0);
 }
 
@@ -2065,8 +1986,6 @@ void demo_draw(struct RENDER_ARGS *args){
 
 
 void menu_draw(MENU *menu_list){
-
-
 
     ALLEGRO_COLOR blue = al_premul_rgba(52, 73, 94, 128);
     ALLEGRO_COLOR white = al_premul_rgba(52, 73, 94, 24);
@@ -2076,8 +1995,6 @@ void menu_draw(MENU *menu_list){
         {0, al_get_display_height(display),0,1,1, blue},
         {al_get_display_width(display), al_get_display_height(display),0,1,1, white}
     };
-
-
 
     al_draw_prim(menu_bg, NULL, NULL, 0, 3, ALLEGRO_PRIM_TRIANGLE_FAN);
 
@@ -2098,8 +2015,6 @@ void menu_draw(MENU *menu_list){
 
         if(menu_list[i].menu_id <= 0) continue;
 
-
-
         int px = al_get_display_width(display) / 2   - al_get_text_width(font_list[FONT_PIXEL_MENU_BIG], menu_list[i].opt_name);
         int py = al_get_display_height(display) / 2  - al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]);
 
@@ -2108,11 +2023,7 @@ void menu_draw(MENU *menu_list){
 
         al_draw_textf(fnt, al_map_rgb_f(1,1,1),  px,  py + i * space_height, 0, "%s", menu_list[i].opt_name);
         al_draw_rectangle(menu_list[i].x,menu_list[i].y, menu_list[i].x + text_size, menu_list[i].y + text_line_size, al_map_rgb_f(1,0,0),1);
-
-
     }
-
-
 }
 
 
@@ -2122,7 +2033,6 @@ void gameplay_update(void){
             al_show_mouse_cursor(display);
             g_gamestate = GAMESTATE_TYPE_MENU;
         }
-
 
         if(player_keys[ALLEGRO_KEY_R]){
             if(gameover) gameover = 0;
@@ -2146,19 +2056,15 @@ void gameplay_update(void){
         player_update();
         score_update_text();
         //pickup_update();
+        stars_update();
         item_update();
         update_spaceship();
-
-
 
         for(int i = 0; i  < MAX_PARTICLES-1; i++){
               if(particles[i].ttl) particle_update(&particles[i]);
         }
 
-
         g_ship_counter = (al_get_timer_count(timer) / 60) % 12;
-
-
 
         if(g_ship_counter >= 11 && !g_ship_active){
             int ship_chance = game_rand(1000);
@@ -2202,7 +2108,7 @@ void gameplay_update(void){
 
 
 
-        if(enemy_count() <= 0){
+        if(enemies_count() <= 0){
             enemy_wave++;
             al_stop_timer(timer);
             new_game(FALSE);
@@ -2214,18 +2120,14 @@ void gameplay_update(void){
 
 void gameplay_draw(struct RENDER_ARGS *args){
 
-
-                al_set_target_bitmap(buffer);
-
-
+                mode_blend();
                 al_clear_to_color(al_map_rgb(0, 0, 0));
                 al_draw_bitmap(stars_bg,0,0,0);
                 al_draw_bitmap(args->particles_buffer,0,0,0);
                 draw_spaceship();
                 draw_enemies(enemies,0,0);
-                draw_player(player.x, player.y);
+
                 player_draw_shot();
-                //pickup_draw();
                 item_draw();
 
                 enemies_draw_bullets();
@@ -2236,7 +2138,7 @@ void gameplay_draw(struct RENDER_ARGS *args){
                 al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,55, 0, "AMMO %02d", player.ammo <= 0 ? 0 : player.ammo);
 
                 particle_draw(NULL, particles,0,-8.0, al_map_rgb(255, 168, 0));
-
+                player_draw(player.x, player.y);
 
                 if(enemy_wave_time > 0){
 
@@ -2260,12 +2162,10 @@ void gameplay_draw(struct RENDER_ARGS *args){
                     enemy_wave_time--;
 
                 }
-                al_set_target_backbuffer(display);
-                al_draw_bitmap(buffer, 0,0,0);
+
+                print_fade_text(font_list[FONT_PIXEL_MENU_BIG],10,95,al_map_rgb_f(1,1,1), 0.4, "TESTE 123");
+
 }
-
-
-
 
 int main(int argc, char **argv)
 {
@@ -2307,7 +2207,6 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-
     int redraw = 0;
 
     key_mutex = al_create_mutex();
@@ -2346,12 +2245,9 @@ int main(int argc, char **argv)
     //al_set_new_bitmap_flags(flags);
 
     particle_reset(particles, DEFAULT_PARTICLES);
-    stars_draw(stars_bg, stars, TRUE);
-
-
+    stars_draw(stars_bg);
     g_menu_cursor.menu_count = sizeof(game_menu) / sizeof(game_menu[0]);
     g_menu_cursor.cursor = sprites[SPR_ENEMY02];
-    //g_menu_cursor.x =  (float)al_get_display_width(display) / 2 - 32;
 
 
     struct RENDER_ARGS render_args;
@@ -2360,12 +2256,7 @@ int main(int argc, char **argv)
 
     while(!g_close_game){
 
-
         ALLEGRO_EVENT e;
-
-
-
-
 
        if(redraw && al_event_queue_is_empty(queue)){
 
@@ -2470,9 +2361,7 @@ int main(int argc, char **argv)
                             g_demo_start = TRUE;
                         }
 
-                        if(!g_game_started){
-                            demo_update();
-                        }
+                        demo_update();
 
                         menu_update(game_menu, g_menu_cursor.opt);
                     }
@@ -2504,7 +2393,6 @@ int main(int argc, char **argv)
         }while(!al_event_queue_is_empty(queue));
     }
 
-
     if(particles_buffer){
         al_destroy_bitmap(particles_buffer);
     }
@@ -2519,13 +2407,12 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-
 static void menu_start_game_click(struct MENU *menu, void *args){
     UNUSED(menu); UNUSED(args);
 
-    if(!g_game_started){
+    //if(!g_game_started){
         new_game(TRUE);
-    }
+    //}
     al_hide_mouse_cursor(display);
 
     g_gamestate = GAMESTATE_TYPE_GAMEPLAY;
@@ -2542,7 +2429,6 @@ static void menu_quit_click(struct MENU *menu, void *args){
     g_close_game = TRUE;
 
 }
-
 
 typedef struct HISCORE_HDR {
         char magic[5];
@@ -2652,10 +2538,8 @@ int hiscore_compress(FILE *f){
 
 }
 
-
 void hiscore_create_default(ALLEGRO_FILE *f, HISCORE *hsc){
     if(f){
-
         HISCORE_HDR header;
         snprintf(header.magic,5,"%s","HSC1\0");
         header.uncompressed_size = hiscore_size();
@@ -2676,7 +2560,6 @@ void hiscore_create_default(ALLEGRO_FILE *f, HISCORE *hsc){
     }
 
 }
-
 
 void hiscore_create_default_memory(void **dest){
     if(! (*dest)){
@@ -2714,8 +2597,6 @@ int hiscore_load_file(char *filename, HISCORE *hsc){
 
     al_fclose(fp);
     return 0;
-
-
 }
 int hiscore_save_file(const char *output_name){
 
@@ -2767,13 +2648,9 @@ void hiscore_update(void){
         g_gamestate = GAMESTATE_TYPE_MENU;
         return;
      }
-
-
-
-
 }
-void hiscore_draw(void){
 
+void hiscore_draw(void){
 
     al_draw_bitmap(stars_bg,0,0,0);
 
@@ -2834,7 +2711,6 @@ void hiscore_user_input_update(ALLEGRO_EVENT *e){
 
     }
 
-
     if(player_keys[ALLEGRO_KEY_ENTER]){
         do_gameover();
         g_gamestate = GAMESTATE_TYPE_HISCORE;
@@ -2874,7 +2750,6 @@ void hiscore_sort(HISCORE *hsc){
     hiscore_revert_array(hsc);
     return;
 }
-
 
 void gameover_init(void){
 
@@ -2995,6 +2870,7 @@ void item_update(void){
 
 void item_draw(void){
 
+
     for(int i = 0; i < MAX_ITEM_LIST;i++){
         if(!item_list[i].active && item_list[i].ttl <= 0) continue;
 
@@ -3006,7 +2882,9 @@ void item_draw(void){
             break;
 
             case ITEM_ID_DOUBLE_CANNON:
-                al_draw_bitmap(sprites[SPR_DSHOT], item->x, item->y, 0);
+                {
+                    al_draw_bitmap(sprites[SPR_DSHOT], item->x, item->y, 0);
+                }
             break;
         }
     }
@@ -3038,6 +2916,22 @@ void item_effect_get_double_cannon(ITEM *item){
 void item_effect_get_default_cannon(ITEM *item){
 
     item->info.flags = ITEMINFO_FLAG_INFINITE_AMMO | ITEMINFO_FLAG_DEFSHOOT;
+    item->info.ammo = 0;
 
+}
+
+int print_fade_text(ALLEGRO_FONT *fnt, float x, float y, ALLEGRO_COLOR color, float fade, const char *text, ...){
+    char buf[255];
+    va_list lst;
+    float c = 1+(y-fade) / 360 / 2.0;
+    float col = c > 1 ? 1 : c < 0 ? 0 : 0;
+    ALLEGRO_COLOR tmp_col = al_map_rgba_f(color.r *col, color.g * col, color.b * col, color.a * col);
+
+    va_start(lst,text);
+    vsnprintf(buf,255,text, lst);
+    va_end(lst);
+
+    al_draw_textf(fnt, tmp_col, x,y, 0, "%s", buf);
+    return (int)y + al_get_font_line_height(fnt);
 
 }
