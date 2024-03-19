@@ -278,6 +278,7 @@ static int player_released_keys[ALLEGRO_KEY_MAX]  = {0};
 static int enemy_direction = 1;
 static int line = 0;
 static int  enemy_shoot_time = 70;
+static int g_game_paused = FALSE;
 
 
 enum SPRITE_ID {
@@ -463,11 +464,12 @@ typedef struct MENU_CURSOR {
 static void menu_start_game_click(struct MENU *menu, void *args);
 static void menu_hiscore_click(struct MENU *menu, void *args);
 static void menu_quit_click(struct MENU *menu, void *args);
+static void menu_continue_game_click(struct MENU *menu, void *args);
 
 
 MENU game_menu[MAX_MENU] = {
         {1, "START GAME\0", menu_start_game_click, 0, NULL,0,0},
-        {2, "CONTINUE GAME\0", NULL, 0, NULL,0,0},
+        {2, "CONTINUE GAME\0",menu_continue_game_click, 0, NULL,0,0},
         {3, "HI-SCORE\0", menu_hiscore_click, 0, NULL,0,0},
         {4, "ABOUT\0", NULL, 1, NULL,0,0},
         {5, "OPTIONS\0", NULL, 1, NULL,0,0},
@@ -559,7 +561,7 @@ void  hiscore_sort(HISCORE *hsc);
 void hiscore_revert_array(HISCORE *hsc);
 
 void hiscore_user_input(void);
-void hiscore_user_input_update(ALLEGRO_EVENT *e);
+void hiscore_user_input_update(void);
 
 int hiscore_compress(FILE *f);
 int hiscore_decompress(FILE *f);
@@ -945,6 +947,26 @@ ALLEGRO_BITMAP *al_load_bitmap_safe(const char *path){
     return b;
 }
 
+void enemies_init(void){
+
+        for(int y = 0; y < ENEMY_ROW_Y;y++){
+            for(int x = 0; x < ENEMY_ROW_X;x++){
+
+                int rand_type = game_rand(100);
+
+                enemies[y][y].type =   rand_type > 50 ? 1 : 2;
+                enemies[y][x].x = x * TILE * 1.5;
+                enemies[y][x].y = y * TILE * 1.5;
+                enemies[y][x].alive = 1;
+                enemies[y][x].type = 1;
+                enemies[y][x].life = 1;
+                memset(enemies[y][x].bullets, 0, sizeof(enemies[y][x].bullets));
+
+            }
+
+        }
+}
+
 int enemies_count(void){
     int count = 0;
     for(int y = 0; y < ENEMY_ROW_Y; y++){
@@ -1038,6 +1060,25 @@ void score_update_text(void){
 
 
 void new_game(int start){
+
+    if(start){
+        g_game_started = TRUE;
+        enemies_reset();
+        player_init(&player);
+
+        if(enemy_wave == 1){
+                enemy_wave_time = 200;
+                enemy_wave_time_total = enemy_wave_time;
+        }
+
+        enemies_init();
+        wave_reset();
+    }
+
+    player_init(&player);
+
+    return;
+    /*
     if(start){
         player_init(&player);
         line = 0;
@@ -1091,6 +1132,7 @@ void new_game(int start){
         }
 
     }
+    */
 }
 
 
@@ -1098,6 +1140,7 @@ void do_gameover(void){
      g_gamestate = GAMESTATE_TYPE_GAMEOVER;
      enemy_wave = 0 ;
      enemy_wave_time_total = 0;
+     g_ship_active = FALSE;
 
     for(int y = 0; y < ENEMY_ROW_Y;y++){
         for(int x = 0; x < ENEMY_ROW_X;x++){
@@ -1619,7 +1662,7 @@ void enemies_update(void){
                  }
 
 
-
+                /*
                 if(rect_collision(player.x,player.y, 32,32, enemies[y][x].x,enemies[y][x].y,32,32)){
                         if(!g_demo_start){
                             do_gameover();
@@ -1628,7 +1671,7 @@ void enemies_update(void){
                             new_game(FALSE);
                         }
                         return;
-                }
+                }*/
 
 
              }
@@ -1947,7 +1990,7 @@ void menu_update(MENU *menu_list, int opt){
 }
 
 void demo_init(void){
-    new_game(TRUE);
+    new_game(FALSE);
 }
 
 int64_t g_record_actual_frame = 0;
@@ -2015,6 +2058,9 @@ void menu_draw(MENU *menu_list){
 
         if(menu_list[i].menu_id <= 0) continue;
 
+        if(g_game_started && menu_list[i].menu_id  ==  1 ) continue;
+        if(!g_game_started && menu_list[i].menu_id ==  2 ) continue;
+
         int px = al_get_display_width(display) / 2   - al_get_text_width(font_list[FONT_PIXEL_MENU_BIG], menu_list[i].opt_name);
         int py = al_get_display_height(display) / 2  - al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]);
 
@@ -2026,95 +2072,115 @@ void menu_draw(MENU *menu_list){
     }
 }
 
+void gameplay_states(void){
+
+    switch(g_gamestate)
+    {
+        case GAMESTATE_TYPE_MENU:
+            {
+                al_show_mouse_cursor(display);
+                if(g_game_started){
+                    g_game_paused = TRUE;
+                }
+            }
+            break;
+
+        case GAMESTATE_TYPE_GAMEPLAY:
+            {
+                al_hide_mouse_cursor(display);
+                if(g_game_started){
+                    g_game_paused = FALSE;
+                }
+            }
+            break;
+
+    }
+
+}
 
 void gameplay_update(void){
 
         if(player_keys[ALLEGRO_KEY_ESCAPE]){
-            al_show_mouse_cursor(display);
             g_gamestate = GAMESTATE_TYPE_MENU;
+            return;
         }
 
+#ifndef DEBUG
         if(player_keys[ALLEGRO_KEY_R]){
             if(gameover) gameover = 0;
             g_gamestate = GAMESTATE_TYPE_MENU;
+            return;
         }
-
-        if(player.life <= 0){
-           if(player.lives > 0){
-               player.life = 100;
-               player.lives--;
-           }else {
-               do_gameover();
-               new_game(TRUE);
-               return;
-           }
-        }
-
-        player_update_shot();
-        enemies_update_bullet();
-        enemies_update();
-        player_update();
-        score_update_text();
-        //pickup_update();
-        stars_update();
-        item_update();
-        update_spaceship();
-
-        for(int i = 0; i  < MAX_PARTICLES-1; i++){
-              if(particles[i].ttl) particle_update(&particles[i]);
-        }
-
-        g_ship_counter = (al_get_timer_count(timer) / 60) % 12;
-
-        if(g_ship_counter >= 11 && !g_ship_active){
-            int ship_chance = game_rand(1000);
-
-            if(ship_chance <= 3){
-
-                g_ship_active = TRUE;
-
-                if(!g_spaceship_entity){
-                    // i need to get out of this condition but keep the loop active not resetting for 1 frame
-                    // just skip everything and continue
-                    g_ship_counter = 0;
-                    g_ship_active = FALSE;
-                    g_spaceship_entity->alive = FALSE;
-                    return;
-                }
-
-                play_sound(SFX_SHIP, 1.0, 0.0, 1.0,  ALLEGRO_PLAYMODE_LOOP);
-                g_spaceship_entity->x = al_get_display_width(display) + 32;
-                g_spaceship_entity->y = game_rand_range(65,100);
-                g_spaceship_entity->alive = TRUE;
+#endif // DEBUG
 
 
+        if(g_game_paused == FALSE){
+
+            player_update_shot();
+            enemies_update_bullet();
+            enemies_update();
+            player_update();
+            score_update_text();
+            stars_update();
+            item_update();
+            update_spaceship();
+
+            for(int i = 0; i  < MAX_PARTICLES-1; i++){
+                  if(particles[i].ttl) particle_update(&particles[i]);
             }
 
-            g_ship_counter = 0;
-        }
+            g_ship_counter = (al_get_timer_count(timer) / 60) % 12;
+
+            if(g_ship_counter >= 11 && !g_ship_active){
+                int ship_chance = game_rand(1000);
+
+                if(ship_chance == 3){
+
+                    g_ship_active = TRUE;
+
+                    if(!g_spaceship_entity){
+                        // i need to get out of this condition but keep the loop active not resetting for 1 frame
+                        // just skip everything and continue
+                        g_ship_counter = 0;
+                        g_ship_active = FALSE;
+                        g_spaceship_entity->alive = FALSE;
+                        return;
+                    }
+
+                    play_sound(SFX_SHIP, 1.0, 0.0, 1.0,  ALLEGRO_PLAYMODE_LOOP);
+                    g_spaceship_entity->x = al_get_display_width(display) + 32;
+                    g_spaceship_entity->y = game_rand_range(65,100);
+                    g_spaceship_entity->alive = TRUE;
 
 
-        if(enemy_wave >= 15 && game_difficulty <= DIFF_HARD){
-            game_difficulty = DIFF_HARD;
-        }
+                }
 
-        if(enemy_wave >= 30 && game_difficulty <= DIFF_HARD){
-            game_difficulty = DIFF_HARD;
-        }
-
-        if(enemy_wave >= 50  && game_difficulty <= DIFF_HARD){
-            game_difficulty = DIFF_NIGHTMARE;
-        }
+                g_ship_counter = 0;
+            }
 
 
+            if(enemy_wave >= 15 && game_difficulty <= DIFF_HARD){
+                game_difficulty = DIFF_HARD;
+            }
 
-        if(enemies_count() <= 0){
-            enemy_wave++;
-            al_stop_timer(timer);
-            new_game(FALSE);
-            al_start_timer(timer);
-            enemy_wave_time = 200;
-            enemy_wave_time_total = enemy_wave_time;
+            if(enemy_wave >= 30 && game_difficulty <= DIFF_HARD){
+                game_difficulty = DIFF_HARD;
+            }
+
+            if(enemy_wave >= 50  && game_difficulty <= DIFF_HARD){
+                game_difficulty = DIFF_NIGHTMARE;
+            }
+
+
+
+            if(enemies_count() <= 0){
+                enemy_wave++;
+                al_stop_timer(timer);
+                al_start_timer(timer);
+                enemy_wave_time = 200;
+                enemy_wave_time_total = enemy_wave_time;
+            }
+
         }
 }
 
@@ -2233,7 +2299,6 @@ int main(int argc, char **argv)
     hiscore_init();
     stars_init();
     item_init();
-    new_game(TRUE);
 
 
     g_spaceship_entity = al_malloc(sizeof(ENEMY));
@@ -2271,6 +2336,7 @@ int main(int argc, char **argv)
 
             if(g_gamestate == GAMESTATE_TYPE_GAMEPLAY){
                 gameplay_draw(&render_args);
+
             }
 
             if(g_gamestate == GAMESTATE_TYPE_HISCORE){
@@ -2348,6 +2414,7 @@ int main(int argc, char **argv)
                     break;
                 case ALLEGRO_EVENT_TIMER:
                 {
+                    gameplay_states();
 
                     if(g_gamestate == GAMESTATE_TYPE_HISCORE){
                         hiscore_update();
@@ -2382,7 +2449,7 @@ int main(int argc, char **argv)
                     }
 
                     if(g_gamestate == GAMESTATE_TYPE_USER_HISCORE){
-                        hiscore_user_input_update(&e);
+                        hiscore_user_input_update();
                     }
                     redraw = 1;
                 }
@@ -2410,12 +2477,12 @@ int main(int argc, char **argv)
 static void menu_start_game_click(struct MENU *menu, void *args){
     UNUSED(menu); UNUSED(args);
 
-    //if(!g_game_started){
-        new_game(TRUE);
-    //}
-    al_hide_mouse_cursor(display);
+        if(!g_game_started){
+            new_game(TRUE);
 
+        }
     g_gamestate = GAMESTATE_TYPE_GAMEPLAY;
+    return;
 }
 
 
@@ -2694,8 +2761,7 @@ void hiscore_user_input(void){
 
 }
 
-void hiscore_user_input_update(ALLEGRO_EVENT *e){
-    UNUSED(e);
+void hiscore_user_input_update(void){
 
     if(player_keys[ALLEGRO_KEY_BACKSPACE]){
 
@@ -2756,10 +2822,8 @@ void gameover_init(void){
 }
 void gameover_update(void){
      if(keybuffer[keybuffer_counter] != '\0' || g_mouse.buttons & 1 || g_mouse.buttons & 2){
-
          memset(keybuffer, 0, 255);
          g_gamestate = GAMESTATE_TYPE_HISCORE;
-         new_game(TRUE);
      }
 
     return;
@@ -2789,6 +2853,8 @@ ITEM *item_get_free(ITEM list[MAX_ITEM_LIST]){
         if(list[i].active) continue;
         break;
     }
+
+    if(i == MAX_ITEM_LIST) return NULL;
 
     return &list[i];
 }
@@ -2917,6 +2983,17 @@ void item_effect_get_default_cannon(ITEM *item){
 
     item->info.flags = ITEMINFO_FLAG_INFINITE_AMMO | ITEMINFO_FLAG_DEFSHOOT;
     item->info.ammo = 0;
+
+}
+
+void menu_continue_game_click(struct MENU *menu, void *args){
+    UNUSED(menu); UNUSED(args);
+    if(g_gamestate != GAMESTATE_TYPE_GAMEPLAY){
+        g_gamestate = GAMESTATE_TYPE_GAMEPLAY;
+        return;
+    }
+
+    return;
 
 }
 
