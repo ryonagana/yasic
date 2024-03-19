@@ -106,9 +106,43 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="../invaders_better/g_bullets.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../invaders_better/g_bullets.h" />
+		<Unit filename="../invaders_better/g_enemies.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../invaders_better/g_enemies.h" />
+		<Unit filename="../invaders_better/g_item.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../invaders_better/g_item.h" />
+		<Unit filename="../invaders_better/g_particles.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../invaders_better/g_particles.h" />
+		<Unit filename="../invaders_better/g_player.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../invaders_better/g_player.h" />
+		<Unit filename="../invaders_better/g_render.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../invaders_better/g_render.h" />
+		<Unit filename="../invaders_better/g_sound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../invaders_better/g_sound.h" />
+		<Unit filename="../invaders_better/g_sprites.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../invaders_better/g_sprites.h" />
+		<Unit filename="../invaders_better/g_utils.h" />
 		<Unit filename="../invaders_better/main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../invaders_better/main.h" />
 		<Unit filename="../invaders_better/miniz.c">
 			<Option compilerVar="CC" />
 		</Unit>

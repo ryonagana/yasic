@@ -36,21 +36,19 @@
 	<utime.h>
 	<utime.h>
 
-1710863443 source:d:\projetos\c\invaders\invaders_better\main.c
+1710880567 source:d:\projetos\c\invaders\invaders_better\main.c
 	<stdio.h>
 	<math.h>
 	<sys/types.h>
 	<sys/stat.h>
-	<allegro5/allegro.h>
-	<allegro5/allegro_audio.h>
-	<allegro5/allegro_acodec.h>
-	<allegro5/allegro_image.h>
-	<allegro5/allegro_native_dialog.h>
-	<allegro5/allegro_primitives.h>
-	<allegro5/allegro_font.h>
-	<allegro5/allegro_ttf.h>
-	<allegro5/allegro_physfs.h>
-	<physfs.h>
+	"main.h"
+	"g_render.h"
+	"g_sound.h"
+	"g_particles.h"
+	"g_item.h"
+	"g_player.h"
+	"g_enemies.h"
+	"g_sprites.h"
 	"miniz.h"
 
 1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\allegro.h
@@ -381,4 +379,108 @@
 	<utime.h>
 	<utime.h>
 	<utime.h>
+
+1710868446 source:d:\projetos\c\invaders\invaders_better\g_render.c
+	"g_render.h"
+	<stdio.h>
+
+1710868655 d:\projetos\c\invaders\invaders_better\g_render.h
+	<allegro5/allegro.h>
+	<allegro5/allegro_audio.h>
+	<allegro5/allegro_acodec.h>
+	<allegro5/allegro_image.h>
+	<allegro5/allegro_native_dialog.h>
+	<allegro5/allegro_primitives.h>
+	<allegro5/allegro_font.h>
+	<allegro5/allegro_ttf.h>
+	<allegro5/allegro_physfs.h>
+	<physfs.h>
+
+1710872483 source:d:\projetos\c\invaders\invaders_better\g_sound.c
+	"g_sound.h"
+	"g_render.h"
+	<stdio.h>
+	<stdlib.h>
+
+1710872529 d:\projetos\c\invaders\invaders_better\g_sound.h
+	<allegro5/allegro.h>
+	<allegro5/allegro_audio.h>
+	<allegro5/allegro_acodec.h>
+
+1710869382 source:d:\projetos\c\invaders\invaders_better\g_particles.c
+	<stdio.h>
+	<math.h>
+	"g_particles.h"
+	"g_render.h"
+	"g_utils.h"
+
+1710869472 d:\projetos\c\invaders\invaders_better\g_particles.h
+	<allegro5/allegro.h>
+	<allegro5/allegro_primitives.h>
+
+1710871332 d:\projetos\c\invaders\invaders_better\g_utils.h
+	<allegro5/allegro.h>
+	<allegro5/allegro_audio.h>
+	<allegro5/allegro_acodec.h>
+	<allegro5/allegro_image.h>
+	<allegro5/allegro_native_dialog.h>
+	<allegro5/allegro_primitives.h>
+	<allegro5/allegro_font.h>
+	<allegro5/allegro_ttf.h>
+	<allegro5/allegro_physfs.h>
+	<physfs.h>
+
+1710871152 source:d:\projetos\c\invaders\invaders_better\g_bullets.c
+	"g_bullets.h"
+
+1710871155 d:\projetos\c\invaders\invaders_better\g_bullets.h
+	"g_utils.h"
+
+1710878385 source:d:\projetos\c\invaders\invaders_better\g_sprites.c
+	<stdio.h>
+	"g_sprites.h"
+	"g_render.h"
+
+1710878415 d:\projetos\c\invaders\invaders_better\g_sprites.h
+	"g_utils.h"
+
+1710876993 source:d:\projetos\c\invaders\invaders_better\g_player.c
+	"g_player.h"
+	<math.h>
+	"g_render.h"
+	"g_sprites.h"
+	"g_sound.h"
+	"main.h"
+
+1710874358 d:\projetos\c\invaders\invaders_better\g_player.h
+	"g_item.h"
+	"g_bullets.h"
+
+1710880458 d:\projetos\c\invaders\invaders_better\main.h
+	"g_particles.h"
+
+1710877969 source:d:\projetos\c\invaders\invaders_better\g_enemies.c
+	"g_sound.h"
+	"g_enemies.h"
+	"g_utils.h"
+	"main.h"
+	"g_sprites.h"
+	"g_render.h"
+	"g_particles.h"
+	"math.h"
+	"g_player.h"
+
+1710877974 d:\projetos\c\invaders\invaders_better\g_enemies.h
+	"g_bullets.h"
+
+1710879104 d:\projetos\c\invaders\invaders_better\g_item.h
+
+1710880418 source:d:\projetos\c\invaders\invaders_better\g_item.c
+	"g_item.h"
+	"g_utils.h"
+	"main.h"
+	"g_sprites.h"
+	"g_render.h"
+	"g_sound.h"
+	"g_player.h"
 
