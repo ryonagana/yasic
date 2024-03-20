@@ -29,7 +29,7 @@
 #define GAME_DATAFILES "game.pk0"
 #define HISCORE_DATA "hiscore.dat"
 
-static  int g_close_game = 0;
+static  int g_close_game = FALSE;
 
 ALLEGRO_MUTEX *key_mutex = NULL;
 char keybuffer[255] = {0};
@@ -59,6 +59,7 @@ static int screen_height = 0;
 
 
 PARTICLE particles[MAX_PARTICLES] = {0};
+ITEM items[MAX_ITEM_LIST] = {0};
 
 enum SPRITE_INTRO {
     SPR_INTRO_CREATOR,
@@ -77,19 +78,10 @@ static int enemy_wave_time_total = 0;
 void wave_reset(void);
 
 
-#define MAX_ITEM_LIST 8
-
-
-static ITEM item_list[MAX_ITEM_LIST] = {0};
-
-
 
 static PLAYER player;
-static ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X];
+static ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X] = {0};
 
-
-
-#define SPRITE_MAX 12
 
 
 typedef struct TEXT {
@@ -106,19 +98,14 @@ static TEXT score_list[10] = {0};
 
 
 int gameover = 0;
-static int g_game_started  = FALSE;
+int g_game_started  = FALSE;
 int player_keys[ALLEGRO_KEY_MAX] = {0};
-static int player_released_keys[ALLEGRO_KEY_MAX]  = {0};
+int player_released_keys[ALLEGRO_KEY_MAX]  = {0};
 int line = 0;
 int  enemy_shoot_time = 70;
-static int g_game_paused = FALSE;
-
-
-
-
+int g_game_paused = FALSE;
 
 int game_difficulty = DIFF_NOVICE;
-
 
 DIFFICULTY_PARAMS difficulty[DIFF_COUNT] = {
     {
@@ -251,7 +238,8 @@ MENU game_menu[MAX_MENU] = {
         {3, "HI-SCORE\0", menu_hiscore_click, 0, NULL,0,0},
         {4, "ABOUT\0", NULL, 1, NULL,0,0},
         {5, "OPTIONS\0", NULL, 1, NULL,0,0},
-        {6, "QUIT\0", menu_quit_click, 0, NULL,0,0}
+        {6, "QUIT\0", menu_quit_click, 0, NULL,0,0},
+        {7, "EASTER EGG\0", NULL, 0, NULL,0,0}
 };
 
 
@@ -259,19 +247,6 @@ MENU_CURSOR g_menu_cursor = {0};
 
 void menu_update(MENU *menu_list, int opt);
 void menu_draw(MENU *menu_list);
-
-ENEMY* getFreeEnemy(void){
-    for(int i = 0; i < ENEMY_ROW_Y; i++){
-        for(int j = 0; j < ENEMY_ROW_X;j++){
-
-            if(!enemies[i][j].alive){
-                return &enemies[i][j];
-            }
-
-        }
-    }
-    return NULL;
-}
 
 void font_init(void){
 
@@ -387,7 +362,6 @@ int rect_collision(float x1, float y1, float w1, float h1, float x2, float y2, f
 
     return FALSE;
 }
-
 
 
 
@@ -855,7 +829,7 @@ void demo_update(void){
         enemies_update_bullet(&player, enemies);
 
         stars_update();
-        item_update(&player, item_list);
+        //item_update(&player, item_list);
 
 }
 
@@ -970,15 +944,15 @@ void gameplay_update(void){
 #endif // DEBUG
 
 
-        if(g_game_paused == FALSE){
+            ITEM *items = item_get_array();
 
             player_update_shot(&player);
             enemies_update_bullet(&player, enemies);
-            enemies_update(&player, item_list,  enemies);
+            enemies_update(&player, items,  enemies);
             player_update(&player);
             score_update_text();
             stars_update();
-            item_update(&player, item_list);
+            item_update();
             update_spaceship();
 
             for(int i = 0; i  < MAX_PARTICLES-1; i++){
@@ -1037,7 +1011,6 @@ void gameplay_update(void){
                 enemy_wave_time_total = enemy_wave_time;
             }
 
-        }
 }
 
 void gameplay_draw(struct RENDER_ARGS *args){
@@ -1050,7 +1023,7 @@ void gameplay_draw(struct RENDER_ARGS *args){
                 draw_enemies(enemies,0,0);
 
                 player_draw_shot(&player);
-                item_draw(item_list);
+                item_draw();
 
                 enemies_draw_bullets(enemies);
                 draw_life_bar();
@@ -1100,7 +1073,8 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    al_change_directory(".");
+    const char *exe_path = al_get_current_directory();
+    al_change_directory(exe_path);
 
 #ifdef PHYSFS_DATAFILES
         if(!PHYSFS_init(argv[0])){
@@ -1154,7 +1128,8 @@ int main(int argc, char **argv)
 
     hiscore_init();
     stars_init();
-    item_init(item_list);
+    item_init();
+    //item_init(item_list, MAX_ITEM_LIST);
 
 
     g_spaceship_entity = al_malloc(sizeof(ENEMY));
@@ -1290,13 +1265,7 @@ int main(int argc, char **argv)
                     }
 
                     if(g_gamestate == GAMESTATE_TYPE_GAMEPLAY){
-
-                            if(g_demo_start){
-                                g_demo_start = FALSE;
-                            }
-
                             gameplay_update();
-
                     }
 
                     if(g_gamestate == GAMESTATE_TYPE_GAMEOVER){

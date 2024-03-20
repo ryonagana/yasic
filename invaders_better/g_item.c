@@ -5,178 +5,193 @@
 #include "g_render.h"
 #include "g_sound.h"
 #include "g_player.h"
-
-static void S_item_effect_get_double_cannon(ITEM *item, void *args){
-    PLAYER *player = args;
-
-    item->info.flags = ITEMINFO_FLAG_DEFSHOOT | ~ITEMINFO_FLAG_INFINITE_AMMO;
-    item->info.ammo = 10;
-    player->ammo =  item->info.ammo;
-
-}
-static void S_item_effect_get_default_cannon(ITEM *item, void *args){
-    UNUSED(args);
-    item->info.flags = ITEMINFO_FLAG_INFINITE_AMMO | ITEMINFO_FLAG_DEFSHOOT;
-    item->info.ammo = 0;
-
-}
+#include <math.h>
 
 
+static void S_item_effect_get_double_cannon(ITEM *item, void *args);
+static void S_item_effect_get_default_cannon(ITEM *item, void *args);
 
-static ITEMINFO item_info_list[ITEM_ID_COUNT] = {
-    {
-       ITEM_ID_DEFAULT_CANNON,
-       ITEMINFO_FLAG_DEFSHOOT | ITEMINFO_FLAG_INFINITE_AMMO,
-       "Default Laser Cannon",
-       40,
-       0,
-       1,
-       0,
-       S_item_effect_get_default_cannon
-    },
 
-    {
-       ITEM_ID_DOUBLE_CANNON,
-       ITEMINFO_FLAG_DEFSHOOT,
-       "Double Laser Cannon",
-       80,
-       0,
-       2,
-       0,
-       S_item_effect_get_double_cannon
-    }
+static ITEM i_default_laser_cannon = {
+    ITEM_ID_DEFAULT_CANNON,
+    0,0,
+    0,0,
+    ITEMINFO_FLAG_DEFSHOOT | ITEMINFO_FLAG_INFINITE_AMMO,
+    FALSE,
+    0,
+    S_item_effect_get_default_cannon,
+    0,
+    30,
+    1
 
+};
+static ITEM i_double_laser_cannon = {
+    ITEM_ID_DOUBLE_CANNON,
+    0,0,
+    2,2,
+    ITEMINFO_FLAG_DEFSHOOT | ~ITEMINFO_FLAG_INFINITE_AMMO,
+    FALSE,
+    0,
+    S_item_effect_get_double_cannon,
+    0,
+    45,
+    2
 };
 
 
-ITEM *item_get_free(ITEM list[MAX_ITEM_LIST]){
-    int i;
-    for(i = 0; i < MAX_ITEM_LIST;i++){
-        if(list[i].active) continue;
-        break;
+static ITEM s_item_index[ITEM_ID_COUNT] = {0};
+static ITEM s_spawn_items_list[MAX_ITEM_LIST] = {0};
+
+
+ITEM *item_get_free(ITEM *items, int max){
+
+    for(int i = 0; i < max; i++){
+        if(!items[i].active){
+            return &items[i];
+        }
     }
 
-    if(i == MAX_ITEM_LIST) return NULL;
+    return NULL;
+}
 
-    return &list[i];
+void item_init(void)
+{
+
+
+    s_item_index[ITEM_ID_DEFAULT_CANNON] = i_default_laser_cannon;
+    s_item_index[ITEM_ID_DOUBLE_CANNON] = i_double_laser_cannon;
+
+
+    s_spawn_items_list[0] = s_item_index[ITEM_ID_DEFAULT_CANNON];
+    s_spawn_items_list[1] = s_item_index[ITEM_ID_DOUBLE_CANNON];
+
+}
+
+ITEM* item_spawn_id(ITEM *items, int size, PLAYER *player, float x, float y, int id){
+    ITEM *it = NULL;
+
+    it = item_get_free(items, size);
+    if(it == NULL)
+        return NULL;
+
+
+    double angle = angle_distance_rad(player->x, player->y, x,y);
+
+    if(angle < 0){
+        angle = PI2 + angle;
+    }
+
+    it = item_get_by_id(it, id);
+    it->active = TRUE;
+    it->x =  cos(angle) + x;
+    it->y =  sin(angle) + y;
+
+    return it;
 }
 
 
-void item_init(ITEM *items){
 
-    memset(items, 0, sizeof(*items));
+void S_item_effect_get_double_cannon(ITEM *item, void *args){
+    PLAYER *player = args;
 
-    for(int i = 0; i < ITEM_ID_COUNT;i++){
-        items[i].info = item_info_list[i];
-        items[i].active = TRUE;
-        items[i].x = 0;
-        items[i].y = 0;
-        items[i].vx = 0;
-        items[i].vy = 0;
-        items[i].ttl = game_rand_range(50,250);
-        items[i].info.flags = 0;
-    }
+    item->flags = ITEMINFO_FLAG_DEFSHOOT | ~ITEMINFO_FLAG_INFINITE_AMMO;
+    item->ammo = 10;
+    player->ammo =  item->ammo;
 
 }
 
-void item_spawn(ITEM *item_list, float x, float y, int id){
-    ITEM *item = item_get_free(item_list);
+void S_item_effect_get_default_cannon(ITEM *item, void *args){
+    UNUSED(args);
+    item->flags = ITEMINFO_FLAG_INFINITE_AMMO | ITEMINFO_FLAG_DEFSHOOT;
+    item->ammo = 0;
+}
 
-    if(item == NULL)
+
+void item_assign_to_player(PLAYER *player, ITEM *item){
+    if(player != NULL){
+        player->item_use = item;
         return;
+    }
 
-    item->x = x;
-    item->y = y;
-    item->info = item_info_list[id];
-    item->vx = 2.0;
-    item->vy = 2.0;
-    item->active = TRUE;
-    item->ttl = game_rand_range(60,150);
+    return;
+}
+void item_assign_to_player_id(PLAYER *player, int id){
+
+    for(size_t i = 0; i < sizeof(s_item_index)/sizeof(s_item_index[0]); i++){
+        if(s_item_index[i].id == id){
+            player->item_use = &s_item_index[i];
+        }
+    }
+
 }
 
+int item2player_collision(PLAYER *player, int pw, int ph, float x, float y , int w, int h){
 
-void item_update(PLAYER *player, ITEM *item_list){
+    if(rect_collision(player->x, player->y, pw,ph, x,y,w,h)){
+        return TRUE;
+    }
 
+    return FALSE;
 
+}
+
+int  item2item_collision(ITEM *a, ITEM *b){
+    if(rect_collision(a->x,a->y, 32,32,b->x,b->y, 32,32)){
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+void item_update(void){
 
     for(int i = 0; i < MAX_ITEM_LIST;i++){
-        if(!item_list[i].active && item_list[i].ttl <= 0) continue;
+        ITEM *it = &s_spawn_items_list[i];
+        if(!it->active) continue;
 
-        ITEM *item = &item_list[i];
 
-        if(item->x < -10 || item->x >= al_get_display_width(display)  + 10  ||
-           item->y < -10 || item->y >= al_get_display_height(display) + 10
-          ){
-             item->active = FALSE;
+        if(it->x < -10 || it->x >= al_get_display_width(display)  + 10  ||
+           it->y < -10 || it->y >= al_get_display_height(display) + 10)
+        {
+             it->active = FALSE;
         }
 
 
-
-        item->x += item->vx;
-        item->y += item->vy;
-
-
-        if(rect_collision(player->x,player->y,32,32, item->x,item->y,32,32)){
-            play(SFX_POWERUP2);
-            item->active = FALSE;
-            item_add_player(player, item->info.id);
-
-            /*
-
-            if(item->info.effect_callback){
-                item->info.effect_callback(item, player);
-            }
-            item->active = FALSE;
-            */
-
-            break;
-
-        }
-
-        if(item->ttl > 0){
-            item->ttl--;
-        }
-
-
+        it->x += it->vx;
+        it->y += it->vy;
     }
 }
-
-void item_draw(ITEM *item_list){
-
+void item_draw(void){
 
     for(int i = 0; i < MAX_ITEM_LIST;i++){
-        if(!item_list[i].active && item_list[i].ttl <= 0) continue;
+        ITEM *it = &s_spawn_items_list[i];
+        if(!it->active) continue;
 
-        ITEM *item = &item_list[i];
-
-        switch(item->info.id){
-        default:
+        switch(it->id){
             case ITEM_ID_DEFAULT_CANNON:
-            break;
-
+                break;
             case ITEM_ID_DOUBLE_CANNON:
-                {
-                    al_draw_bitmap(sprites[SPR_DSHOT], item->x, item->y, 0);
-                }
-            break;
+                al_draw_bitmap(sprites[SPR_DSHOT], it->x, it->y, 0);
+            default:
+                break;
         }
+
     }
 }
 
+ITEM *item_get_array(void){
+    return s_spawn_items_list;
+}
 
-void item_add_player(PLAYER *p, int id){
+ITEM *item_get_by_id(ITEM *item, int id){
 
     for(int i = 0; i < ITEM_ID_COUNT;i++){
-        if(p->items[i].active) continue;
-
-        p->items[i].active = TRUE;
-        p->items[i].info = item_info_list[id%ITEM_ID_COUNT];
-        p->items[i].info.effect_callback(&p->items[i], p);
-        p->item_use = &p->items[i];
-        break;
+        if(s_spawn_items_list[i].id == id){
+            memcpy(item, &s_spawn_items_list[i], sizeof(ITEM));
+            return item;
+        }
     }
 
+    return NULL;
 
 }
-
-

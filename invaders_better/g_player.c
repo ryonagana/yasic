@@ -3,7 +3,10 @@
 #include "g_render.h"
 #include "g_sprites.h"
 #include "g_sound.h"
+#include "g_item.h"
 #include "main.h"
+
+
 void player_init(PLAYER *p){
 
     p->x = al_get_display_width(display) / 2 - 32;
@@ -17,12 +20,8 @@ void player_init(PLAYER *p){
     p->life = 100.0;
     p->lives = 1;
     p->shot_time = 25;
-
-    for(int i = 0; i < ITEM_ID_COUNT;i++){
-        p->items[i].active = false;
-    }
-
-    item_add_player(p, ITEM_ID_DEFAULT_CANNON);
+    memset(p->items,0, sizeof(p->items));
+    item_assign_to_player_id(p, ITEM_ID_DEFAULT_CANNON);
 
 }
 
@@ -43,13 +42,17 @@ void player_update_shot(PLAYER *player){
                 player->bullets[i].alive = false;
            }
 
-            if(player->item_use->info.id == ITEM_ID_DOUBLE_CANNON){
+           for(int i = 0; i < ITEM_ID_COUNT; i++){
 
-                for(int bullet_index = 0; bullet_index < player->item_use->info.shots;bullet_index++){
-                    player->bullets[bullet_index%1].x += sin(150 * DEG2RAD);
-                    player->bullets[bullet_index%2].y   +=  cos(30 * DEG2RAD);
+                if(player->items[i].id == ITEM_ID_DOUBLE_CANNON){
+
+                    for(int bullet_index = 0; bullet_index < player->items[i].shot_num;bullet_index++){
+                        player->bullets[bullet_index%1].x += sin(150 * DEG2RAD);
+                        player->bullets[bullet_index%2].y   +=  cos(30 * DEG2RAD);
+                    }
                 }
-            }
+
+           }
 
         /*
            if(g_spaceship_entity->alive && g_spaceship_entity && rect_collision(player.bullets[i].x, player.bullets[i].y, 8,8, g_spaceship_entity->x, g_spaceship_entity->y, 32,32)){
@@ -91,21 +94,21 @@ void player_draw_shot(PLAYER *player){
 void player_shoot(PLAYER *player){
     ITEM *item = player->item_use;
 
-    if(!(item->info.flags & ITEMINFO_FLAG_INFINITE_AMMO)){
+    if(!(item->flags & ITEMINFO_FLAG_INFINITE_AMMO)){
         if(player->ammo > 0){
             player->ammo--;
         }else {
-            player->item_use = &player->items[0];
+            player->item_use = &player->items[ITEM_ID_DEFAULT_CANNON];
         }
     }
 
-    switch(item->info.id){
+    switch(item->id){
     default:
     case ITEM_ID_DEFAULT_CANNON:
     {
         create_shot(player->bullets, player->x, player->y, 0,1.0);
         play(SFX_LASER);
-        player->shot_time = item->info.delay;
+        player->shot_time = item->shot_time;
     }
         break;
 
@@ -116,7 +119,7 @@ void player_shoot(PLAYER *player){
             }
 
             play(SFX_LASER);
-            player->shot_time = item->info.delay;
+            player->shot_time = player->item_use->shot_time;
         }
         break;
     }

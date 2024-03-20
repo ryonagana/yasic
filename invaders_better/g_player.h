@@ -23,6 +23,7 @@ typedef struct PLAYER {
 } PLAYER;
 
 void player_init(PLAYER *p);
+
 void player_draw(float x, float y);
 void player_update_shot(PLAYER *player);
 void player_draw_shot(PLAYER *player);

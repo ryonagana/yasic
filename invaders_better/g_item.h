@@ -1,8 +1,9 @@
 #ifndef GAME_ITEM_HEADER
 #define GAME_ITEM_HEADER
+#include <stdio.h>
+#include <stdint.h>
 
 #define MAX_ITEM_LIST 8
-
 
 enum ITEMINFO_FLAG {
 
@@ -20,44 +21,39 @@ enum ITEM_ID {
     ITEM_ID_COUNT
 };
 
-struct ITEM;
-
-typedef struct ITEMINFO {
-    int id;
-    int flags;
-    char name[25];
-    int delay;
-    int ammo;
-    int shots;
-    int effect_time;
-    void (*effect_callback)(struct ITEM *item, void *args);
-
-}ITEMINFO;
-
 
 typedef struct ITEM {
-    ITEMINFO info;
+    int id;
     float x;
     float y;
     float vx;
     float vy;
-    int active;
-    int ttl;
-
-
+    uint32_t flags;
+    unsigned char active;
+    int ammo;
+    void (*effect_callback)(struct ITEM *item, void *args);
+    int ticks;
+    int shot_time;
+    int shot_num;
 }ITEM;
 
 typedef struct PLAYER PLAYER;
 
 
+void item_init(void);
+ITEM *item_get_free(ITEM *items, int max);
+ITEM *item_spawn_id(ITEM *items, int size, PLAYER *player, float x, float y, int id);
+ITEM *item_get_by_id(ITEM *item, int id);
+void item_assign_to_player(PLAYER *player, ITEM *item);
+void item_assign_to_player_id(PLAYER *player, int id);
+int  item2player_collision(PLAYER *player, int pw, int ph, float x, float y, int w, int h);
+int  item2item_collision(ITEM *a, ITEM *b);
 
-ITEM *item_get_free(ITEM list[MAX_ITEM_LIST]);
-void item_spawn(ITEM *items_list, float x, float y, int id);
-void item_add_player(PLAYER *p, int id);
-void item_init(ITEM *item);
-void item_update(PLAYER *player, ITEM *item_list);
-void item_draw(ITEM *item_list);
 
+ITEM *item_get_array(void);
+
+void item_update(void);
+void item_draw(void);
 
 
 

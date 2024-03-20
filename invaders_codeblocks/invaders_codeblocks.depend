@@ -36,7 +36,7 @@
 	<utime.h>
 	<utime.h>
 
-1710880567 source:d:\projetos\c\invaders\invaders_better\main.c
+1710967079 source:d:\projetos\c\invaders\invaders_better\main.c
 	<stdio.h>
 	<math.h>
 	<sys/types.h>
@@ -444,22 +444,24 @@
 1710878415 d:\projetos\c\invaders\invaders_better\g_sprites.h
 	"g_utils.h"
 
-1710876993 source:d:\projetos\c\invaders\invaders_better\g_player.c
+1710965799 source:d:\projetos\c\invaders\invaders_better\g_player.c
 	"g_player.h"
 	<math.h>
 	"g_render.h"
 	"g_sprites.h"
 	"g_sound.h"
+	"g_item.h"
 	"main.h"
 
-1710874358 d:\projetos\c\invaders\invaders_better\g_player.h
+1710963407 d:\projetos\c\invaders\invaders_better\g_player.h
 	"g_item.h"
 	"g_bullets.h"
 
-1710880458 d:\projetos\c\invaders\invaders_better\main.h
+1710949743 d:\projetos\c\invaders\invaders_better\main.h
 	"g_particles.h"
 
-1710877969 source:d:\projetos\c\invaders\invaders_better\g_enemies.c
+1710968793 source:d:\projetos\c\invaders\invaders_better\g_enemies.c
+	<assert.h>
 	"g_sound.h"
 	"g_enemies.h"
 	"g_utils.h"
@@ -470,12 +472,14 @@
 	"math.h"
 	"g_player.h"
 
-1710877974 d:\projetos\c\invaders\invaders_better\g_enemies.h
+1710949781 d:\projetos\c\invaders\invaders_better\g_enemies.h
 	"g_bullets.h"
 
-1710879104 d:\projetos\c\invaders\invaders_better\g_item.h
+1710969043 d:\projetos\c\invaders\invaders_better\g_item.h
+	<stdio.h>
+	<stdint.h>
 
-1710880418 source:d:\projetos\c\invaders\invaders_better\g_item.c
+1710967798 source:d:\projetos\c\invaders\invaders_better\g_item.c
 	"g_item.h"
 	"g_utils.h"
 	"main.h"

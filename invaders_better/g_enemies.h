@@ -36,11 +36,14 @@ typedef struct ENEMY {
 typedef struct PLAYER PLAYER;
 typedef struct ITEM ITEM;
 
+
+
+ENEMY* getFreeEnemy(ENEMY (*enemies)[ENEMY_ROW_X]);
 void enemies_init(ENEMY (*enemies)[ENEMY_ROW_X]);
 int enemies_bullet_collision(ENEMY *e, BULLET *b);
-void enemies_update_bullet(PLAYER *player, ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X]);
+void enemies_update_bullet(PLAYER *player, ENEMY (*enemies)[ENEMY_ROW_X]);
 void enemies_draw_bullets(ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X]);
-void enemies_set_down(ENEMY[ENEMY_ROW_Y][ENEMY_ROW_X]);
+void enemies_set_down(ENEMY (*enemies)[ENEMY_ROW_X]);
 int enemies_count(ENEMY (*enemies)[ENEMY_ROW_X]);
 void enemies_killall(ENEMY *enemies[]);
 void enemies_reset(ENEMY (*enemies)[ENEMY_ROW_X]);

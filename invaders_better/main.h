@@ -44,6 +44,8 @@ extern PARTICLE particles[MAX_PARTICLES];
 
 extern MOUSECOORD g_mouse;
 extern int player_keys[ALLEGRO_KEY_MAX];
+extern int g_game_paused;
+extern int g_game_started;
 
 double angle_distance_rad(double x1, double y1, double x2, double y2);
 

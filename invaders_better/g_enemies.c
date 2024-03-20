@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "g_sound.h"
 #include "g_enemies.h"
 #include "g_utils.h"
@@ -5,6 +6,7 @@
 #include "g_sprites.h"
 #include "g_render.h"
 #include "g_particles.h"
+
 
 #include "math.h"
 #include "g_player.h"
@@ -18,6 +20,21 @@ const float explosion_speed[4] = {
      1.2f,
      2.0f,
 };
+
+
+
+ENEMY* getFreeEnemy(ENEMY (*enemies)[ENEMY_ROW_X]){
+    for(int i = 0; i < ENEMY_ROW_Y; i++){
+        for(int j = 0; j < ENEMY_ROW_X;j++){
+
+            if(!enemies[i][j].alive){
+                return &enemies[i][j];
+            }
+        }
+    }
+    return NULL;
+}
+
 
 
 void enemies_init(ENEMY (*enemies)[ENEMY_ROW_X]) {
@@ -104,7 +121,7 @@ void enemies_draw_bullets(ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X]){
     }
 }
 
-void enemies_update_bullet(PLAYER *player, ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X]){
+void enemies_update_bullet(PLAYER *player, ENEMY (*enemies)[ENEMY_ROW_X]){
 
 
         for(int y = 0; y < ENEMY_ROW_Y; y++){
@@ -185,6 +202,9 @@ void enemies_update_bullet(PLAYER *player, ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_
             enemy_shoot_time--;
         }else {
 
+            if(g_game_paused)
+                return;
+
             int enemy_index_x =  game_rand_range(0, ENEMY_ROW_X-1);
             int enemy_index_y =  game_rand_range(0, ENEMY_ROW_Y-1);
 
@@ -220,7 +240,7 @@ void enemies_update_bullet(PLAYER *player, ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_
 }
 
 
-void enemies_set_down(ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X]){
+void enemies_set_down(ENEMY (*enemies)[ENEMY_ROW_X]){
         for(int y = 0; y < ENEMY_ROW_Y; y++){
             for(int x = 0;x < ENEMY_ROW_X;x++){
                 enemies[y][x].y +=  TILE;
@@ -287,13 +307,13 @@ void enemies_update(PLAYER *player,  ITEM *item_list, ENEMY (*enemies)[ENEMY_ROW
                         play_sound(rand,1.0,0.0, explosion_speed[speed_index], ALLEGRO_PLAYMODE_ONCE);
 
 
-                        int item_drop_item = game_rand_range(0, ITEM_ID_COUNT);
                         int drop_chance = game_rand_range(1,100);
 
                         if(drop_chance <= 99){
 
-                            if(item_drop_item == ITEM_ID_DEFAULT_CANNON)
-                                return;
+
+                            int item_drop_item = ITEM_ID_DOUBLE_CANNON;
+
 
                             int sounds[3] = {
                                 SFX_POWERUP,
@@ -303,9 +323,13 @@ void enemies_update(PLAYER *player,  ITEM *item_list, ENEMY (*enemies)[ENEMY_ROW
 
                             //score_add(score_list, 150,  enemies[y][x].x,enemies[y][x].y-50, COLOR_WHITE);
                             player->score += 150;
-                            item_spawn(item_list, enemies[y][x].x,enemies[y][x].y, item_drop_item);
+                            //item_spawn(item_list, enemies[y][x].x,enemies[y][x].y, item_drop_item);
+                            item_spawn_id(item_list, MAX_ITEM_LIST, player,   enemies[y][x].x,enemies[y][x].y, item_drop_item);
+                            //assert(it == NULL);
+                            //it->id = item_drop_item;
                             int rand_snd = game_rand_range(0,2);
                             play(sounds[rand_snd]);
+
                         }
 
 
