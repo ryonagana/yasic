@@ -109,6 +109,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../invaders_better/g_bullets.h" />
+		<Unit filename="../invaders_better/g_config.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../invaders_better/g_config.h" />
 		<Unit filename="../invaders_better/g_enemies.c">
 			<Option compilerVar="CC" />
 		</Unit>
