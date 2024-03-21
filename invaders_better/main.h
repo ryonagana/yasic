@@ -36,6 +36,7 @@ typedef struct POINT {
 
 }POINT;
 
+typedef struct PLAYER PLAYER;
 
 void do_gameover(void);
 
@@ -48,6 +49,9 @@ extern int g_game_paused;
 extern int g_game_started;
 
 double angle_distance_rad(double x1, double y1, double x2, double y2);
+
+
+PLAYER* getPlayer(int pos);
 
 
 #endif // MAIN_HEADER

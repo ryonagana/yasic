@@ -15,6 +15,7 @@ typedef struct PLAYER {
     int direction;
     BULLET bullets[MAX_BULLETS];
     int shot_time;
+    int shot_count;
     int shoot;
     int keypressed[4];
     ITEM items[ITEM_ID_COUNT];

@@ -66,6 +66,8 @@ void player_update_shot(PLAYER *player){
         }
     }
 
+
+
     if(player->shot_time > 0){
         player->shoot = TRUE;
     }else if(player->shot_time < 0){
@@ -75,6 +77,7 @@ void player_update_shot(PLAYER *player){
     }
 
     player->shot_time--;
+
     return;
 
 }
@@ -108,7 +111,8 @@ void player_shoot(PLAYER *player){
     {
         create_shot(player->bullets, player->x, player->y, 0,1.0);
         play(SFX_LASER);
-        player->shot_time = item->shot_time;
+        player->shot_time = player->item_use->shot_time;
+        player->shot_count = player->item_use->shot_num;
     }
         break;
 
@@ -116,10 +120,12 @@ void player_shoot(PLAYER *player){
         {
             for(int i = 0; i < 2; i++){
                 create_shot(player->bullets, player->x + cos(45.0 * DEG2RAD) , player->y + cos(-45.0 * DEG2RAD),0.0,1.0);
+                player->shot_time = player->item_use->shot_time;
+                player->shot_count = player->item_use->shot_num;
             }
 
             play(SFX_LASER);
-            player->shot_time = player->item_use->shot_time;
+
         }
         break;
     }

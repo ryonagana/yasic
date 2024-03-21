@@ -24,6 +24,8 @@ enum ITEM_ID {
 
 typedef struct ITEM {
     int id;
+    char name[50];
+    char  sprite[255];
     float x;
     float y;
     float vx;

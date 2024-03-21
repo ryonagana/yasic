@@ -364,10 +364,11 @@ int rect_collision(float x1, float y1, float w1, float h1, float x2, float y2, f
 }
 
 
-
-
-
-
+enum GAME_CHEAT_CODE {
+    GAME_CHEAT_CODE_GODMODE = 0x2,
+    GAME_CHEAT_CODE_INFIN_AMMO = 0x4,
+    GAME_CHEAT_CODE_SKIP_WAVE = 0x8
+};
 
 
 
@@ -1009,6 +1010,8 @@ void gameplay_update(void){
                 al_start_timer(timer);
                 enemy_wave_time = 200;
                 enemy_wave_time_total = enemy_wave_time;
+                new_game(TRUE);
+
             }
 
 }
@@ -1704,5 +1707,13 @@ int print_fade_text(ALLEGRO_FONT *fnt, float x, float y, ALLEGRO_COLOR color, fl
 
     al_draw_textf(fnt, tmp_col, x,y, 0, "%s", buf);
     return (int)y + al_get_font_line_height(fnt);
+
+}
+
+
+PLAYER* getPlayer(int pos){
+    UNUSED(pos);
+
+    return &player;
 
 }
