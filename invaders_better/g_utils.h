@@ -18,8 +18,8 @@
 #define TILE 32
 #define UNUSED(x) ((void)x)
 
-#define ENEMY_ROW_X 10
-#define ENEMY_ROW_Y 5
+#define ENEMY_COLS 10
+#define ENEMY_ROWS 5
 #define GAME_DATAFILES "game.pk0"
 #define HISCORE_DATA "hiscore.dat"
 

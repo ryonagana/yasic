@@ -37,6 +37,7 @@ typedef struct ITEM {
     int ticks;
     int shot_time;
     int shot_num;
+    int shot_delay;
 }ITEM;
 
 typedef struct PLAYER PLAYER;
@@ -50,6 +51,7 @@ void item_assign_to_player(PLAYER *player, ITEM *item);
 void item_assign_to_player_id(PLAYER *player, int id);
 int  item2player_collision(PLAYER *player, int pw, int ph, float x, float y, int w, int h);
 int  item2item_collision(ITEM *a, ITEM *b);
+void item_killall(ITEM *item_list, int cols);
 
 
 ITEM *item_get_array(void);

@@ -13,6 +13,7 @@ static void S_item_effect_get_double_cannon(ITEM *item, void *args);
 static void S_item_effect_get_default_cannon(ITEM *item, void *args);
 
 
+/*
 static ITEM i_default_laser_cannon = {
     ITEM_ID_DEFAULT_CANNON,
     "",
@@ -42,9 +43,9 @@ static ITEM i_double_laser_cannon = {
     60,
     2
 };
+*/
 
-
-static ITEM s_item_index[ITEM_ID_COUNT] = {0};
+//static ITEM s_item_index[ITEM_ID_COUNT] = {0};
 static ITEM s_spawn_items_list[MAX_ITEM_LIST] = {0};
 
 
@@ -65,7 +66,7 @@ static void S_item_load_config(ALLEGRO_CONFIG *cfg, ITEM *item){
     item->shot_time = shot_time;
     item->shot_num = shot_count;
     item->flags = flags;
-
+    item->shot_delay = 0;
 
 }
 
@@ -123,12 +124,12 @@ void item_init(void)
 {
 
 
-    s_item_index[ITEM_ID_DEFAULT_CANNON] = i_default_laser_cannon;
-    s_item_index[ITEM_ID_DOUBLE_CANNON] = i_double_laser_cannon;
+    //s_item_index[ITEM_ID_DEFAULT_CANNON] = i_default_laser_cannon;
+    //s_item_index[ITEM_ID_DOUBLE_CANNON] = i_double_laser_cannon;
 
 
-    s_spawn_items_list[0] = s_item_index[ITEM_ID_DEFAULT_CANNON];
-    s_spawn_items_list[1] = s_item_index[ITEM_ID_DOUBLE_CANNON];
+    //s_spawn_items_list[0] = s_item_index[ITEM_ID_DEFAULT_CANNON];
+    //s_spawn_items_list[1] = s_item_index[ITEM_ID_DOUBLE_CANNON];
 
     S_load_items_config_file();
 
@@ -193,7 +194,14 @@ void item_assign_to_player(PLAYER *player, ITEM *item){
 }
 void item_assign_to_player_id(PLAYER *player, int id){
 
-   player->item_use = &s_item_index[id % ITEM_ID_COUNT];
+    int c = 0;
+
+    for(c = 0; c < MAX_ITEM_LIST;c++){
+        if(s_spawn_items_list[c].id == id) break;
+    }
+
+
+   player->item_use = &s_spawn_items_list[c];
    player->shot_time = player->item_use->shot_time;
 
 }
@@ -218,18 +226,14 @@ int  item2item_collision(ITEM *a, ITEM *b){
 
 void item_update(void){
 
+
+
     PLAYER *player = getPlayer(0);
 
     for(int i = 0; i < MAX_ITEM_LIST;i++){
         ITEM *it = &s_spawn_items_list[i];
         if(!it->active) continue;
 
-        /*
-        if(it->x < -10 || it->x >= al_get_display_width(display)  + 10  ||
-           it->y < -10 || it->y >= al_get_display_height(display) + 10)
-        {
-             it->active = FALSE;
-        }*/
 
         if(it->x <= 0 || it->x >= al_get_display_width(display) - 1){
             it->vx *= -1;
@@ -260,6 +264,7 @@ void item_update(void){
         }
 
     }
+
 }
 void item_draw(void){
 
@@ -295,3 +300,10 @@ ITEM *item_get_by_id(ITEM *item, int id){
     return NULL;
 
 }
+
+void item_killall(ITEM *item_list, int cols){
+    for(int i = 0; i < cols;i++){
+       item_list[i].active = FALSE;
+    }
+}
+

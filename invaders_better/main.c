@@ -24,8 +24,8 @@
 #define TILE 32
 #define UNUSED(x) ((void)x)
 
-#define ENEMY_ROW_X 10
-#define ENEMY_ROW_Y 5
+#define ENEMY_COLS 10
+#define ENEMY_ROWS 5
 #define GAME_DATAFILES "game.pk0"
 #define HISCORE_DATA "hiscore.dat"
 
@@ -71,16 +71,16 @@ ALLEGRO_BITMAP *spr_intro[10];
 
 
 
-static int enemy_wave = 1;
-static int enemy_wave_time = 0;
-static int enemy_wave_time_total = 0;
+//static int enemy_wave = 1;
+//static int enemy_wave_time = 0;
+//static int enemy_wave_time_total = 0;
 
 void wave_reset(void);
 
 
 
 static PLAYER player;
-static ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X] = {0};
+static ENEMY enemies[ENEMY_ROWS][ENEMY_COLS] = {0};
 
 
 
@@ -106,6 +106,19 @@ int  enemy_shoot_time = 70;
 int g_game_paused = FALSE;
 
 int game_difficulty = DIFF_NOVICE;
+
+
+typedef struct ENEMIES_WAVE {
+    int ticks;
+    int text_time;
+    int row;
+    int col;
+    int wave_num;
+    unsigned char boss_wave;
+    unsigned char started;
+}ENEMIES_WAVE;
+
+ENEMIES_WAVE g_enemies_wave;
 
 DIFFICULTY_PARAMS difficulty[DIFF_COUNT] = {
     {
@@ -387,7 +400,7 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
 
     flags = ALLEGRO_OPENGL_3_0 | ALLEGRO_GENERATE_EXPOSE_EVENTS;
 
-    al_set_new_display_option(ALLEGRO_VSYNC, vsync > 0 ? 2 : 1 , ALLEGRO_REQUIRE);
+    al_set_new_display_option(ALLEGRO_VSYNC, vsync > 0 ? 1 : 0 , ALLEGRO_REQUIRE);
 
 
 
@@ -551,37 +564,26 @@ void new_game(int start){
         enemies_reset(enemies);
         player_init(&player);
 
-        if(enemy_wave == 1){
-                enemy_wave_time = 200;
-                enemy_wave_time_total = enemy_wave_time;
-        }
+        g_enemies_wave.ticks = al_get_timer_count(timer) + 200;
+        g_enemies_wave.wave_num = 1;
 
         enemies_init(enemies);
         wave_reset();
     }
 
     player_init(&player);
+    g_enemies_wave.ticks = al_get_timer_count(timer) + 200;
 
     return;
 }
 
 
 void do_gameover(void){
-     g_gamestate = GAMESTATE_TYPE_GAMEOVER;
-     enemy_wave = 0 ;
-     enemy_wave_time_total = 0;
-     g_ship_active = FALSE;
-
-    for(int y = 0; y < ENEMY_ROW_Y;y++){
-        for(int x = 0; x < ENEMY_ROW_X;x++){
-                if(enemies[y][x].alive){
-                    enemies[y][x].alive = false;
-                }
-
-        }
-    }
-    g_gamestate = GAMESTATE_TYPE_USER_HISCORE;
+    g_ship_active = FALSE;
+    enemies_killall(enemies);
+    g_gamestate = GAMESTATE_TYPE_GAMEOVER;
     wave_reset();
+
 }
 
 void draw_life_bar(void){
@@ -600,7 +602,7 @@ void draw_debug(void){
     "LINES: %d lines\n"
     "Enemy Shoot Time %d\n"
     "Player life: %.2f",
-    enemies_count(enemies),
+    enemies_count(enemies, ENEMY_COLS, ENEMY_ROWS),
     player.shot_time,
     player.shoot ? "YES" : "No",
     line,
@@ -895,11 +897,11 @@ void menu_draw(MENU *menu_list){
         int px = al_get_display_width(display) / 2   - al_get_text_width(font_list[FONT_PIXEL_MENU_BIG], menu_list[i].opt_name);
         int py = al_get_display_height(display) / 2  - al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]);
 
-        int text_size = al_get_text_width(font_list[FONT_PIXEL_MENU_BIG], menu_list[i].opt_name);
-        int text_line_size = al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]);
+        //int text_size = al_get_text_width(font_list[FONT_PIXEL_MENU_BIG], menu_list[i].opt_name);
+        //int text_line_size = al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]);
 
         al_draw_textf(fnt, al_map_rgb_f(1,1,1),  px,  py + i * space_height, 0, "%s", menu_list[i].opt_name);
-        al_draw_rectangle(menu_list[i].x,menu_list[i].y, menu_list[i].x + text_size, menu_list[i].y + text_line_size, al_map_rgb_f(1,0,0),1);
+        //al_draw_rectangle(menu_list[i].x,menu_list[i].y, menu_list[i].x + text_size, menu_list[i].y + text_line_size, al_map_rgb_f(1,0,0),1);
     }
 }
 
@@ -936,12 +938,20 @@ void gameplay_update(void){
             return;
         }
 
-#ifndef DEBUG
+#ifdef DEBUG
         if(player_keys[ALLEGRO_KEY_R]){
             if(gameover) gameover = 0;
             g_gamestate = GAMESTATE_TYPE_MENU;
             return;
         }
+
+        if(player_keys[ALLEGRO_KEY_K]){
+            enemies_killall(enemies);
+            item_killall(items, MAX_ITEM_LIST );
+            new_game(FALSE);
+            return;
+        }
+
 #endif // DEBUG
 
 
@@ -990,27 +1000,28 @@ void gameplay_update(void){
             }
 
 
-            if(enemy_wave >= 15 && game_difficulty <= DIFF_HARD){
+            if(g_enemies_wave.wave_num >= 15 && game_difficulty <= DIFF_HARD){
                 game_difficulty = DIFF_HARD;
             }
 
-            if(enemy_wave >= 30 && game_difficulty <= DIFF_HARD){
+            if(g_enemies_wave.wave_num >= 30 && game_difficulty <= DIFF_HARD){
                 game_difficulty = DIFF_HARD;
             }
 
-            if(enemy_wave >= 50  && game_difficulty <= DIFF_HARD){
+            if(g_enemies_wave.wave_num >= 50  && game_difficulty <= DIFF_HARD){
                 game_difficulty = DIFF_NIGHTMARE;
             }
 
 
 
-            if(enemies_count(enemies) <= 0){
-                enemy_wave++;
+
+            if(enemies_count(enemies, ENEMY_ROWS, ENEMY_COLS) <= 0){
+                g_enemies_wave.wave_num++;
                 al_stop_timer(timer);
+                new_game(FALSE);
                 al_start_timer(timer);
-                enemy_wave_time = 200;
-                enemy_wave_time_total = enemy_wave_time;
-                new_game(TRUE);
+                item_killall(items, MAX_ITEM_LIST);
+                enemies_reset(enemies);
 
             }
 
@@ -1033,20 +1044,21 @@ void gameplay_draw(struct RENDER_ARGS *args){
                 score_draw_text();
                 al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,20, 0, "SCORE: %08d", player.score);
                 al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,35, 0, "LIVES %02d", player.lives);
-                al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,55, 0, "AMMO %02d", player.ammo <= 0 ? 0 : player.ammo);
+                al_draw_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb_f(1,1,1),10,55, 0, "AMMO %03d", player.ammo <= 0 ? 0 : player.ammo);
+                bullet_update(player.bullets);
 
                 particle_draw(NULL, particles,0,-8.0, al_map_rgb(255, 168, 0));
                 player_draw(player.x, player.y);
 
-                if(enemy_wave_time > 0){
+                if(g_enemies_wave.ticks >= al_get_timer_count(timer)){
 
                     float wave_x = 0.0;
                     float wave_y = 0.0;
-                    float alpha =  (float)enemy_wave_time_total / enemy_wave_time;
+                    float alpha = al_get_timer_count(timer)  - g_enemies_wave.ticks / 100;
 
-                    ALLEGRO_COLOR trans_color = al_premul_rgba_f(1,0,0, alpha);
+                    ALLEGRO_COLOR trans_color = al_premul_rgba_f(1,1,1, alpha);
                     char buf[25];
-                    sprintf(buf, "WAVE: %d", enemy_wave);
+                    sprintf(buf, "WAVE: %d", g_enemies_wave.wave_num);
 
                     al_draw_text(font_list[FONT_PIXEL_MENU_BIG],
                     trans_color,
@@ -1057,7 +1069,10 @@ void gameplay_draw(struct RENDER_ARGS *args){
                     );
 
                     wave_y += 0.9;
-                    enemy_wave_time--;
+                    //enemy_wave_time--;
+
+                }else{
+                    g_enemies_wave.ticks = 0;
 
                 }
 
@@ -1132,6 +1147,12 @@ int main(int argc, char **argv)
     hiscore_init();
     stars_init();
     item_init();
+    g_enemies_wave.boss_wave = 0;
+    g_enemies_wave.started = 0;
+    g_enemies_wave.col = ENEMY_COLS;
+    g_enemies_wave.row = ENEMY_ROWS;
+    g_enemies_wave.text_time = 0;
+    g_enemies_wave.ticks = 0;
     //item_init(item_list, MAX_ITEM_LIST);
 
 
@@ -1668,9 +1689,11 @@ void gameover_draw(void){
 }
 
 void wave_reset(void){
-    enemy_wave = 1;
-    enemy_wave_time = 0;
-    enemy_wave_time_total = 0;
+    g_enemies_wave.wave_num = 1;
+    g_enemies_wave.ticks = 0;
+    //enemy_wave = 1;
+    //enemy_wave_time = 0;
+    //enemy_wave_time_total = 0;
 }
 
 

@@ -1,8 +1,8 @@
 #ifndef GAME_ENEMIES_HEADER
 #define GAME_ENEMIES_HEADER
 
-#define ENEMY_ROW_X 10
-#define ENEMY_ROW_Y 5
+#define ENEMY_COLS 10
+#define ENEMY_ROWS 5
 #include "g_bullets.h"
 
 #define MAX_BULLETS 50
@@ -38,16 +38,16 @@ typedef struct ITEM ITEM;
 
 
 
-ENEMY* getFreeEnemy(ENEMY (*enemies)[ENEMY_ROW_X]);
-void enemies_init(ENEMY (*enemies)[ENEMY_ROW_X]);
+ENEMY* getFreeEnemy(ENEMY (*enemies)[ENEMY_COLS]);
+void enemies_init(ENEMY (*enemies)[ENEMY_COLS]);
 int enemies_bullet_collision(ENEMY *e, BULLET *b);
-void enemies_update_bullet(PLAYER *player, ENEMY (*enemies)[ENEMY_ROW_X]);
-void enemies_draw_bullets(ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X]);
-void enemies_set_down(ENEMY (*enemies)[ENEMY_ROW_X]);
-int enemies_count(ENEMY (*enemies)[ENEMY_ROW_X]);
-void enemies_killall(ENEMY *enemies[]);
-void enemies_reset(ENEMY (*enemies)[ENEMY_ROW_X]);
-void enemies_update(PLAYER *player,  ITEM *item_list, ENEMY (*enemies)[ENEMY_ROW_X]);
-void draw_enemies(ENEMY enemy_list[ENEMY_ROW_Y][ENEMY_ROW_X], float offset_x, float offset_y);
+void enemies_update_bullet(PLAYER *player, ENEMY (*enemies)[ENEMY_COLS]);
+void enemies_draw_bullets(ENEMY enemies[ENEMY_ROWS][ENEMY_COLS]);
+void enemies_set_down(ENEMY (*enemies)[ENEMY_COLS]);
+int enemies_count(ENEMY (*enemies)[ENEMY_COLS], int rows, int cols);
+void enemies_killall(ENEMY (*enemies)[ENEMY_COLS]);
+void enemies_reset(ENEMY (*enemies)[ENEMY_COLS]);
+void enemies_update(PLAYER *player,  ITEM *item_list, ENEMY (*enemies)[ENEMY_COLS]);
+void draw_enemies(ENEMY enemy_list[ENEMY_ROWS][ENEMY_COLS], float offset_x, float offset_y);
 int  enemies_bullet_collision(ENEMY *enemy, BULLET *bullet);
 #endif // GAME_ENEMIES_HEADER

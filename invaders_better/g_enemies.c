@@ -23,9 +23,9 @@ const float explosion_speed[4] = {
 
 
 
-ENEMY* getFreeEnemy(ENEMY (*enemies)[ENEMY_ROW_X]){
-    for(int i = 0; i < ENEMY_ROW_Y; i++){
-        for(int j = 0; j < ENEMY_ROW_X;j++){
+ENEMY* getFreeEnemy(ENEMY (*enemies)[ENEMY_COLS]){
+    for(int i = 0; i < ENEMY_ROWS; i++){
+        for(int j = 0; j < ENEMY_COLS;j++){
 
             if(!enemies[i][j].alive){
                 return &enemies[i][j];
@@ -37,10 +37,10 @@ ENEMY* getFreeEnemy(ENEMY (*enemies)[ENEMY_ROW_X]){
 
 
 
-void enemies_init(ENEMY (*enemies)[ENEMY_ROW_X]) {
+void enemies_init(ENEMY (*enemies)[ENEMY_COLS]) {
 
-        for(int y = 0; y < ENEMY_ROW_Y;y++){
-            for(int x = 0; x < ENEMY_ROW_X;x++){
+        for(int y = 0; y < ENEMY_ROWS;y++){
+            for(int x = 0; x < ENEMY_COLS;x++){
 
                 int rand_type = game_rand(100);
 
@@ -57,34 +57,35 @@ void enemies_init(ENEMY (*enemies)[ENEMY_ROW_X]) {
         }
 }
 
-void enemies_killall(ENEMY *enemies[]){
-    for(int i = 0; i < ENEMY_ROW_Y;i++){
-        for(int j = 0; j < ENEMY_ROW_X;j++){
+void enemies_killall(ENEMY (*enemies)[ENEMY_COLS]){
+    for(int i = 0; i < ENEMY_ROWS;i++){
+        for(int j = 0; j < ENEMY_COLS;j++){
             if(!enemies[i][j].alive) continue;
             enemies[i][j].alive = FALSE;
         }
     }
 }
-void enemies_reset(ENEMY  (*enemies)[ENEMY_ROW_X]){
+void enemies_reset(ENEMY  (*enemies)[ENEMY_COLS]){
 
-    for(int i = 0; i < ENEMY_ROW_Y;i++){
-        for(int j = 0; j < ENEMY_ROW_X;j++){
-            if(!enemies[i][j].alive) continue;
-            enemies[i][j].alive = FALSE;
+    for(int i = 0; i < ENEMY_ROWS;i++){
+        for(int j = 0; j < ENEMY_COLS;j++){
+            enemies[i][j].alive = TRUE;
             enemies[i][j].x  = 0;
              enemies[i][j].y = 0;
         }
     }
+
+    enemies_init(enemies);
 }
 
 
-void draw_enemies(ENEMY enemy_list[ENEMY_ROW_Y][ENEMY_ROW_X], float offset_x, float offset_y){
+void draw_enemies(ENEMY enemy_list[ENEMY_ROWS][ENEMY_COLS], float offset_x, float offset_y){
 
     (void)offset_x; (void)offset_y;
 
     if(!gameover){
-        for(int y = 0; y < ENEMY_ROW_Y;y++){
-            for(int x = 0; x < ENEMY_ROW_X;x++){
+        for(int y = 0; y < ENEMY_ROWS;y++){
+            for(int x = 0; x < ENEMY_COLS;x++){
                 if( enemy_list[y][x].alive){
                     int type = enemy_list[y][x].type == 1 ? SPR_ENEMY01 : SPR_ENEMY02;
                     ALLEGRO_BITMAP *enemy_spr = sprites[type];
@@ -104,10 +105,10 @@ void draw_enemies(ENEMY enemy_list[ENEMY_ROW_Y][ENEMY_ROW_X], float offset_x, fl
     }
 }
 
-void enemies_draw_bullets(ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X]){
+void enemies_draw_bullets(ENEMY enemies[ENEMY_ROWS][ENEMY_COLS]){
 
-    for(int y = 0; y < ENEMY_ROW_Y;y++){
-        for(int x = 0; x < ENEMY_ROW_X;x++){
+    for(int y = 0; y < ENEMY_ROWS;y++){
+        for(int x = 0; x < ENEMY_COLS;x++){
             if(!enemies[y][x].alive) continue;
 
             for(int i = 0; i < MAX_BULLETS; i++){
@@ -121,11 +122,11 @@ void enemies_draw_bullets(ENEMY enemies[ENEMY_ROW_Y][ENEMY_ROW_X]){
     }
 }
 
-void enemies_update_bullet(PLAYER *player, ENEMY (*enemies)[ENEMY_ROW_X]){
+void enemies_update_bullet(PLAYER *player, ENEMY (*enemies)[ENEMY_COLS]){
 
 
-        for(int y = 0; y < ENEMY_ROW_Y; y++){
-            for(int x = 0;x < ENEMY_ROW_X;x++){
+        for(int y = 0; y < ENEMY_ROWS; y++){
+            for(int x = 0;x < ENEMY_COLS;x++){
 
                 ENEMY *enemy = &enemies[y][x];
 
@@ -205,8 +206,8 @@ void enemies_update_bullet(PLAYER *player, ENEMY (*enemies)[ENEMY_ROW_X]){
             if(g_game_paused)
                 return;
 
-            int enemy_index_x =  game_rand_range(0, ENEMY_ROW_X-1);
-            int enemy_index_y =  game_rand_range(0, ENEMY_ROW_Y-1);
+            int enemy_index_x =  game_rand_range(0, ENEMY_COLS-1);
+            int enemy_index_y =  game_rand_range(0, ENEMY_ROWS-1);
 
             ENEMY *e = &enemies[enemy_index_y][enemy_index_x];
 
@@ -215,7 +216,7 @@ void enemies_update_bullet(PLAYER *player, ENEMY (*enemies)[ENEMY_ROW_X]){
             }
 
                 for(int i = 0; i < difficulty[game_difficulty].enemies_num_shoot; i++){
-                    BULLET *b = create_shot(e->bullets, e->x, e->y, 1.0, 1.0);
+                    BULLET *b = create_shot(e->bullets, e->x, e->y, 1.0, 1.0, ITEM_ID_DEFAULT_CANNON);
 
                     if(b == NULL){
                         return;
@@ -240,9 +241,9 @@ void enemies_update_bullet(PLAYER *player, ENEMY (*enemies)[ENEMY_ROW_X]){
 }
 
 
-void enemies_set_down(ENEMY (*enemies)[ENEMY_ROW_X]){
-        for(int y = 0; y < ENEMY_ROW_Y; y++){
-            for(int x = 0;x < ENEMY_ROW_X;x++){
+void enemies_set_down(ENEMY (*enemies)[ENEMY_COLS]){
+        for(int y = 0; y < ENEMY_ROWS; y++){
+            for(int x = 0;x < ENEMY_COLS;x++){
                 enemies[y][x].y +=  TILE;
                 line++;
             }
@@ -250,12 +251,12 @@ void enemies_set_down(ENEMY (*enemies)[ENEMY_ROW_X]){
 }
 
 
-void enemies_update(PLAYER *player,  ITEM *item_list, ENEMY (*enemies)[ENEMY_ROW_X]){
+void enemies_update(PLAYER *player,  ITEM *item_list, ENEMY (*enemies)[ENEMY_COLS]){
 
 
     int phase = WALK_TIME_DELAY_PHASE1;
-    for(int y = 0; y < ENEMY_ROW_Y; y++){
-        for(int x = 0;x < ENEMY_ROW_X;x++){
+    for(int y = 0; y < ENEMY_ROWS; y++){
+        for(int x = 0;x < ENEMY_COLS;x++){
              if(enemies[y][x].alive) {
                  enemies[y][x].x +=  difficulty[game_difficulty].speed_multiplier * enemy_direction;
                  walk_time--;
@@ -358,10 +359,10 @@ void enemies_update(PLAYER *player,  ITEM *item_list, ENEMY (*enemies)[ENEMY_ROW
 }
 
 
-int enemies_count(ENEMY (*enemies)[ENEMY_ROW_X]){
+int enemies_count(ENEMY (*enemies)[ENEMY_COLS], int rows, int cols){
     int count = 0;
-    for(int y = 0; y < ENEMY_ROW_Y; y++){
-        for(int x = 0; x < ENEMY_ROW_X;x++){
+    for(int y = 0; y < rows; y++){
+        for(int x = 0; x < cols;x++){
             if(enemies[y][x].alive) count++;
         }
     }

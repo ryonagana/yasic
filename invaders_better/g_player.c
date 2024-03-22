@@ -33,14 +33,11 @@ void player_draw(float x, float y){
 }
 
 void player_update_shot(PLAYER *player){
+
+    /*
     for(int i = 0; i < MAX_BULLETS; i++){
         if(player->bullets[i].alive && player->bullets[i].ttl > 0){
-           player->bullets[i].y -= 8.0;
 
-           if( player->bullets[i].y < -16 || player->bullets[i].y > al_get_display_height(display) + 16 ||
-               player->bullets[i].x < -16 || player->bullets[i].x > al_get_display_width(display) + 16){
-                player->bullets[i].alive = false;
-           }
 
            for(int i = 0; i < ITEM_ID_COUNT; i++){
 
@@ -51,21 +48,10 @@ void player_update_shot(PLAYER *player){
                         player->bullets[bullet_index%2].y   +=  cos(30 * DEG2RAD);
                     }
                 }
-
-           }
-
-        /*
-           if(g_spaceship_entity->alive && g_spaceship_entity && rect_collision(player.bullets[i].x, player.bullets[i].y, 8,8, g_spaceship_entity->x, g_spaceship_entity->y, 32,32)){
-                g_spaceship_entity->alive = FALSE;
-                g_ship_active = FALSE;
-                score_add(score_list, 1000,  g_spaceship_entity->x, g_spaceship_entity->y, COLOR_WHITE);
-                player->score += 1000;
-                al_stop_samples();
-           }*/
-
+          }
         }
     }
-
+    */
 
 
     if(player->shot_time > 0){
@@ -95,40 +81,37 @@ void player_draw_shot(PLAYER *player){
 
 
 void player_shoot(PLAYER *player){
-    ITEM *item = player->item_use;
 
-    if(!(item->flags & ITEMINFO_FLAG_INFINITE_AMMO)){
-        if(player->ammo > 0){
-            player->ammo--;
-        }else {
-            player->item_use = &player->items[ITEM_ID_DEFAULT_CANNON];
-        }
-    }
 
-    switch(item->id){
-    default:
-    case ITEM_ID_DEFAULT_CANNON:
+    int bullet_id = player->item_use->id;
+
+    switch(player->item_use->id)
     {
-        create_shot(player->bullets, player->x, player->y, 0,1.0);
-        play(SFX_LASER);
-        player->shot_time = player->item_use->shot_time;
-        player->shot_count = player->item_use->shot_num;
-    }
+        default:
+        case ITEM_ID_DEFAULT_CANNON:
+        {
+            create_shot(player->bullets, player->x, player->y, 0,-8.0, bullet_id);
+            player->shot_time = player->item_use->shot_time;
+            play(SFX_LASER);
+        }
         break;
 
-    case ITEM_ID_DOUBLE_CANNON:
+        case ITEM_ID_DOUBLE_CANNON:
         {
-            for(int i = 0; i < 2; i++){
-                create_shot(player->bullets, player->x + cos(45.0 * DEG2RAD) , player->y + cos(-45.0 * DEG2RAD),0.0,1.0);
-                player->shot_time = player->item_use->shot_time;
-                player->shot_count = player->item_use->shot_num;
+            for(int i = 0; i < player->item_use->shot_num;i++){
+                if(i%1){
+                    create_shot_angle(player->bullets, player->x, player->y, 0,-8.0, 45, bullet_id );
+                    continue;
+                }
+
+                create_shot_angle(player->bullets, player->x, player->y, 0,-8.0, 5, bullet_id);
             }
-
+            player->shot_time = player->item_use->shot_time;
             play(SFX_LASER);
-
         }
         break;
     }
+
 }
 
 void player_update(PLAYER *player){

@@ -1,6 +1,7 @@
 #include "g_bullets.h"
-
-
+#include "main.h"
+#include "g_render.h"
+#include <math.h>
 
 int getCountBulletsAlive(BULLET *bullets){
 
@@ -22,7 +23,33 @@ BULLET* getFreeBullet(BULLET bullets[MAX_BULLETS]){
    return &bullets[c];
 }
 
-BULLET *create_shot(BULLET *bullets, const float x, const float y, const float vx, const float vy){
+BULLET *create_shot_angle(BULLET *bullets, const float x, const float y, const float vx, const float vy, float angle_deg, int id){
+    BULLET *bullet = getFreeBullet(bullets);
+
+
+    bullet->vx = vx;
+    bullet->vy = vy;
+
+
+    double angle = angle_deg * DEG2RAD;
+
+    bullet->y =  y;
+    bullet->x =  x;
+
+    bullet->angle = angle;
+
+    bullet->alive = TRUE;
+    bullet->ttl = game_rand_range(80,255);
+    bullet->bullet_id = id;
+
+
+
+
+    return bullet;
+
+}
+
+BULLET *create_shot(BULLET *bullets, const float x, const float y, const float vx, const float vy, int id){
 
     BULLET *bullet = getFreeBullet(bullets);
 
@@ -32,9 +59,39 @@ BULLET *create_shot(BULLET *bullets, const float x, const float y, const float v
     bullet->ttl = game_rand_range(80,255);
     bullet->vx = vx;
     bullet->vy = vy;
+    bullet->bullet_id = id;
 
 
     return bullet;
 
 }
 
+void bullet_update(BULLET *bullet_list){
+
+    for(int i = 0; i < MAX_BULLETS;i++){
+        if(!bullet_list[i].alive) continue;
+
+        if(bullet_list[i].x < -8){
+            bullet_list[i].alive = FALSE;
+        }
+
+        if(bullet_list[i].x > al_get_display_width(display)-1){
+            bullet_list[i].alive = FALSE;
+        }
+
+
+        if(bullet_list[i].y < -8){
+            bullet_list[i].alive = FALSE;
+        }
+
+        if(bullet_list[i].y > al_get_display_height(display)-1){
+            bullet_list[i].alive = FALSE;
+        }
+
+
+        bullet_list[i].x += bullet_list[i].vx;
+        bullet_list[i].y += bullet_list[i].vy;
+
+    }
+
+}
