@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug_Static_Mingw32_x64">
-				<Option output="../invaders-debug" prefix_auto="1" extension_auto="1" />
+				<Option output="../invaders-debug/invaders_x64-debug" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="../../invaders" />
 				<Option object_output="obj/Debug_Static/" />
 				<Option type="1" />
@@ -99,6 +99,40 @@
 					<Add option="-lm" />
 					<Add option="-lphysfs" />
 					<Add directory="../vendor/liballegro-5.2.9-git-release-static/lib" />
+				</Linker>
+			</Target>
+			<Target title="Debug_Linux_x64">
+				<Option output="../invaders_x64_linux-bin" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-Wextra" />
+					<Add option="-Wall" />
+					<Add option="-std=c11" />
+					<Add option="-m64" />
+					<Add option="-g" />
+					<Add option="-Wextra -Werror -Wno-unused-function -Wno-switch -Wuninitialized -Wstrict-prototypes -Wno-error=type-limits" />
+					<Add option="-DPHYSFS_DATAFILES_OLD" />
+					<Add option="-DDEBUG_PLAYER_UPDATE" />
+					<Add option="-DDEBUG" />
+					<Add directory="/usr/include" />
+				</Compiler>
+				<Linker>
+					<Add option="-m64" />
+					<Add option="-lallegro" />
+					<Add option="-lallegro_font" />
+					<Add option="-lallegro_ttf" />
+					<Add option="-lallegro_audio" />
+					<Add option="-lallegro_acodec" />
+					<Add option="-lallegro_image" />
+					<Add option="-lallegro_dialog" />
+					<Add option="-lallegro_primitives" />
+					<Add option="-lm" />
+					<Add option="-lphysfs" />
+					<Add directory="/usr/lib64" />
 				</Linker>
 			</Target>
 		</Build>

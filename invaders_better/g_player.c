@@ -34,7 +34,7 @@ void player_draw(float x, float y){
 
 void player_update_shot(PLAYER *player){
 
-    /*
+
     for(int i = 0; i < MAX_BULLETS; i++){
         if(player->bullets[i].alive && player->bullets[i].ttl > 0){
 
@@ -51,7 +51,7 @@ void player_update_shot(PLAYER *player){
           }
         }
     }
-    */
+
 
 
     if(player->shot_time > 0){
@@ -99,7 +99,7 @@ void player_shoot(PLAYER *player){
         case ITEM_ID_DOUBLE_CANNON:
         {
             for(int i = 0; i < player->item_use->shot_num;i++){
-                if(i%1){
+                if(i%2){
                     create_shot_angle(player->bullets, player->x, player->y, 0,-8.0, 45, bullet_id );
                     continue;
                 }

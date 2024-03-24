@@ -47,6 +47,18 @@ extern MOUSECOORD g_mouse;
 extern int player_keys[ALLEGRO_KEY_MAX];
 extern int g_game_paused;
 extern int g_game_started;
+extern int g_gamestate;
+
+enum GAMESTATE_TYPE {
+        GAMESTATE_TYPE_MENU,
+        GAMESTATE_TYPE_GAMEPLAY,
+        GAMESTATE_TYPE_HISCORE,
+        GAMESTATE_TYPE_OPTIONS,
+        GAMESTATE_TYPE_GAMEOVER,
+        GAMESTATE_TYPE_USER_HISCORE,
+        GAMESTATE_TYPE_INTROS
+};
+
 
 double angle_distance_rad(double x1, double y1, double x2, double y2);
 

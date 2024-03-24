@@ -58,6 +58,14 @@ static int screen_height = 0;
 
 
 
+
+
+
+
+
+
+
+
 PARTICLE particles[MAX_PARTICLES] = {0};
 ITEM items[MAX_ITEM_LIST] = {0};
 
@@ -196,17 +204,8 @@ int g_ship_counter = 0;
 int g_ship_active = FALSE;
 ENEMY *g_spaceship_entity = NULL;
 
-enum GAMESTATE_TYPE {
-        GAMESTATE_TYPE_MENU,
-        GAMESTATE_TYPE_GAMEPLAY,
-        GAMESTATE_TYPE_HISCORE,
-        GAMESTATE_TYPE_OPTIONS,
-        GAMESTATE_TYPE_GAMEOVER,
-        GAMESTATE_TYPE_USER_HISCORE,
-        GAMESTATE_TYPE_INTROS
-};
 
-static int g_gamestate = GAMESTATE_TYPE_MENU;
+int g_gamestate = GAMESTATE_TYPE_MENU;
 void new_game(int start);
 
 void gameover_init(void);
@@ -398,9 +397,9 @@ int allegro_create_display_context(int width, int height, int fullscreen, int vs
 
     #define NOT_VALID_PTR(x) (x == NULL || !x ? 1 : 0)
 
-    flags = ALLEGRO_OPENGL_3_0 | ALLEGRO_GENERATE_EXPOSE_EVENTS;
+    flags = ALLEGRO_OPENGL | ALLEGRO_GENERATE_EXPOSE_EVENTS;
 
-    al_set_new_display_option(ALLEGRO_VSYNC, vsync > 0 ? 1 : 0 , ALLEGRO_REQUIRE);
+    al_set_new_display_option(ALLEGRO_VSYNC, vsync > 0 ? 1 : 2 , ALLEGRO_SUGGEST);
 
 
 
@@ -843,6 +842,7 @@ void demo_draw(struct RENDER_ARGS *args){
                 al_draw_bitmap(stars_bg,0,0,0);
                 al_draw_bitmap(args->particles_buffer,0,0,0);
                 //draw_spaceship();
+                draw_enemies(enemies,0,0);
                 //draw_enemies(enemies,0,0);
 
                 //draw_player(player.x, player.y);
@@ -879,7 +879,7 @@ void menu_draw(MENU *menu_list){
     ALLEGRO_FONT *fnt = NULL;
     int space_height = 32;
 
-    if(w >= 1360 && h >= 768){
+    if(w >= 1024 && h >= 768){
         fnt = font_list[FONT_PIXEL_MENU_BIG];
         space_height = 64;
     }else {
@@ -1028,8 +1028,9 @@ void gameplay_update(void){
 }
 
 void gameplay_draw(struct RENDER_ARGS *args){
+                ALLEGRO_STATE render_state;
 
-                mode_blend();
+                al_store_state(&render_state, ALLEGRO_STATE_BLENDER);
                 al_clear_to_color(al_map_rgb(0, 0, 0));
                 al_draw_bitmap(stars_bg,0,0,0);
                 al_draw_bitmap(args->particles_buffer,0,0,0);
@@ -1037,8 +1038,12 @@ void gameplay_draw(struct RENDER_ARGS *args){
                 draw_enemies(enemies,0,0);
 
                 player_draw_shot(&player);
-                item_draw();
 
+                mode_blend();
+                item_draw();
+                mode_solid();
+
+                al_restore_state(&render_state);
                 enemies_draw_bullets(enemies);
                 draw_life_bar();
                 score_draw_text();
@@ -1114,7 +1119,7 @@ int main(int argc, char **argv)
 
     char title[200];
 
-    snprintf(title, 200, "Invaders From Space (better) %d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_BUILD);
+    snprintf(title, 200, "Invaders From Space (better) %d.%02d.%02d", VERSION_MAJOR, VERSION_MINOR, VERSION_BUILD);
 
     if(allegro_create_display_context(0,0,0,2, title) > 0){
         fprintf(stderr, "Error: failed to load display context");
@@ -1505,7 +1510,7 @@ int hiscore_load_file(char *filename, HISCORE *hsc){
 
     al_fread(fp, &header, sizeof(HISCORE_HDR));
 
-    if(header.uncompressed_size != al_fsize(fp)){
+    if(header.uncompressed_size != (mz_ulong)al_fsize(fp)){
         return -2;
     }
 

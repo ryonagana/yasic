@@ -99,9 +99,8 @@ void draw_enemies(ENEMY enemy_list[ENEMY_ROWS][ENEMY_COLS], float offset_x, floa
     }
 
     if(gameover > 0){
-        al_draw_textf(debug_font, al_map_rgb_f(1.0,0,0), (int)al_get_display_width(display)/ 2,
-         (int)al_get_display_height(display) / 2.0,0, "GAME OVER BABY!"
-        );
+        g_gamestate = GAMESTATE_TYPE_GAMEOVER;
+        return;
     }
 }
 
@@ -124,6 +123,8 @@ void enemies_draw_bullets(ENEMY enemies[ENEMY_ROWS][ENEMY_COLS]){
 
 void enemies_update_bullet(PLAYER *player, ENEMY (*enemies)[ENEMY_COLS]){
 
+        if(g_game_paused)
+            return;
 
         for(int y = 0; y < ENEMY_ROWS; y++){
             for(int x = 0;x < ENEMY_COLS;x++){
@@ -169,14 +170,13 @@ void enemies_update_bullet(PLAYER *player, ENEMY (*enemies)[ENEMY_COLS]){
                                     }
 
                                     bullet->alive = FALSE;
-                                    //particle_explosion(particles, (int)bullet->x, (int)bullet->y, 200,100, 200);
-
+                                    particle_explosion(particles, (int)bullet->x, (int)bullet->y, 200,100, 200, COLOR_ORANGE);
                                     play(SFX_EXPLOSION4);
                                 }
 
                            }
 
-                           if(bullet->x >= al_get_display_width(display)){
+                           if(bullet->x >= al_get_display_width(display)-1){
                                bullet->alive = FALSE;
                            }
 
@@ -184,7 +184,7 @@ void enemies_update_bullet(PLAYER *player, ENEMY (*enemies)[ENEMY_COLS]){
                                bullet->alive = false;
                            }
 
-                            if(bullet->y >= al_get_display_height(display)){
+                            if(bullet->y >= al_get_display_height(display)-1){
                                bullet->alive = false;
                            }
 
