@@ -14,7 +14,7 @@
 static int enemy_direction = 1;
 static int walk_time = WALK_TIME_DELAY_PHASE1;
 
-const float explosion_speed[4] = {
+static float explosion_speed[4] = {
      .5f,
      1.0f,
      1.2f,

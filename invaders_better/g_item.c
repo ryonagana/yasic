@@ -187,6 +187,8 @@ void S_item_effect_get_default_cannon(ITEM *item, void *args){
 void item_assign_to_player(PLAYER *player, ITEM *item){
     if(player != NULL){
         player->item_use = item;
+        player->shot_time = item->shot_time;
+        player->ammo = item->ammo;
         return;
     }
 

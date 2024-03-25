@@ -570,6 +570,7 @@ void new_game(int start){
         wave_reset();
     }
 
+    enemies_reset(enemies);
     player_init(&player);
     g_enemies_wave.ticks = al_get_timer_count(timer) + 200;
 

@@ -1433,7 +1433,7 @@
 	<allegro5/allegro.h>
 	<stdio.h>
 
-1711235842 source:/home/archdark/projetos/c/yasic/invaders_better/g_enemies.c
+1711292283 source:/home/archdark/projetos/c/yasic/invaders_better/g_enemies.c
 	<assert.h>
 	"g_sound.h"
 	"g_enemies.h"
@@ -1464,7 +1464,7 @@
 	<stdio.h>
 	<stdint.h>
 
-1711235842 source:/home/archdark/projetos/c/yasic/invaders_better/g_item.c
+1711330469 source:/home/archdark/projetos/c/yasic/invaders_better/g_item.c
 	"g_item.h"
 	"g_utils.h"
 	"main.h"
@@ -1482,7 +1482,7 @@
 	"g_render.h"
 	"g_utils.h"
 
-1711290807 source:/home/archdark/projetos/c/yasic/invaders_better/g_player.c
+1711330370 source:/home/archdark/projetos/c/yasic/invaders_better/g_player.c
 	"g_player.h"
 	<math.h>
 	"g_render.h"
