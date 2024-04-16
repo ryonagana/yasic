@@ -99,8 +99,9 @@ void player_draw_shot(PLAYER *player){
             al_draw_bitmap(sprites[SPR_PLAYERSHOT], player->bullets[i].x, player->bullets[i].y,0);
         }
    }
-
+#ifdef DEBUG
     player_show_debug(player);
+#endif
 }
 
 
@@ -108,21 +109,27 @@ void player_shoot(PLAYER *player){
 
   ITEM* weapon = &player->items[player->item_index];
 
+  
+
   if(!weapon->active) return;
     /* if(!(weapon->flags & ITEMINFO_FLAG_WEAP)) continue; */
-    
+
+  player->shot_time = weapon->shot_time;
+  player->shot_count = weapon->shot_count;
+  player->ammo = weapon->ammo;
+  
   switch(weapon->id){
       case ITEM_ID_DEFAULT_CANNON:
 	{
 	    create_shot(player->bullets, player->x , player->y, 0, -4.0f, weapon->id);
-	    player->shot_time = weapon->shot_time;
+
 	}
 	break;
 
       case ITEM_ID_DOUBLE_CANNON:
         {
-	  player->shot_time = weapon->shot_time;
-	  for(int i = 0; i < 2; i++){
+	 
+	  for(int i = 0; i < weapon->shot_count; i++){
 	    float ang = i==0 ? 50.0f : 140.0;
 	    create_shot_angle(player->bullets, player->x , player->y, 0, -2.0f, ang, weapon->id);
 	  }

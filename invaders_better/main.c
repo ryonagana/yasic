@@ -1,3 +1,4 @@
+#include <allegro5/timer.h>
 #include <stdio.h>
 #include <math.h>
 
@@ -443,12 +444,16 @@ void new_game(int start){
 
         enemies_init(enemies);
         wave_reset();
+	return;
     }
 
+    g_game_started = TRUE;
     enemies_reset(enemies);
     player_init(&player);
     g_enemies_wave.ticks = al_get_timer_count(timer) + 200;
-
+    enemies_init(enemies);
+    wave_reset();
+    
     return;
 }
 
@@ -684,7 +689,7 @@ int64_t g_record_actual_frame = 0;
 
 void demo_update(void){
         player_update_shot(&player);
-        enemies_update_bullet(&player, enemies);
+        //enemies_update_bullet(&player, enemies);
 
         stars_update();
         //item_update(&player, item_list);
@@ -975,7 +980,7 @@ int main(int argc, char **argv)
 
     char title[200];
 
-    snprintf(title, 200, "Invaders From Space (better) %d.%02d.%02d", VERSION_MAJOR, VERSION_MINOR, VERSION_BUILD);
+    snprintf(title, 200, "Invaders From Space (better) %d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_BUILD);
 
     if(allegro_create_display_context(0,0,0,2, title) > 0){
         fprintf(stderr, "Error: failed to load display context");
@@ -1010,11 +1015,12 @@ int main(int argc, char **argv)
     stars_init();
     item_init();
     g_enemies_wave.boss_wave = 0;
-    g_enemies_wave.started = 0;
+    g_enemies_wave.started = 1;
     g_enemies_wave.col = ENEMY_COLS;
     g_enemies_wave.row = ENEMY_ROWS;
     g_enemies_wave.text_time = 0;
     g_enemies_wave.ticks = 0;
+    g_enemies_wave.wave_num = 1;
     //item_init(item_list, MAX_ITEM_LIST);
 
 
@@ -1576,7 +1582,7 @@ void gameover_draw(void){
 
 void wave_reset(void){
     g_enemies_wave.wave_num = 1;
-    g_enemies_wave.ticks = 0;
+    g_enemies_wave.ticks = al_get_timer_count(timer);
     //enemy_wave = 1;
     //enemy_wave_time = 0;
     //enemy_wave_time_total = 0;

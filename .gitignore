@@ -17,4 +17,6 @@ game.pk0
 *.pk0
 invaders_better/assets
 invaders_better/invaders_better
-invaders_better/*.exe
+invaders_better/*.exe*-bin
+*~
+*#
