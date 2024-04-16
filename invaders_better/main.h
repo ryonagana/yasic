@@ -1,7 +1,7 @@
 #ifndef MAIN_HEADER
 #define MAIN_HEADER
 
-#include "g_particles.h"
+#include "g_utils.h"
 
 typedef struct DIFFICULTY_PARAMS {
     int type;
@@ -37,6 +37,7 @@ typedef struct POINT {
 }POINT;
 
 typedef struct PLAYER PLAYER;
+#include "g_particles.h"
 
 void do_gameover(void);
 
@@ -61,8 +62,6 @@ enum GAMESTATE_TYPE {
 
 
 double angle_distance_rad(double x1, double y1, double x2, double y2);
-
-
 PLAYER* getPlayer(int pos);
 
 

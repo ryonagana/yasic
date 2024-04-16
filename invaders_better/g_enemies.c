@@ -6,7 +6,7 @@
 #include "g_sprites.h"
 #include "g_render.h"
 #include "g_particles.h"
-
+#include "g_score.h"
 
 #include "math.h"
 #include "g_player.h"
@@ -22,12 +22,11 @@ static float explosion_speed[4] = {
 };
 
 
-
 ENEMY* getFreeEnemy(ENEMY (*enemies)[ENEMY_COLS]){
     for(int i = 0; i < ENEMY_ROWS; i++){
         for(int j = 0; j < ENEMY_COLS;j++){
 
-            if(!enemies[i][j].alive){
+            if(0 == enemies[i][j].alive){
                 return &enemies[i][j];
             }
         }
@@ -252,7 +251,7 @@ void enemies_set_down(ENEMY (*enemies)[ENEMY_COLS]){
 
 
 void enemies_update(PLAYER *player,  ITEM *item_list, ENEMY (*enemies)[ENEMY_COLS]){
-
+    UNUSED(item_list);
 
     int phase = WALK_TIME_DELAY_PHASE1;
     for(int y = 0; y < ENEMY_ROWS; y++){
@@ -301,7 +300,7 @@ void enemies_update(PLAYER *player,  ITEM *item_list, ENEMY (*enemies)[ENEMY_COL
                  if(enemies_bullet_collision(&enemies[y][x], player->bullets)){
                         enemies[y][x].alive = FALSE;
                         player->score += 100;
-                        //score_add(score_list, 100, enemies[y][x].x, enemies[y][x].y, COLOR_RED);
+                        score_add(g_score_list, 100, enemies[y][x].x, enemies[y][x].y, COLOR_RED);
                         int rand = game_rand_range(0,2);
                         int speed_index = 0;
                         speed_index = game_rand_range(0,3);
@@ -322,11 +321,14 @@ void enemies_update(PLAYER *player,  ITEM *item_list, ENEMY (*enemies)[ENEMY_COL
                                 SFX_POWERUP3
                             };
 
-                            //score_add(score_list, 150,  enemies[y][x].x,enemies[y][x].y-50, COLOR_WHITE);
+                            score_add(g_score_list, 150,  enemies[y][x].x,enemies[y][x].y-50, COLOR_WHITE);
                             player->score += 150;
+			     
+			    
                             //item_spawn(item_list, enemies[y][x].x,enemies[y][x].y, item_drop_item);
-                            item_spawn_id(item_list, MAX_ITEM_LIST, player,   enemies[y][x].x,enemies[y][x].y, item_drop_item);
-                            //assert(it == NULL);
+                            item_spawn_by_id(player, enemies[y][x].x, enemies[y][x].y, item_drop_item);
+			    fprintf(stdout, "ITEM DROPPED ID: %d\n", item_drop_item);
+			    //assert(it == NULL);
                             //it->id = item_drop_item;
                             int rand_snd = game_rand_range(0,2);
                             play(sounds[rand_snd]);

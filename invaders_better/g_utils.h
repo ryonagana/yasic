@@ -9,9 +9,10 @@
 #include <allegro5/allegro_physfs.h>
 #include <physfs.h>
 
+
 #define VERSION_MAJOR 0
-#define VERSION_MINOR 2
-#define VERSION_BUILD 2
+#define VERSION_MINOR 3
+#define VERSION_BUILD 0
 
 #define TRUE  (1ul)
 #define FALSE (0l)
@@ -25,7 +26,7 @@
 
 
 #define PI  ALLEGRO_PI
-#define PI2 (ALLEGRO_PI*2)
+#define PI2 (ALLEGRO_PI*ALLEGRO_PI)
 
 #define RAD2DEG 57.29578049
 #define DEG2RAD 0.017453292
@@ -37,11 +38,22 @@
 #define COLOR_MAGENTA al_map_rgb(255,9,255)
 #define COLOR_ORANGE al_map_rgba(241, 196, 15,255)
 
+
+#define MAX_BULLETS 50
+#define DEFAULT_PARTICLES 2000
+#define MAX_PARTICLES     10000
+
+#define MAX_FONTS 6
+
+
+
+
 extern int gameover;
 extern int line;
 extern int enemy_shoot_time;
 extern int game_difficulty;
 extern int g_demo_start;
+extern ALLEGRO_FONT *font_list[MAX_FONTS];
 
 int  game_rand(int num);
 int game_rand_range(int n, int m);

@@ -1,6 +1,7 @@
 #ifndef GAME_PLAYER_HEADER
 #define GAME_PLAYER_HEADER
 
+
 #include "g_item.h"
 #include "g_bullets.h"
 
@@ -19,7 +20,9 @@ typedef struct PLAYER {
     int shoot;
     int keypressed[4];
     ITEM items[ITEM_ID_COUNT];
-    ITEM *item_use;
+    ITEM weapons[ITEM_ID_COUNT];
+  //ITEM *item_use;
+    unsigned item_index;
     int ammo;
 } PLAYER;
 
@@ -30,4 +33,8 @@ void player_update_shot(PLAYER *player);
 void player_draw_shot(PLAYER *player);
 void player_shoot(PLAYER *player);
 void player_update(PLAYER *player);
+
+//DEBUG:
+void player_show_debug(PLAYER *p);
+
 #endif // GAME_PLAYER_HEADER

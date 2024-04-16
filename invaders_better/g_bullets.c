@@ -26,27 +26,15 @@ BULLET* getFreeBullet(BULLET bullets[MAX_BULLETS]){
 BULLET *create_shot_angle(BULLET *bullets, const float x, const float y, const float vx, const float vy, float angle_deg, int id){
     BULLET *bullet = getFreeBullet(bullets);
 
-
+    bullet->alive = TRUE;
     bullet->vx = vx;
     bullet->vy = vy;
-
-
-    double angle = angle_deg * DEG2RAD;
-
-    bullet->y =  y;
-    bullet->x =  x;
-
-    bullet->angle = angle;
-
-    bullet->alive = TRUE;
-    bullet->ttl = game_rand_range(80,255);
-    bullet->bullet_id = id;
-
-
-
-
+    bullet->bullet_id  = id;
+    bullet->x = x;
+    bullet->y = y;
+    bullet->angle = angle_deg;
+    bullet->ttl = game_rand_range(100, 255);
     return bullet;
-
 }
 
 BULLET *create_shot(BULLET *bullets, const float x, const float y, const float vx, const float vy, int id){
@@ -56,9 +44,10 @@ BULLET *create_shot(BULLET *bullets, const float x, const float y, const float v
     bullet->x = x;
     bullet->y = y;
     bullet->alive = TRUE;
-    bullet->ttl = game_rand_range(80,255);
+    bullet->ttl = game_rand_range(100,255);
     bullet->vx = vx;
     bullet->vy = vy;
+    bullet->angle = 90;
     bullet->bullet_id = id;
 
 

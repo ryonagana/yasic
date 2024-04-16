@@ -12,22 +12,13 @@
 #include "g_player.h"
 #include "g_enemies.h"
 #include "g_sprites.h"
-
+#include "g_utils.h"
+#include "g_score.h"
 #include "miniz.h"
+#include "g_score.h"
 
-#define VERSION_MAJOR 0
-#define VERSION_MINOR 2
-#define VERSION_BUILD 2
-
-#define TRUE  (1ul)
-#define FALSE (0l)
-#define TILE 32
-#define UNUSED(x) ((void)x)
-
-#define ENEMY_COLS 10
-#define ENEMY_ROWS 5
-#define GAME_DATAFILES "game.pk0"
-#define HISCORE_DATA "hiscore.dat"
+/* #define GAME_DATAFILES "game.pk0" */
+/* #define HISCORE_DATA "hiscore.dat" */
 
 static  int g_close_game = FALSE;
 
@@ -35,35 +26,8 @@ ALLEGRO_MUTEX *key_mutex = NULL;
 char keybuffer[255] = {0};
 int keybuffer_counter = 0;
 
-#define PI  ALLEGRO_PI
-#define PI2 (ALLEGRO_PI*2)
-
-#define RAD2DEG 57.29578049
-#define DEG2RAD 0.017453292
-
-#define FPS 60.0
-
-#define COLOR_WHITE al_map_rgb(255,255,255)
-#define COLOR_RED al_map_rgb(255,0,0)
-#define COLOR_MAGENTA al_map_rgb(255,9,255)
-#define COLOR_ORANGE al_map_rgba(241, 196, 15,255)
-
 static int screen_width  = 0;
 static int screen_height = 0;
-
-#define MAX_BULLETS 50
-
-#define DEFAULT_PARTICLES 2000
-#define MAX_PARTICLES     10000
-
-
-
-
-
-
-
-
-
 
 
 PARTICLE particles[MAX_PARTICLES] = {0};
@@ -77,32 +41,9 @@ enum SPRITE_INTRO {
 
 ALLEGRO_BITMAP *spr_intro[10];
 
-
-
-//static int enemy_wave = 1;
-//static int enemy_wave_time = 0;
-//static int enemy_wave_time_total = 0;
-
 void wave_reset(void);
-
-
-
 static PLAYER player;
 static ENEMY enemies[ENEMY_ROWS][ENEMY_COLS] = {0};
-
-
-
-typedef struct TEXT {
-    float x, y;
-    char text[255];
-    int ttl;
-    int shadow;
-    ALLEGRO_COLOR color;
-}TEXT;
-
-
-static TEXT score_list[10] = {0};
-
 
 
 int gameover = 0;
@@ -186,17 +127,7 @@ ALLEGRO_BITMAP *stars_bg = NULL;
 
 static STAR star_list[3][MAX_STARS_PART];
 
-enum FONT_ID {
 
-    FONT_PIXEL_SMALL,
-    FONT_PIXEL_BIG,
-    FONT_PIXEL_MENU_BIG,
-    FONT_PIXEL_MENU_SMALL,
-    FONT_COUNT
-
-};
-
-#define MAX_FONTS 6
 ALLEGRO_FONT *font_list[MAX_FONTS] = {0};
 
 int g_count_init_round = 0;
@@ -250,8 +181,8 @@ MENU game_menu[MAX_MENU] = {
         {3, "HI-SCORE\0", menu_hiscore_click, 0, NULL,0,0},
         {4, "ABOUT\0", NULL, 1, NULL,0,0},
         {5, "OPTIONS\0", NULL, 1, NULL,0,0},
-        {6, "QUIT\0", menu_quit_click, 0, NULL,0,0},
-        {7, "EASTER EGG\0", NULL, 0, NULL,0,0}
+        {6, "QUIT\0", menu_quit_click, 0, NULL,0,0}//,
+        //{7, "EASTER EGG\0", NULL, 0, NULL,0,0}
 };
 
 
@@ -310,10 +241,6 @@ HISCORE hiscore[MAX_HISCORE] = {
 };
 
 
-void score_draw_text(void);
-TEXT* score_free(TEXT score[10]);
-void score_add(TEXT *score, const int num, const float x, const float y, ALLEGRO_COLOR color);
-void score_update_text(void);
 
 ALLEGRO_BITMAP *hiscore_bitmap = NULL;
 
@@ -504,58 +431,6 @@ void mode_solid(void){
     al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO);
 }
 
-void score_draw_text(void){
-
-    for (int i= 0; i < 10; i++){
-        if(score_list[i].ttl > 0){
-            unsigned char a,r,g,b;
-            al_unmap_rgba(score_list[i].color,&r,&g,&b,&a);
-            int ttl = score_list[i].ttl;
-            ALLEGRO_COLOR c = al_premul_rgba(r*ttl,g*ttl,b*ttl,a*ttl);
-            al_draw_textf(font_list[FONT_PIXEL_BIG], c, score_list[i].x, score_list[i].y,0, "%s", score_list[i].text);
-        }
-    }
-}
-
-TEXT* score_free(TEXT score[10]){
-    int c = 0;
-    for(c = 0;c < 10; c++){
-        if(score[c].ttl <= 0){
-            break;
-        }
-    }
-    return &score[c];
-}
-
-void score_add(TEXT *score, const int num, const float x, const float y, ALLEGRO_COLOR color){
-
-    TEXT *s = score_free(score);
-
-    s->x = x;
-    s->y = y;
-    s->ttl = 80;
-    s->shadow = 0;
-    s->color = color;
-    if(num < 0){
-         snprintf(s->text, 255, "%02d", num);
-         return;
-    }
-
-    snprintf(s->text, 255, "+%02d", num);
-    return;
-}
-
-void score_update_text(void){
-    for (int i= 0; i < 10; i++){
-        if(score_list[i].ttl > 0){
-            score_list[i].y--;
-            score_list[i].ttl--;
-        }
-
-    }
-}
-
-
 void new_game(int start){
 
     if(start){
@@ -593,26 +468,6 @@ void draw_life_bar(void){
     al_draw_filled_rectangle(0, 0, w, 15 , al_map_rgb_f(1,0,0));
     al_draw_multiline_textf(font_list[FONT_PIXEL_SMALL], al_map_rgb(255,255,255), w/2,0, 0,20,0,"%.2f",  fabs(player.life/100.0) * 100);
 }
-
-void draw_debug(void){
-    al_draw_multiline_textf(debug_font, al_map_rgb_f(1.0,0,0), 0,0, 300, 20,0,
-    "TOTAL ENEMIES: %d\n"
-    "SHOT TIME: %d\n"
-    "SHOOT : %s\n"
-    "LINES: %d lines\n"
-    "Enemy Shoot Time %d\n"
-    "Player life: %.2f",
-    enemies_count(enemies, ENEMY_COLS, ENEMY_ROWS),
-    player.shot_time,
-    player.shoot ? "YES" : "No",
-    line,
-    enemy_shoot_time,
-    player.life
-
-   );
-   return;
-}
-
 
 
 
@@ -948,7 +803,7 @@ void gameplay_update(void){
 
         if(player_keys[ALLEGRO_KEY_K]){
             enemies_killall(enemies);
-            item_killall(items, MAX_ITEM_LIST );
+            item_pickup_killall();
             new_game(FALSE);
             return;
         }
@@ -956,7 +811,7 @@ void gameplay_update(void){
 #endif // DEBUG
 
 
-            ITEM *items = item_get_array();
+	    //ITEM *items = item_get_array();
 
             player_update_shot(&player);
             enemies_update_bullet(&player, enemies);
@@ -964,7 +819,7 @@ void gameplay_update(void){
             player_update(&player);
             score_update_text();
             stars_update();
-            item_update();
+            item_drop_update();
             update_spaceship();
 
             for(int i = 0; i  < MAX_PARTICLES-1; i++){
@@ -1021,7 +876,7 @@ void gameplay_update(void){
                 al_stop_timer(timer);
                 new_game(FALSE);
                 al_start_timer(timer);
-                item_killall(items, MAX_ITEM_LIST);
+                item_pickup_killall();
                 enemies_reset(enemies);
 
             }
@@ -1041,7 +896,7 @@ void gameplay_draw(struct RENDER_ARGS *args){
                 player_draw_shot(&player);
 
                 mode_blend();
-                item_draw();
+                item_drop_draw();
                 mode_solid();
 
                 al_restore_state(&render_state);
@@ -1060,9 +915,9 @@ void gameplay_draw(struct RENDER_ARGS *args){
 
                     float wave_x = 0.0;
                     float wave_y = 0.0;
-                    float alpha = al_get_timer_count(timer)  - g_enemies_wave.ticks / 100;
+                    //float alpha = al_get_timer_count(timer)  - g_enemies_wave.ticks / 100;
 
-                    ALLEGRO_COLOR trans_color = al_premul_rgba_f(1,1,1, alpha);
+                    ALLEGRO_COLOR trans_color = al_premul_rgba_f(1,1,1, 1);
                     char buf[25];
                     sprintf(buf, "WAVE: %d", g_enemies_wave.wave_num);
 
@@ -1149,6 +1004,7 @@ int main(int argc, char **argv)
 
     init_sprites();
     font_init();
+    score_init();
 
     hiscore_init();
     stars_init();
@@ -1574,15 +1430,39 @@ void hiscore_update(void){
 
 void hiscore_draw(void){
 
+  
     al_draw_bitmap(stars_bg,0,0,0);
 
     for(int i = 0; i < MAX_HISCORE; i++){
 
         int h = al_get_font_line_height(font_list[FONT_PIXEL_MENU_BIG]);
+	
 
         if(hiscore[i].score > 0){
+	  char position[10];
+	  
+	  if(i == 1){
+	    snprintf(position,10,"%dst",i);
+	  }else if(i == 2){
+	    snprintf(position,10,"%dnd",i);
+	  }else  if(i == 3){
+	    snprintf(position,10,"%drd",i);
+	  }else {
+	    snprintf(position,10,"%dth",i);
+	  }
+	  
+	  
+	  al_draw_textf(font_list[FONT_PIXEL_BIG], al_map_rgb_f(1,1,1),
+            0,
+            200 + h*i,
+            0,
+            "%s", position
+            );
+	}
+	
+        if(hiscore[i].score > 0){
             al_draw_textf(font_list[FONT_PIXEL_BIG], al_map_rgb_f(1,1,1),
-            10,
+            80,
             200 + h*i,
             0,
             "%s", hiscore[i].name
