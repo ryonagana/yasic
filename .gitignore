@@ -20,3 +20,5 @@ invaders_better/invaders_better
 invaders_better/*.exe*-bin
 *~
 *#
+.objs
+invaders_better2
