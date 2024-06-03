@@ -70,6 +70,8 @@
 		<Unit filename="include/enemy.h" />
 		<Unit filename="include/invaders.h" />
 		<Unit filename="include/level.h" />
+		<Unit filename="include/player.h" />
+		<Unit filename="include/sound.h" />
 		<Unit filename="include/utils.h" />
 		<Unit filename="src/display.c">
 			<Option compilerVar="CC" />
@@ -84,6 +86,12 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/player.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/sound.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
