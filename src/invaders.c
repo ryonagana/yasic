@@ -2,18 +2,21 @@
 #include "display.h"
 #include "level.h"
 #include "enemy.h"
-
+#include "player.h"
 
 static int s_close = 0;
 static int s_redraw = 0;
 
 static LEVEL game_level;
 static ENEMY enemies[ENEMY_ROWS][ENEMY_COLS];
+static PLAYER player;
+
 
 
 void Invaders_Start(void){
     LVL_Init(&game_level, enemies);
     LVL_Start(enemies);
+    Player_Init(&player);
 }
 void Invaders_Loop(void){
 

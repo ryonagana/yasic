@@ -4,20 +4,27 @@
 #include "display.h"
 
 
+#define ENEMY_DIR_RIGHT (1)
+#define ENEMY_DIR_LEFT  (-1)
+
 static ALLEGRO_BITMAP *tmp_enemies = NULL;
-static int enemies_direction = 1;
+//static int s_enemies_direction = 1;
+//static int s_enemy_state = 0;
 
 
-static void S_Enemy_MoveDown(ENEMY (*enemies)[ENEMY_COLS], int direction){
+static int S_Enemy_AliveCount(ENEMY (*enemies)[ENEMY_COLS]){
+  int count = 0;
+
   for(int row = 0; row < ENEMY_ROWS;row++){
     for(int col = 0; col < ENEMY_COLS;col++){
-            ENEMY *e = &enemies[row][col];
-            e->y += TILE<<1;
-
+        ENEMY *e = &enemies[row][col];
+        if(e->alive){
+                count++;
+        }
     }
   }
 
-  enemies_direction = direction;
+  return count;
 }
 
 void Enemy_Update(ENEMY (*enemies)[ENEMY_COLS]){
@@ -26,16 +33,17 @@ void Enemy_Update(ENEMY (*enemies)[ENEMY_COLS]){
     for(int col = 0; col < ENEMY_COLS;col++){
         ENEMY *e = &enemies[row][col];
 
-        if(e->x  > Dsp_GetWindowWidth()){
-            S_Enemy_MoveDown(enemies, -1);
+        if(e->x >= Dsp_GetWindowWidth() - TILE - 1 && e->direction == ENEMY_DIR_RIGHT){
+            e->direction = -1;
+            e->y += TILE;
         }
 
-        if(e->x  < 0){
-            S_Enemy_MoveDown(enemies, 1);
+        if(e->x <= 0 && e->direction == ENEMY_DIR_LEFT){
+            e->direction = 1;
+            e->y += TILE;
         }
 
-        e->x += 6 * e->vx * enemies_direction;
-
+        e->x += 6 * e->vx * e->direction;
     }
   }
 }
@@ -53,7 +61,6 @@ void Enemy_Render(ENEMY (*enemies)[ENEMY_COLS]){
 
             if(e->alive){
                     al_draw_bitmap(tmp_enemies,  e->x * e->vx ,e->y * e->vy,0);
-                //al_draw_filled_rectangle(e->x, e->y, e->x + col * TILE , e->y * row + TILE, al_map_rgb(255,0,0));
             }
         }
       }

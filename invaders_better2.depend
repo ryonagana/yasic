@@ -1,9 +1,10 @@
 # depslib dependency file v1.0
-1717279200 source:/home/user/programacao/c/yasic/src/invaders.c
+1717378937 source:/home/user/programacao/c/yasic/src/invaders.c
 	"invaders.h"
 	"display.h"
 	"level.h"
 	"enemy.h"
+	"player.h"
 
 1717346483 source:/home/user/programacao/c/yasic/src/display.c
 	"display.h"
@@ -753,8 +754,9 @@
 1705822921 /usr/include/allegro5/allegro_primitives.h
 	<allegro5/allegro.h>
 
-1717072307 source:/home/user/programacao/c/yasic/src/main.c
+1717378328 source:/home/user/programacao/c/yasic/src/main.c
 	"display.h"
+	"sound.h"
 	"invaders.h"
 
 1717030856 /home/user/programacao/c/yasic/include/invaders.h
@@ -772,13 +774,13 @@
 	<allegro5/allegro_native_dialog.h>
 	<allegro5/allegro_primitives.h>
 
-1717372141 source:/home/user/programacao/c/yasic/src/enemy.c
+1717377327 source:/home/user/programacao/c/yasic/src/enemy.c
 	"enemy.h"
 	<allegro5/allegro_primitives.h>
 	"level.h"
 	"display.h"
 
-1717372157 /home/user/programacao/c/yasic/include/enemy.h
+1717376191 /home/user/programacao/c/yasic/include/enemy.h
 	<stdio.h>
 	<stdint.h>
 
@@ -789,4 +791,18 @@
 
 1717258106 /home/user/programacao/c/yasic/include/level.h
 	"enemy.h"
+
+1717378083 source:/home/user/programacao/c/yasic/src/sound.c
+	"sound.h"
+	<stdio.h>
+	<allegro5/allegro.h>
+	<allegro5/allegro_audio.h>
+	<allegro5/allegro_acodec.h>
+
+1717377478 /home/user/programacao/c/yasic/include/sound.h
+
+1717379526 source:/home/user/programacao/c/yasic/src/player.c
+	"player.h"
+
+1717379561 /home/user/programacao/c/yasic/include/player.h
 

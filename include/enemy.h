@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define ENEMY_ROWS 8
-#define ENEMY_COLS 5
+#define ENEMY_ROWS 7
+#define ENEMY_COLS 7
 
 
 typedef struct ENEMY {
