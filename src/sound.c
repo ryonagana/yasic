@@ -38,9 +38,7 @@ void Snd_Init(int channels){
 
 }
 void Snd_End(void){
-    if(al_is_audio_installed()){
-        al_uninstall_audio();
-    }
+
 
     if(mixer){
         al_destroy_mixer(mixer);
@@ -49,5 +47,9 @@ void Snd_End(void){
     if(voice){
         al_destroy_voice(voice);
         voice = NULL;
+    }
+
+    if(al_is_audio_installed()){
+        al_uninstall_audio();
     }
 }

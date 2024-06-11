@@ -8,9 +8,6 @@
 #define ENEMY_DIR_LEFT  (-1)
 
 static ALLEGRO_BITMAP *tmp_enemies = NULL;
-//static int s_enemies_direction = 1;
-//static int s_enemy_state = 0;
-
 
 static int S_Enemy_AliveCount(ENEMY (*enemies)[ENEMY_COLS]){
   int count = 0;

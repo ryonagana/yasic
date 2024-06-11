@@ -6,4 +6,7 @@ void Invaders_Start(void);
 void Invaders_Loop(void);
 void Invaders_Shutdown(void);
 
+int KeyDown(int key);
+int KeyUp(int key);
+
 #endif // INVADERS_H
