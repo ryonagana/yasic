@@ -2,34 +2,9 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug Linux" />
-	<File name="include/player.h" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include/display.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="289" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="src/display.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="5880" topLine="206" />
-		</Cursor>
-	</File>
-	<File name="src/main.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="204" topLine="8" />
-		</Cursor>
-	</File>
-	<File name="src/sound.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1100" topLine="44" />
-		</Cursor>
-	</File>
-	<File name="src/enemy.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1630" topLine="47" />
-		</Cursor>
-	</File>
-	<File name="include/sound.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="33" topLine="0" />
+			<Cursor1 position="750" topLine="13" />
 		</Cursor>
 	</File>
 	<File name="src/level.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -37,19 +12,54 @@
 			<Cursor1 position="329" topLine="11" />
 		</Cursor>
 	</File>
-	<File name="src/player.c" open="1" top="1" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include/enemy.h" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="233" topLine="0" />
+			<Cursor1 position="114" topLine="5" />
 		</Cursor>
 	</File>
-	<File name="include/display.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include/sound.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="750" topLine="13" />
+			<Cursor1 position="33" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src/bullet.c" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1183" topLine="82" />
+		</Cursor>
+	</File>
+	<File name="src/enemy.c" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="203" topLine="9" />
+		</Cursor>
+	</File>
+	<File name="src/sound.c" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1168" topLine="31" />
+		</Cursor>
+	</File>
+	<File name="src/display.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5880" topLine="206" />
+		</Cursor>
+	</File>
+	<File name="src/player.c" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="329" topLine="12" />
 		</Cursor>
 	</File>
 	<File name="include/invaders.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="0" topLine="0" />
+			<Cursor1 position="149" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="include/bullet.h" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="939" topLine="28" />
+		</Cursor>
+	</File>
+	<File name="src/invaders.c" open="1" top="1" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3276" topLine="105" />
 		</Cursor>
 	</File>
 	<File name="include/level.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -57,14 +67,14 @@
 			<Cursor1 position="475" topLine="20" />
 		</Cursor>
 	</File>
-	<File name="include/enemy.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include/player.h" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="114" topLine="0" />
+			<Cursor1 position="293" topLine="6" />
 		</Cursor>
 	</File>
-	<File name="src/invaders.c" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src/main.c" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="360" topLine="18" />
+			<Cursor1 position="273" topLine="0" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

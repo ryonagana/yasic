@@ -66,6 +66,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="include/bullet.h" />
 		<Unit filename="include/display.h" />
 		<Unit filename="include/enemy.h" />
 		<Unit filename="include/invaders.h" />
@@ -73,6 +74,9 @@
 		<Unit filename="include/player.h" />
 		<Unit filename="include/sound.h" />
 		<Unit filename="include/utils.h" />
+		<Unit filename="src/bullet.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/display.c">
 			<Option compilerVar="CC" />
 		</Unit>
