@@ -12,9 +12,9 @@ typedef struct PLAYER {
     uint32_t shoot_count;
     uint32_t weapons;
     uint32_t items;
-
     int accel_timer;
     int accel_index;
+    int state;
 
 }PLAYER;
 

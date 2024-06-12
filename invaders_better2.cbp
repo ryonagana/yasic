@@ -8,12 +8,47 @@
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/invaders_better2" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../invaders" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-std=c11" />
+					<Add option="-m64" />
 					<Add option="-g" />
+					<Add option="-Werror -Wno-unused-function -Wno-switch -Wuninitialized -Wstrict-prototypes -g -O0 -gdwarf-5" />
+					<Add directory="vendor/liballegro-5.2.9-git-release-static/include" />
+					<Add directory="include" />
 				</Compiler>
+				<Linker>
+					<Add option="-static-libstdc++" />
+					<Add option="-static-libgcc" />
+					<Add option="-m64" />
+					<Add option="-lallegro_monolith-static" />
+					<Add option="-lwinmm" />
+					<Add option="-lshlwapi" />
+					<Add option="-lole32" />
+					<Add option="-luser32" />
+					<Add option="-lopengl32" />
+					<Add option="-lgdi32" />
+					<Add option="-lgdiplus" />
+					<Add option="-lwebp" />
+					<Add option="-ldsound" />
+					<Add option="-lflac" />
+					<Add option="-lpsapi" />
+					<Add option="-ldumb" />
+					<Add option="-lfreetype" />
+					<Add option="-lpng16" />
+					<Add option="-lzlib" />
+					<Add option="-lcomdlg32" />
+					<Add option="-lsharpyuv" />
+					<Add option="-lphysfs" />
+					<Add option="-lvorbisfile" />
+					<Add option="-lvorbis" />
+					<Add option="-logg" />
+					<Add directory="vendor/liballegro-5.2.9-git-release-static/lib" />
+					<LinkerExe value="CppCompiler" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/invaders_better2" prefix_auto="1" extension_auto="1" />

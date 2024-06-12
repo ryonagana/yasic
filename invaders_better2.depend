@@ -819,3 +819,385 @@
 	<allegro5/allegro.h>
 	<allegro5/allegro_primitives.h>
 
+1718213701 source:d:\projetos\c\invaders\src\bullet.c
+	"bullet.h"
+	<stdio.h>
+	"display.h"
+
+1718213696 d:\projetos\c\invaders\include\bullet.h
+	<allegro5/allegro.h>
+	<allegro5/allegro_primitives.h>
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\allegro.h
+	"allegro5/base.h"
+	"allegro5/altime.h"
+	"allegro5/bitmap.h"
+	"allegro5/bitmap_draw.h"
+	"allegro5/bitmap_io.h"
+	"allegro5/bitmap_lock.h"
+	"allegro5/blender.h"
+	"allegro5/clipboard.h"
+	"allegro5/color.h"
+	"allegro5/config.h"
+	"allegro5/cpu.h"
+	"allegro5/debug.h"
+	"allegro5/display.h"
+	"allegro5/drawing.h"
+	"allegro5/error.h"
+	"allegro5/events.h"
+	"allegro5/file.h"
+	"allegro5/fixed.h"
+	"allegro5/fmaths.h"
+	"allegro5/fshook.h"
+	"allegro5/fullscreen_mode.h"
+	"allegro5/haptic.h"
+	"allegro5/joystick.h"
+	"allegro5/keyboard.h"
+	"allegro5/memory.h"
+	"allegro5/monitor.h"
+	"allegro5/mouse.h"
+	"allegro5/mouse_cursor.h"
+	"allegro5/path.h"
+	"allegro5/render_state.h"
+	"allegro5/shader.h"
+	"allegro5/system.h"
+	"allegro5/threads.h"
+	"allegro5/timer.h"
+	"allegro5/tls.h"
+	"allegro5/touch_input.h"
+	"allegro5/transformations.h"
+	"allegro5/utf8.h"
+	"allegro5/alcompat.h"
+
+1702562682 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\base.h
+	<errno.h>
+	<limits.h>
+	<limits.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdlib.h>
+	<time.h>
+	<string.h>
+	<sys/types.h>
+	<fortify/fortify.h>
+	<dmalloc.h>
+	"allegro5/internal/alconfig.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\internal\alconfig.h
+	"allegro5/platform/alplatf.h"
+	"allegro5/platform/alwatcom.h"
+	"allegro5/platform/almngw32.h"
+	"allegro5/platform/albcc32.h"
+	"allegro5/platform/almsvc.h"
+	"allegro5/platform/aliphonecfg.h"
+	"allegro5/platform/alosxcfg.h"
+	"allegro5/platform/alandroidcfg.h"
+	"allegro5/platform/alraspberrypicfg.h"
+	"allegro5/platform/alucfg.h"
+	"allegro5/platform/allegro_sdl_config.h"
+	"allegro5/platform/astdint.h"
+	"allegro5/platform/astdbool.h"
+
+1703072630 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\platform\alplatf.h
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\platform\alwatcom.h
+	<io.h>
+	<i86.h>
+	<conio.h>
+	<fcntl.h>
+	<direct.h>
+	<malloc.h>
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\platform\almngw32.h
+	<io.h>
+	<fcntl.h>
+	<direct.h>
+	<malloc.h>
+	"allegro5/platform/alplatf.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\platform\albcc32.h
+	<io.h>
+	<fcntl.h>
+	<direct.h>
+	<malloc.h>
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\platform\almsvc.h
+	<io.h>
+	<fcntl.h>
+	<direct.h>
+	<malloc.h>
+	"allegro5/platform/alplatf.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\platform\aliphonecfg.h
+	<fcntl.h>
+	<unistd.h>
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\platform\alosxcfg.h
+	"allegro5/platform/alplatf.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\platform\alandroidcfg.h
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\platform\alraspberrypicfg.h
+	<fcntl.h>
+	<unistd.h>
+	<sys/types.h>
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\platform\alucfg.h
+	<fcntl.h>
+	<unistd.h>
+	"alunix.h"
+	"allegro5/platform/alplatf.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\platform\alunix.h
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\platform\allegro_sdl_config.h
+	<fcntl.h>
+	<unistd.h>
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\platform\astdint.h
+	<inttypes.h>
+	<stdint.h>
+	<limits.h>
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\platform\astdbool.h
+	<stdbool.h>
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\altime.h
+	"allegro5/base.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\bitmap.h
+	"allegro5/color.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\color.h
+	"allegro5/base.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\bitmap_draw.h
+	"allegro5/bitmap.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\bitmap_io.h
+	"allegro5/bitmap.h"
+	"allegro5/file.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\file.h
+	"allegro5/base.h"
+	"allegro5/path.h"
+	"allegro5/utf8.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\path.h
+	"allegro5/base.h"
+	"allegro5/utf8.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\utf8.h
+	"allegro5/base.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\bitmap_lock.h
+	"allegro5/bitmap.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\blender.h
+	"allegro5/base.h"
+	"allegro5/color.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\clipboard.h
+	"allegro5/base.h"
+	"allegro5/display.h"
+	"allegro5/utf8.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\display.h
+	"allegro5/bitmap.h"
+	"allegro5/color.h"
+	"allegro5/events.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\events.h
+	"allegro5/altime.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\config.h
+	"allegro5/file.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\cpu.h
+	"allegro5/base.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\debug.h
+	<assert.h>
+	"allegro5/base.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\drawing.h
+	"allegro5/color.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\error.h
+	"allegro5/base.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\fixed.h
+	"allegro5/base.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\fmaths.h
+	"allegro5/base.h"
+	"allegro5/fixed.h"
+	"allegro5/inline/fmaths.inl"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\inline\fmaths.inl
+	"allegro5/error.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\fshook.h
+	"allegro5/base.h"
+	"allegro5/file.h"
+	"allegro5/path.h"
+	<sys/types.h>
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\fullscreen_mode.h
+	"allegro5/base.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\haptic.h
+	"allegro5/base.h"
+	"allegro5/display.h"
+	"allegro5/events.h"
+	"allegro5/joystick.h"
+	"allegro5/keyboard.h"
+	"allegro5/mouse.h"
+	"allegro5/touch_input.h"
+
+1702562682 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\joystick.h
+	"allegro5/base.h"
+	"allegro5/events.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\keyboard.h
+	"allegro5/base.h"
+	"allegro5/events.h"
+	"allegro5/keycodes.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\keycodes.h
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\mouse.h
+	"allegro5/base.h"
+	"allegro5/events.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\touch_input.h
+	"allegro5/base.h"
+	"allegro5/events.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\memory.h
+	"allegro5/base.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\monitor.h
+	"allegro5/base.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\mouse_cursor.h
+	"allegro5/base.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\render_state.h
+	"allegro5/base.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\shader.h
+	"allegro5/base.h"
+	"allegro5/transformations.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\transformations.h
+	"allegro5/display.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\system.h
+	"allegro5/config.h"
+	"allegro5/path.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\threads.h
+	"allegro5/altime.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\timer.h
+	"allegro5/base.h"
+	"allegro5/events.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\tls.h
+	"allegro5/base.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\alcompat.h
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\allegro_primitives.h
+	<allegro5/allegro.h>
+
+1718213696 d:\projetos\c\invaders\include\display.h
+	<stdio.h>
+	<allegro5/allegro.h>
+	<allegro5/allegro_audio.h>
+	<allegro5/allegro_acodec.h>
+	<allegro5/allegro_image.h>
+	<allegro5/allegro_font.h>
+	<allegro5/allegro_ttf.h>
+	<allegro5/allegro_native_dialog.h>
+	<allegro5/allegro_primitives.h>
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\allegro_audio.h
+	"allegro5/allegro.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\allegro_acodec.h
+	"allegro5/allegro.h"
+	"allegro5/allegro_audio.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\allegro_image.h
+	"allegro5/base.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\allegro_font.h
+	"allegro5/allegro.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\allegro_ttf.h
+	"allegro5/allegro.h"
+	"allegro5/allegro_font.h"
+
+1702561983 d:\projetos\c\invaders\vendor\liballegro-5.2.9-git-release-static\include\allegro5\allegro_native_dialog.h
+	"allegro5/allegro.h"
+
+1718213701 source:d:\projetos\c\invaders\src\display.c
+	"display.h"
+	"utils.h"
+
+1718213696 d:\projetos\c\invaders\include\utils.h
+
+1718224390 source:d:\projetos\c\invaders\src\enemy.c
+	"enemy.h"
+	<allegro5/allegro_primitives.h>
+	"level.h"
+	"display.h"
+
+1718221170 d:\projetos\c\invaders\include\enemy.h
+	<stdio.h>
+	<stdint.h>
+
+1718225402 d:\projetos\c\invaders\include\level.h
+	"enemy.h"
+
+1718226046 source:d:\projetos\c\invaders\src\invaders.c
+	"invaders.h"
+	"display.h"
+	"level.h"
+	"enemy.h"
+	"player.h"
+	"bullet.h"
+
+1718213696 d:\projetos\c\invaders\include\invaders.h
+
+1718219826 d:\projetos\c\invaders\include\player.h
+	<stdio.h>
+	<stdint.h>
+
+1718228012 source:d:\projetos\c\invaders\src\level.c
+	"level.h"
+	"enemy.h"
+	"display.h"
+	<string.h>
+	<allegro5/allegro_primitives.h>
+
+1718213702 source:d:\projetos\c\invaders\src\main.c
+	"display.h"
+	"sound.h"
+	"invaders.h"
+
+1718213696 d:\projetos\c\invaders\include\sound.h
+
+1718219890 source:d:\projetos\c\invaders\src\player.c
+	"player.h"
+	"display.h"
+
+1718213702 source:d:\projetos\c\invaders\src\sound.c
+	"sound.h"
+	<stdio.h>
+	<allegro5/allegro.h>
+	<allegro5/allegro_audio.h>
+	<allegro5/allegro_acodec.h>
+

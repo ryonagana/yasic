@@ -19,6 +19,7 @@ void Player_Init(PLAYER *p){
     p->direction = 1;
     p->accel_timer = 70;
     p->accel_index = 0;
+    p->state = 0;
 }
 void Player_SpawnPos(PLAYER *p, int x, int y){
     p->x = x;
@@ -35,9 +36,16 @@ void Player_SetShootCount(PLAYER *p, int count){
 }
 
 void Player_MoveLeft(PLAYER *p){
+    if(p->state <= 0){
+        p->state = 1;
+    }
     p->direction = -1;
 }
 void Player_MoveRight(PLAYER *p){
+    if(p->state <= 0){
+        p->state = 1;
+    }
+
     p->direction = 1;
 }
 

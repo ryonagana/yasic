@@ -4,46 +4,88 @@
 #include "display.h"
 
 
-#define ENEMY_DIR_RIGHT (1)
-#define ENEMY_DIR_LEFT  (-1)
+
+#define ENEMY_LOOP(ptr) for(int i = 0; i <  ENEMY_ROWS; i++){\
+                          for(int j = 0; j < ENEMY_COLS;j++){\
+                              ENEMY *e = &(ptr)[i][j];\
+
+
+#define ENEMY_LOOP_END()  }\
+                        }
+
+
 
 static ALLEGRO_BITMAP *tmp_enemies = NULL;
 
-static int S_Enemy_AliveCount(ENEMY (*enemies)[ENEMY_COLS]){
+int Enemy_AliveCount(ENEMY (*enemies)[ENEMY_COLS]){
+
+
   int count = 0;
 
-  for(int row = 0; row < ENEMY_ROWS;row++){
-    for(int col = 0; col < ENEMY_COLS;col++){
-        ENEMY *e = &enemies[row][col];
+
+    ENEMY_LOOP(enemies)
+    {
         if(e->alive){
-                count++;
+            count++;
         }
     }
-  }
+    ENEMY_LOOP_END();
+
 
   return count;
+
 }
 
-void Enemy_Update(ENEMY (*enemies)[ENEMY_COLS]){
+void Enemy_CorrectPosition(ENEMY (*enemies)[ENEMY_COLS]){
 
-  for(int row = 0; row < ENEMY_ROWS;row++){
-    for(int col = 0; col < ENEMY_COLS;col++){
-        ENEMY *e = &enemies[row][col];
+    ENEMY_LOOP(enemies)
+    {
+        if(e->alive){
+            e->x = (e->x * TILE) * 1.2f;
+            e->y = (e->y * TILE) * 1.2f;
 
-        if(e->x >= Dsp_GetWindowWidth() - TILE - 1 && e->direction == ENEMY_DIR_RIGHT){
-            e->direction = -1;
-            e->y += TILE;
         }
-
-        if(e->x <= 0 && e->direction == ENEMY_DIR_LEFT){
-            e->direction = 1;
-            e->y += TILE;
-        }
-
-        e->x += 6 * e->vx * e->direction;
     }
-  }
+    ENEMY_LOOP_END();
+
+
 }
+
+
+void Enemy_ChangeDirection(ENEMY (*enemies)[ENEMY_COLS], int direction){
+    ENEMY_LOOP(enemies)
+    {
+        if(e->alive){
+
+            if(direction == ENEMY_DIR_RIGHT){
+                e->vx *=  ENEMY_DIR_LEFT;
+                e->direction = ENEMY_DIR_LEFT;
+            }
+
+            if(direction == ENEMY_DIR_LEFT){
+                e->vx *=  ENEMY_DIR_RIGHT;
+                e->direction = ENEMY_DIR_RIGHT;
+            }
+        }
+    }
+    ENEMY_LOOP_END();
+}
+
+
+void Enemy_MoveDown(ENEMY (*enemies)[ENEMY_COLS], LEVEL *level){
+
+    ENEMY_LOOP(enemies)
+    {
+        if(e->alive){
+            e->y += TILE;
+        }
+    }
+    ENEMY_LOOP_END();
+
+}
+
+
+
 void Enemy_Render(ENEMY (*enemies)[ENEMY_COLS]){
        if(NULL == tmp_enemies){
             tmp_enemies  = al_create_bitmap(TILE,TILE);
@@ -57,7 +99,7 @@ void Enemy_Render(ENEMY (*enemies)[ENEMY_COLS]){
             ENEMY *e = &enemies[row][col];
 
             if(e->alive){
-                    al_draw_bitmap(tmp_enemies,  e->x * e->vx ,e->y * e->vy,0);
+                    al_draw_bitmap(tmp_enemies,  e->x,e->y,0);
             }
         }
       }

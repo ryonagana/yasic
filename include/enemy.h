@@ -8,6 +8,9 @@
 #define ENEMY_COLS 7
 
 
+#define ENEMY_DIR_RIGHT (1)
+#define ENEMY_DIR_LEFT  (-1)
+
 typedef struct ENEMY {
     int x;
     int y;
@@ -18,7 +21,13 @@ typedef struct ENEMY {
     int direction;
 }ENEMY;
 
-void Enemy_Update(ENEMY (*enemies)[ENEMY_COLS]);
+//dummy
+typedef struct LEVEL LEVEL;
+
 void Enemy_Render(ENEMY (*enemies)[ENEMY_COLS]);
 void Enemy_Shutdown(void);
+int Enemy_AliveCount(ENEMY (*enemies)[ENEMY_COLS]);
+void Enemy_MoveDown(ENEMY (*enemies)[ENEMY_COLS], LEVEL *level);
+void Enemy_ChangeDirection(ENEMY (*enemies)[ENEMY_COLS], int direction);
+void Enemy_CorrectPosition(ENEMY (*enemies)[ENEMY_COLS]);
 #endif // ENEMY_H

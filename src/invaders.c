@@ -29,6 +29,9 @@ void Invaders_Start(void){
     memset(pressed_keys, 0, sizeof(pressed_keys));
     memset(released_keys, 0, sizeof(released_keys));
 
+    int total = Enemy_AliveCount(enemies);
+
+    printf("%d", total);
 
     Player_SpawnPos(&player, Dsp_GetWindowWidth() / 2 - 32, Dsp_GetWindowHeight() - 64);
 
@@ -45,11 +48,14 @@ void Invaders_Loop(void){
 
             al_set_target_bitmap(g_display.screen);
             al_clear_to_color(al_map_rgb(0,0,0));
-            Dsp_RenderNoise();
+            //Dsp_RenderNoise();
             Enemy_Render(enemies);
             Player_Render(&player);
 
             Bullet_Draw(&bullets, NULL);
+
+
+            LVL_RenderGrid();
             al_set_target_backbuffer(g_display.dsp);
 
 
@@ -84,6 +90,10 @@ void Invaders_Loop(void){
 
                 case ALLEGRO_EVENT_TIMER:
                     {
+                        if(player.state == 1){
+                            game_level.state =  LEVEL_STATE_MARCH_WALK;
+                        }
+
                         if(KeyDown(ALLEGRO_KEY_LEFT)){
                             Player_MoveLeft(&player);
                         }
@@ -94,7 +104,7 @@ void Invaders_Loop(void){
 
 
                         Player_Update(&player);
-                        Enemy_Update(enemies);
+                        //Enemy_Update(enemies);
                         Bullet_Update(&bullets);
 
 
@@ -118,12 +128,12 @@ void Invaders_Loop(void){
                             shot_time_test = 60;
                         }
 
+                        LVL_Update(&game_level, enemies);
+
                         s_redraw = 1;
                     }
                     break;
             }
-
-
 
         }while(!al_event_queue_is_empty(g_display.queue));
 
