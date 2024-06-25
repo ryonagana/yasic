@@ -22,8 +22,8 @@ static int s_shoot_counter_list[LEVEL_DIFFICULT_NIGHTMARE+1] = {
 
 
 static float march_walk_speed_list[LEVEL_DIFFICULT_NIGHTMARE+1] = {
-    20.0,
-    20.0,
+    1.0,
+    1.0,
     10.0,
     11.0,
     11.0
@@ -44,6 +44,9 @@ void LVL_Init(LEVEL *lvl, ENEMY (*enemies_list)[ENEMY_COLS]){
 
 
 void LVL_Start(ENEMY (*enemies)[ENEMY_COLS]){
+
+    Enemy_Init(enemies);
+    /*
     for(int y = 0; y < ENEMY_COLS;y++){
         for(int x = 0;x < ENEMY_ROWS;x++){
             ENEMY *e = &enemies[y][x];
@@ -61,12 +64,13 @@ void LVL_Start(ENEMY (*enemies)[ENEMY_COLS]){
             e->direction = ENEMY_DIR_RIGHT;
         }
     }
+    */
 }
 
 
 void LVL_Update(LEVEL *level, ENEMY (*enemies)[ENEMY_COLS]){
 
-    if(level->march_walk_time == 0 && level->state == LEVEL_STATE_MARCH_WALK){
+    //if(level->march_walk_time == 0 && level->state == LEVEL_STATE_MARCH_WALK){
 
         for(int row = 0; row < ENEMY_ROWS;row++){
             for(int col = 0; col < ENEMY_COLS;col++){
@@ -74,30 +78,32 @@ void LVL_Update(LEVEL *level, ENEMY (*enemies)[ENEMY_COLS]){
 
 
                 if(e->x >= Dsp_GetWindowWidth() - TILE - 1 && e->direction == ENEMY_DIR_RIGHT){
-                    //Enemy_MoveDown(enemies,level);
+
                     Enemy_ChangeDirection(enemies, e->direction);
+                    Enemy_MoveDown(enemies,level);
                     //Enemy_CorrectPosition(enemies);
                     continue;
                 }
 
                 if(e->x <= 0 && e->direction == ENEMY_DIR_LEFT){
-                    //Enemy_MoveDown(enemies,level);
+
                     Enemy_ChangeDirection(enemies, e->direction);
+                    Enemy_MoveDown(enemies,level);
                     //Enemy_CorrectPosition(enemies);
                     continue;
                 }
 
                  e->vx = march_walk_speed_list[level->difficulty];
-                 e->x += e->vx * e->direction;
+                 e->x += e->vx * e->direction * ENEMY_GRID_SPACE;
             }
         }
 
-        level->march_walk_time = level->march_walk_delay;
-    }
+   //     level->march_walk_time = level->march_walk_delay;
+    //}
 
-    if(level->march_walk_time > 0 && level->state == LEVEL_STATE_MARCH_WALK){
+   // if(level->march_walk_time > 0 && level->state == LEVEL_STATE_MARCH_WALK){
         level->march_walk_time--;
-    }
+   // }
 
 
 

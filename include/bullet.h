@@ -24,12 +24,16 @@ typedef struct TBULLETS {
     int length;
     int reset;
     void (*update_callback)(struct BULLET *b, int bullet_length);
-    void (*render_callback)(struct BULLET *b, int bullet_length);
+    void (*render_callback)(struct BULLET *b, int bullet_length,  ALLEGRO_BITMAP *bmp);
 }TBULLETS;
 
 void Bullet_Init(TBULLETS *bullet_root, int size);
 void Bullet_Update(TBULLETS *bullet_root);
 void Bullet_Draw(TBULLETS *bullet_root, ALLEGRO_BITMAP *bmp);
+
+
+void Bullet_SetUpdateCallback(TBULLETS *bullets, void (*update_callback)(struct BULLET *b, int bullet_length));
+void Bullet_SetDrawCallback(TBULLETS *bullets,   void (*render_callback)(struct BULLET *b, int bullet_length, ALLEGRO_BITMAP *bmp));
 
 BULLET* Bullet_FindFree(TBULLETS *bullet_root);
 

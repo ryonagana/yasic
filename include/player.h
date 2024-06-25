@@ -2,6 +2,10 @@
 #define PLAYER_H
 #include <stdio.h>
 #include <stdint.h>
+#include "bullet.h"
+
+
+
 typedef struct PLAYER {
     int x;
     int y;
@@ -15,6 +19,7 @@ typedef struct PLAYER {
     int accel_timer;
     int accel_index;
     int state;
+    TBULLETS bullets;
 
 }PLAYER;
 
@@ -28,5 +33,7 @@ void Player_Render(PLAYER *p);
 
 void Player_MoveLeft(PLAYER *p);
 void Player_MoveRight(PLAYER *p);
+
+void Player_Shoot(PLAYER *p);
 
 #endif // PLAYER_H

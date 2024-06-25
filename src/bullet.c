@@ -43,13 +43,11 @@ void Bullet_Update(TBULLETS *bullet_root){
 
             if(bullet_root->update_callback){
                 bullet_root->update_callback(b, bullet_root->length);
-            }else {
-                S_Bullet_Default_Update(b, bullet_root->length);
+                return;
             }
 
-            if(b->flags & BULLET_GRAVITY_AFFECTED){
-                b->vy += b->gravity;
-            }
+            S_Bullet_Default_Update(b, bullet_root->length);
+
 
         }
 
@@ -64,7 +62,8 @@ void Bullet_Draw(TBULLETS *bullet_root, ALLEGRO_BITMAP *bmp){
                 BULLET *b = &bullet_root->bullets[i];
 
             if(bullet_root->render_callback){
-                bullet_root->render_callback(b, bullet_root->length);
+                bullet_root->render_callback(b, bullet_root->length, bmp);
+                return;
             }
 
             if(bmp){
@@ -128,4 +127,15 @@ int Bullet_GetFlag(BULLET *b) {
 
 void Bullet_SetGravity(BULLET *b, float gravity){
     b->gravity = gravity;
+}
+
+void Bullet_SetUpdateCallback(TBULLETS *bullets, void (*update_callback)(struct BULLET *b, int bullet_length)){
+    if(update_callback){
+        bullets->update_callback = update_callback;
+    }
+}
+void Bullet_SetDrawCallback(TBULLETS *bullets,   void (*render_callback)(struct BULLET *b, int bullet_length, ALLEGRO_BITMAP *bmp)){
+    if(render_callback){
+        bullets->render_callback = render_callback;
+    }
 }

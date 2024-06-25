@@ -4,6 +4,7 @@
 #include "enemy.h"
 #include "player.h"
 #include "bullet.h"
+#include "resources.h"
 
 static int s_close = 0;
 static int s_redraw = 0;
@@ -11,7 +12,7 @@ static int s_redraw = 0;
 static LEVEL game_level;
 static ENEMY enemies[ENEMY_ROWS][ENEMY_COLS];
 static PLAYER player;
-static TBULLETS bullets;
+//static TBULLETS bullets;
 
 uint8_t keys[ALLEGRO_KEY_MAX];
 uint8_t released_keys[ALLEGRO_KEY_MAX];
@@ -20,11 +21,12 @@ uint8_t pressed_keys[ALLEGRO_KEY_MAX];
 int shot_time_test = 60;
 
 void Invaders_Start(void){
+    resources_init();
     LVL_Init(&game_level, enemies);
     LVL_Start(enemies);
     Player_Init(&player);
 
-    Bullet_Init(&bullets, 10);
+    //Bullet_Init(&bullets, 10);
 
     memset(pressed_keys, 0, sizeof(pressed_keys));
     memset(released_keys, 0, sizeof(released_keys));
@@ -52,7 +54,7 @@ void Invaders_Loop(void){
             Enemy_Render(enemies);
             Player_Render(&player);
 
-            Bullet_Draw(&bullets, NULL);
+            //Bullet_Draw(&player.bullets, NULL);
 
 
             LVL_RenderGrid();
@@ -102,15 +104,20 @@ void Invaders_Loop(void){
                             Player_MoveRight(&player);
                         }
 
+                        if(KeyDown(ALLEGRO_KEY_SPACE)){
+                            Player_Shoot(&player);
+                        }
+
 
                         Player_Update(&player);
                         //Enemy_Update(enemies);
-                        Bullet_Update(&bullets);
+                        //Bullet_Update(&player.bullets);
 
-
+                        /*
                         if(shot_time_test > 0){
                             shot_time_test--;
                         }
+
 
                         if(shot_time_test == 0){
                             //todo
@@ -127,6 +134,7 @@ void Invaders_Loop(void){
                             }
                             shot_time_test = 60;
                         }
+                        */
 
                         LVL_Update(&game_level, enemies);
 

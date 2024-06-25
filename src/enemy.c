@@ -5,9 +5,9 @@
 
 
 
-#define ENEMY_LOOP(ptr) for(int i = 0; i <  ENEMY_ROWS; i++){\
+#define ENEMY_LOOP(type, ptr) for(int i = 0; i <  ENEMY_ROWS; i++){\
                           for(int j = 0; j < ENEMY_COLS;j++){\
-                              ENEMY *e = &(ptr)[i][j];\
+                             type *e = &(ptr)[i][j];\
 
 
 #define ENEMY_LOOP_END()  }\
@@ -17,13 +17,29 @@
 
 static ALLEGRO_BITMAP *tmp_enemies = NULL;
 
+void Enemy_Init(ENEMY (*enemies)[ENEMY_COLS]){
+
+    ENEMY_LOOP(ENEMY, enemies)
+    {
+        e->alive = 1;
+        e->direction = ENEMY_DIR_LEFT;
+        e->flags = 0;
+        e->vx = 1.0f;
+        e->vy = 1.0f;
+        e->x = (j * TILE) * ENEMY_GRID_SPACE;
+        e->y = (i * TILE) * ENEMY_GRID_SPACE;
+    }
+    ENEMY_LOOP_END();
+
+}
+
 int Enemy_AliveCount(ENEMY (*enemies)[ENEMY_COLS]){
 
 
   int count = 0;
 
 
-    ENEMY_LOOP(enemies)
+    ENEMY_LOOP(ENEMY,  enemies)
     {
         if(e->alive){
             count++;
@@ -36,9 +52,10 @@ int Enemy_AliveCount(ENEMY (*enemies)[ENEMY_COLS]){
 
 }
 
+/*
 void Enemy_CorrectPosition(ENEMY (*enemies)[ENEMY_COLS]){
 
-    ENEMY_LOOP(enemies)
+    ENEMY_LOOP(ENEMY, enemies)
     {
         if(e->alive){
             e->x = (e->x * TILE) * 1.2f;
@@ -50,22 +67,25 @@ void Enemy_CorrectPosition(ENEMY (*enemies)[ENEMY_COLS]){
 
 
 }
+*/
 
 
 void Enemy_ChangeDirection(ENEMY (*enemies)[ENEMY_COLS], int direction){
-    ENEMY_LOOP(enemies)
+    ENEMY_LOOP(ENEMY, enemies)
     {
         if(e->alive){
 
+
             if(direction == ENEMY_DIR_RIGHT){
-                e->vx *=  ENEMY_DIR_LEFT;
+                e->vx *=  ENEMY_DIR_LEFT * ENEMY_GRID_SPACE ;
                 e->direction = ENEMY_DIR_LEFT;
             }
 
             if(direction == ENEMY_DIR_LEFT){
-                e->vx *=  ENEMY_DIR_RIGHT;
+                e->vx *=  ENEMY_DIR_LEFT * ENEMY_GRID_SPACE;
                 e->direction = ENEMY_DIR_RIGHT;
             }
+
         }
     }
     ENEMY_LOOP_END();
@@ -74,10 +94,10 @@ void Enemy_ChangeDirection(ENEMY (*enemies)[ENEMY_COLS], int direction){
 
 void Enemy_MoveDown(ENEMY (*enemies)[ENEMY_COLS], LEVEL *level){
 
-    ENEMY_LOOP(enemies)
+    ENEMY_LOOP(ENEMY, enemies)
     {
         if(e->alive){
-            e->y += TILE;
+            e->y += TILE * ENEMY_GRID_SPACE;
         }
     }
     ENEMY_LOOP_END();

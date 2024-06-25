@@ -819,12 +819,12 @@
 	<allegro5/allegro.h>
 	<allegro5/allegro_primitives.h>
 
-1718213701 source:d:\projetos\c\invaders\src\bullet.c
+1719345379 source:d:\projetos\c\invaders\src\bullet.c
 	"bullet.h"
 	<stdio.h>
 	"display.h"
 
-1718213696 d:\projetos\c\invaders\include\bullet.h
+1719345370 d:\projetos\c\invaders\include\bullet.h
 	<allegro5/allegro.h>
 	<allegro5/allegro_primitives.h>
 
@@ -1149,34 +1149,36 @@
 
 1718213696 d:\projetos\c\invaders\include\utils.h
 
-1718224390 source:d:\projetos\c\invaders\src\enemy.c
+1719341873 source:d:\projetos\c\invaders\src\enemy.c
 	"enemy.h"
 	<allegro5/allegro_primitives.h>
 	"level.h"
 	"display.h"
 
-1718221170 d:\projetos\c\invaders\include\enemy.h
+1719341367 d:\projetos\c\invaders\include\enemy.h
 	<stdio.h>
 	<stdint.h>
 
 1718225402 d:\projetos\c\invaders\include\level.h
 	"enemy.h"
 
-1718226046 source:d:\projetos\c\invaders\src\invaders.c
+1719344992 source:d:\projetos\c\invaders\src\invaders.c
 	"invaders.h"
 	"display.h"
 	"level.h"
 	"enemy.h"
 	"player.h"
 	"bullet.h"
+	"resources.h"
 
 1718213696 d:\projetos\c\invaders\include\invaders.h
 
-1718219826 d:\projetos\c\invaders\include\player.h
+1719342667 d:\projetos\c\invaders\include\player.h
 	<stdio.h>
 	<stdint.h>
+	"bullet.h"
 
-1718228012 source:d:\projetos\c\invaders\src\level.c
+1719341826 source:d:\projetos\c\invaders\src\level.c
 	"level.h"
 	"enemy.h"
 	"display.h"
@@ -1190,9 +1192,11 @@
 
 1718213696 d:\projetos\c\invaders\include\sound.h
 
-1718219890 source:d:\projetos\c\invaders\src\player.c
+1719345761 source:d:\projetos\c\invaders\src\player.c
 	"player.h"
 	"display.h"
+	"level.h"
+	"resources.h"
 
 1718213702 source:d:\projetos\c\invaders\src\sound.c
 	"sound.h"
@@ -1200,4 +1204,11 @@
 	<allegro5/allegro.h>
 	<allegro5/allegro_audio.h>
 	<allegro5/allegro_acodec.h>
+
+1719345094 source:d:\projetos\c\invaders\src\resources.c
+	<stdio.h>
+	"resources.h"
+
+1719345084 d:\projetos\c\invaders\include\resources.h
+	<allegro5/allegro.h>
 

@@ -6,6 +6,7 @@
 
 #define ENEMY_ROWS 7
 #define ENEMY_COLS 7
+#define ENEMY_GRID_SPACE 1.5f
 
 
 #define ENEMY_DIR_RIGHT (1)
@@ -23,7 +24,7 @@ typedef struct ENEMY {
 
 //dummy
 typedef struct LEVEL LEVEL;
-
+void Enemy_Init(ENEMY (*enemies)[ENEMY_COLS]);
 void Enemy_Render(ENEMY (*enemies)[ENEMY_COLS]);
 void Enemy_Shutdown(void);
 int Enemy_AliveCount(ENEMY (*enemies)[ENEMY_COLS]);
