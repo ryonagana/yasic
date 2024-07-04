@@ -24,30 +24,26 @@
 					<Add option="-static-libstdc++" />
 					<Add option="-static-libgcc" />
 					<Add option="-m64" />
-					<Add option="-lallegro_monolith-static" />
-					<Add option="-lwinmm" />
-					<Add option="-lshlwapi" />
-					<Add option="-lole32" />
+					<Add option="-lmingw32" />
+					<Add option="-lSDL2main" />
+					<Add option="-lSDL2" />
+					<Add option="-lSDL2_image" />
+					<Add option="-mwindows" />
+					<Add option="-lm" />
+					<Add option="-ldinput8" />
+					<Add option="-ldxguid" />
+					<Add option="-ldxerr8" />
 					<Add option="-luser32" />
-					<Add option="-lopengl32" />
 					<Add option="-lgdi32" />
-					<Add option="-lgdiplus" />
-					<Add option="-lwebp" />
-					<Add option="-ldsound" />
-					<Add option="-lflac" />
-					<Add option="-lpsapi" />
-					<Add option="-ldumb" />
-					<Add option="-lfreetype" />
-					<Add option="-lpng16" />
-					<Add option="-lzlib" />
-					<Add option="-lcomdlg32" />
-					<Add option="-lsharpyuv" />
-					<Add option="-lphysfs" />
-					<Add option="-lvorbisfile" />
-					<Add option="-lvorbis" />
-					<Add option="-logg" />
+					<Add option="-lwinmm" />
+					<Add option="-limm32" />
+					<Add option="-lole32" />
+					<Add option="-loleaut32" />
+					<Add option="-lshell32" />
+					<Add option="-lversion" />
+					<Add option="-luuid" />
 					<Add directory="vendor/liballegro-5.2.9-git-release-static/lib" />
-					<LinkerExe value="CppCompiler" />
+					<LinkerExe value="CCompiler" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -106,9 +102,12 @@
 		<Unit filename="include/enemy.h" />
 		<Unit filename="include/invaders.h" />
 		<Unit filename="include/level.h" />
+		<Unit filename="include/platform.h" />
 		<Unit filename="include/player.h" />
+		<Unit filename="include/render.h" />
 		<Unit filename="include/resources.h" />
 		<Unit filename="include/sound.h" />
+		<Unit filename="include/texture.h" />
 		<Unit filename="include/utils.h" />
 		<Unit filename="src/bullet.c">
 			<Option compilerVar="CC" />
@@ -131,10 +130,16 @@
 		<Unit filename="src/player.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="src/render.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/resources.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/sound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/texture.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
