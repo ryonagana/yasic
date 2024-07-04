@@ -55,7 +55,7 @@ void Bullet_Update(TBULLETS *bullet_root){
 
 }
 
-void Bullet_Draw(TBULLETS *bullet_root, ALLEGRO_BITMAP *bmp){
+void Bullet_Draw(TBULLETS *bullet_root, SDL_Texture *bmp){
     for(int i = 0; i < bullet_root->length;i++){
 
             if(bullet_root->bullets[i].alive){
@@ -67,9 +67,9 @@ void Bullet_Draw(TBULLETS *bullet_root, ALLEGRO_BITMAP *bmp){
             }
 
             if(bmp){
-                al_draw_bitmap(bmp, b->x, b->y,0);
+                //al_draw_bitmap(bmp, b->x, b->y,0);
             }else {
-                al_draw_filled_circle(b->x,b->y,5,al_map_rgb(255,0,255));
+                //al_draw_filled_circle(b->x,b->y,5,al_map_rgb(255,0,255));
             }
         }
     }
@@ -134,7 +134,7 @@ void Bullet_SetUpdateCallback(TBULLETS *bullets, void (*update_callback)(struct 
         bullets->update_callback = update_callback;
     }
 }
-void Bullet_SetDrawCallback(TBULLETS *bullets,   void (*render_callback)(struct BULLET *b, int bullet_length, ALLEGRO_BITMAP *bmp)){
+void Bullet_SetDrawCallback(TBULLETS *bullets,   void (*render_callback)(struct BULLET *b, int bullet_length, SDL_Texture *bmp)){
     if(render_callback){
         bullets->render_callback = render_callback;
     }

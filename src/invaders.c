@@ -5,18 +5,18 @@
 #include "player.h"
 #include "bullet.h"
 #include "resources.h"
+#include "utils.h"
 
-static int s_close = 0;
-static int s_redraw = 0;
+
 
 static LEVEL game_level;
 static ENEMY enemies[ENEMY_ROWS][ENEMY_COLS];
 static PLAYER player;
 //static TBULLETS bullets;
 
-uint8_t keys[ALLEGRO_KEY_MAX];
-uint8_t released_keys[ALLEGRO_KEY_MAX];
-uint8_t pressed_keys[ALLEGRO_KEY_MAX];
+uint8_t keys[227];
+uint8_t released_keys[227];
+uint8_t pressed_keys[227];
 
 int shot_time_test = 60;
 
@@ -39,117 +39,48 @@ void Invaders_Start(void){
 
 
 }
+
+int InvadersHandleLoop(float delta){
+    SDL_Event e;
+    SDL_PollEvent(&e);
+
+
+    if(e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE){
+        return 1;
+    }
+
+    return 0;
+
+}
+
 void Invaders_Loop(void){
 
-    while(!s_close){
-        ALLEGRO_EVENT e;
 
-        if(s_redraw && al_event_queue_is_empty(g_display.queue)){
-            s_redraw = 0;
-            al_clear_to_color(al_map_rgb(0,0,0));
-
-            al_set_target_bitmap(g_display.screen);
-            al_clear_to_color(al_map_rgb(0,0,0));
-            //Dsp_RenderNoise();
-            Enemy_Render(enemies);
-            Player_Render(&player);
-
-            //Bullet_Draw(&player.bullets, NULL);
+    float deltaTime = 0;
+    Uint32 prevFrameTime = 0;
 
 
-            LVL_RenderGrid();
-            al_set_target_backbuffer(g_display.dsp);
+    while(!InvadersHandleLoop(deltaTime)){
+        deltaTime = (SDL_GetTicks() - prevFrameTime ) / 1000.0f;
+        prevFrameTime = SDL_GetTicks();
 
 
-            al_draw_bitmap(g_display.screen,0,0,0);
+        Enemy_Update(enemies, deltaTime);
 
-            al_flip_display();
+        SDL_SetRenderTarget(g_display.renderer, g_display.screen);
+        SDL_RenderClear(g_display.renderer);
+
+        Enemy_Render(enemies);
+        SDL_SetRenderTarget(g_display.renderer, NULL);
+
+        Dsp_Render();
+
+
+        if(g_display.vsync){
+            Dsp_CapFrameRate(prevFrameTime);
         }
-
-        //deplete all event queue before render
-        do {
-            al_wait_for_event(g_display.queue, &e);
-
-            switch(e.type){
-                case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                    s_close = 1;
-                    break;
-
-
-                case ALLEGRO_EVENT_KEY_DOWN:
-                    {
-                        pressed_keys[e.keyboard.keycode] = 1;
-                        released_keys[e.keyboard.keycode] = 0;
-                    }
-                    break;
-
-                case ALLEGRO_EVENT_KEY_UP:
-                    {
-                        pressed_keys[e.keyboard.keycode] = 0;
-                        released_keys[e.keyboard.keycode] = 1;
-                    }
-                    break;
-
-                case ALLEGRO_EVENT_TIMER:
-                    {
-                        if(player.state == 1){
-                            game_level.state =  LEVEL_STATE_MARCH_WALK;
-                        }
-
-                        if(KeyDown(ALLEGRO_KEY_LEFT)){
-                            Player_MoveLeft(&player);
-                        }
-
-                        if(KeyDown(ALLEGRO_KEY_RIGHT)){
-                            Player_MoveRight(&player);
-                        }
-
-                        if(KeyDown(ALLEGRO_KEY_SPACE)){
-                            Player_Shoot(&player);
-                        }
-
-
-                        Player_Update(&player);
-                        //Enemy_Update(enemies);
-                        //Bullet_Update(&player.bullets);
-
-                        /*
-                        if(shot_time_test > 0){
-                            shot_time_test--;
-                        }
-
-
-                        if(shot_time_test == 0){
-                            //todo
-                            BULLET * shoot = Bullet_FindFree(&bullets);
-
-                            if(shoot){
-                                shoot->alive = 1;
-                                shoot->vx = 0;
-                                shoot->vy = -1;
-                                shoot->x = player.x;
-                                shoot->y = player.y;
-                                //Bullet_SetGravity(shoot, 0.06f);
-                                //Bullet_SetFlag(shoot, BULLET_GRAVITY_AFFECTED);
-                            }
-                            shot_time_test = 60;
-                        }
-                        */
-
-                        LVL_Update(&game_level, enemies);
-
-                        s_redraw = 1;
-                    }
-                    break;
-            }
-
-        }while(!al_event_queue_is_empty(g_display.queue));
-
-
-
-
-
     }
+
 
 }
 void Invaders_Shutdown(void){

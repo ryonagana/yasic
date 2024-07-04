@@ -4,5 +4,9 @@
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
+#define UNUSED(x) ((void)x)
+
+#define TRUE  (1ul)
+#define FALSE (0ul)
 
 #endif // UTILS_H

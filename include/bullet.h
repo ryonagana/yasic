@@ -1,7 +1,6 @@
 #ifndef BULLET_H
 #define BULLET_H
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_primitives.h>
+#include <SDL2/SDL.h>
 
 #define MAX_BULLETS 150
 #define BULLET_RICOCHET_SIDE    (1<<0)
@@ -24,16 +23,16 @@ typedef struct TBULLETS {
     int length;
     int reset;
     void (*update_callback)(struct BULLET *b, int bullet_length);
-    void (*render_callback)(struct BULLET *b, int bullet_length,  ALLEGRO_BITMAP *bmp);
+    void (*render_callback)(struct BULLET *b, int bullet_length,  SDL_Texture *bmp);
 }TBULLETS;
 
 void Bullet_Init(TBULLETS *bullet_root, int size);
 void Bullet_Update(TBULLETS *bullet_root);
-void Bullet_Draw(TBULLETS *bullet_root, ALLEGRO_BITMAP *bmp);
+void Bullet_Draw(TBULLETS *bullet_root, SDL_Texture* bmp);
 
 
 void Bullet_SetUpdateCallback(TBULLETS *bullets, void (*update_callback)(struct BULLET *b, int bullet_length));
-void Bullet_SetDrawCallback(TBULLETS *bullets,   void (*render_callback)(struct BULLET *b, int bullet_length, ALLEGRO_BITMAP *bmp));
+void Bullet_SetDrawCallback(TBULLETS *bullets,   void (*render_callback)(struct BULLET *b, int bullet_length, SDL_Texture *bmp));
 
 BULLET* Bullet_FindFree(TBULLETS *bullet_root);
 

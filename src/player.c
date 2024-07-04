@@ -19,9 +19,9 @@ static void S_player_default_shot_update(struct BULLET *b, int bullet_length){
     b->y += b->vy;
 }
 
-static void S_player_default_shot_render(struct BULLET *b, int bullet_length, ALLEGRO_BITMAP *bmp){
+static void S_player_default_shot_render(struct BULLET *b, int bullet_length, SDL_Texture *bmp){
     //al_draw_filled_circle(b->x, b->y, 10, al_map_rgb(0,0,255));
-    al_draw_bitmap(bmp, b->x, b->y, 0);
+    //al_draw_bitmap(bmp, b->x, b->y, 0);
 }
 
 void Player_Init(PLAYER *p){
@@ -110,6 +110,7 @@ void Player_Update(PLAYER *p){
 
 void Player_Render(PLAYER *p){
 
-    al_draw_filled_rectangle(p->x, p->y, p->x + 32, p->y + 32, al_map_rgb(0,0,255));
-    Bullet_Draw(&p->bullets, g_sprite[ SPRITE_SHOOT_SPR]);
+    SDL_Texture *bullet_spr = resources_get_sprite(SPRITE_SHOOT_SPR);
+    //al_draw_filled_rectangle(p->x, p->y, p->x + 32, p->y + 32, al_map_rgb(0,0,255));
+    Bullet_Draw(&p->bullets, bullet_spr);
 }

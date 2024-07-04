@@ -111,6 +111,7 @@ void LVL_Update(LEVEL *level, ENEMY (*enemies)[ENEMY_COLS]){
 
 void LVL_RenderGrid(void){
 
+    /*
     int tx,ty;
     //ALLEGRO_VERTEX vtx[255];
     ALLEGRO_VERTEX vty[255];
@@ -126,26 +127,19 @@ void LVL_RenderGrid(void){
          vty[rows].z = 0;
          vty[rows].u = 0;
          vty[rows].v = 0;
-         vty[rows].color = al_map_rgb(255,0,255);
+         //vty[rows].color = al_map_rgb(255,0,255);
 
 
     }
 
-    /*
-    for(int cols = 0 ; cols < tx; cols++){
 
-         vtx[cols].x = (cols * TILE); //tx * TILE;
-         vtx[cols].y = Dsp_GetWindowHeight();
-         vtx[cols].z = 0;
-         vtx[cols].u = 0;
-         vtx[cols].v = 0;
-         vtx[cols].color = al_map_rgb(255,0,255);
-    }*/
 
 
 
     //al_draw_prim(vtx, NULL, NULL, 0, tx, ALLEGRO_PRIM_LINE_LIST);
     al_draw_prim(vty, NULL, NULL, 0, ty, ALLEGRO_PRIM_LINE_STRIP);
+    */
+
 
 }
 

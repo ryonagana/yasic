@@ -1,13 +1,12 @@
 #include "sound.h"
 #include <stdio.h>
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_audio.h>
-#include <allegro5/allegro_acodec.h>
+#include "utils.h"
 
-ALLEGRO_MIXER *mixer = NULL;
-ALLEGRO_VOICE *voice = NULL;
+
 
 void Snd_Init(int channels){
+    UNUSED(channels);
+    /*
     if(!al_is_audio_installed()){
         if(!al_install_audio()){
             fprintf(stderr, "Audio Error! - No Sound");
@@ -34,12 +33,14 @@ void Snd_Init(int channels){
     }
 
     al_reserve_samples(channels);
+    */
+    return;
 
 
 }
 void Snd_End(void){
 
-
+    /*
     if(mixer){
         al_destroy_mixer(mixer);
         mixer = NULL;
@@ -51,5 +52,6 @@ void Snd_End(void){
 
     if(al_is_audio_installed()){
         al_uninstall_audio();
-    }
+    }*/
+    return;
 }

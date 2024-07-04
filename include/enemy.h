@@ -26,6 +26,7 @@ typedef struct ENEMY {
 typedef struct LEVEL LEVEL;
 void Enemy_Init(ENEMY (*enemies)[ENEMY_COLS]);
 void Enemy_Render(ENEMY (*enemies)[ENEMY_COLS]);
+void Enemy_Update(ENEMY (*enemies)[ENEMY_COLS], float deltaTime);
 void Enemy_Shutdown(void);
 int Enemy_AliveCount(ENEMY (*enemies)[ENEMY_COLS]);
 void Enemy_MoveDown(ENEMY (*enemies)[ENEMY_COLS], LEVEL *level);
