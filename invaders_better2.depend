@@ -1221,3 +1221,10 @@
 1720122951 d:\projetos\c\invaders\include\texture.h
 	<SDL2/SDL.h>
 
+1720183675 source:d:\projetos\c\invaders\src\timer.c
+	"timer.h"
+	"utils.h"
+
+1720183087 d:\projetos\c\invaders\include\timer.h
+	<SDL2/SDL.h>
+

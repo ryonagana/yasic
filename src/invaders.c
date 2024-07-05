@@ -6,6 +6,7 @@
 #include "bullet.h"
 #include "resources.h"
 #include "utils.h"
+#include "timer.h"
 
 
 
@@ -17,8 +18,9 @@ static PLAYER player;
 uint8_t keys[227];
 uint8_t released_keys[227];
 uint8_t pressed_keys[227];
-
 int shot_time_test = 60;
+
+GAMETIMER game_timer;
 
 void Invaders_Start(void){
     resources_init();
@@ -27,6 +29,8 @@ void Invaders_Start(void){
     Player_Init(&player);
 
     //Bullet_Init(&bullets, 10);
+
+    GameTimer_Init(&game_timer);
 
     memset(pressed_keys, 0, sizeof(pressed_keys));
     memset(released_keys, 0, sizeof(released_keys));

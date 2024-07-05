@@ -108,6 +108,7 @@
 		<Unit filename="include/resources.h" />
 		<Unit filename="include/sound.h" />
 		<Unit filename="include/texture.h" />
+		<Unit filename="include/timer.h" />
 		<Unit filename="include/utils.h" />
 		<Unit filename="src/bullet.c">
 			<Option compilerVar="CC" />
@@ -140,6 +141,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/texture.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/timer.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
