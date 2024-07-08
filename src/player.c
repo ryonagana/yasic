@@ -36,14 +36,15 @@ void Player_Init(PLAYER *p){
     p->accel_index = 0;
     p->state = 0;
 
+
     Bullet_Init(&p->bullets, 35);
     Bullet_SetDrawCallback(&p->bullets, S_player_default_shot_render);
     Bullet_SetUpdateCallback(&p->bullets, S_player_default_shot_update);
 
 }
 void Player_SpawnPos(PLAYER *p, int x, int y){
-    p->x = x;
-    p->y = y;
+    p->pos.x = x;
+    p->pos.y = y;
 }
 
 void Player_SetShootTime(PLAYER *p, int timer){
@@ -79,11 +80,13 @@ void Player_Shoot(PLAYER *p){
 
 void Player_Update(PLAYER *p){
 
-    p->vx = p->direction * s_speed_modifier[0];
+
+
+    p->vel.x = p->direction * s_speed_modifier[0];
     //p->vy = p->direction * s_speed_modifier[0];
 
-    p->x += p->vx;
-    p->y += p->vy;
+    p->pos.x += p->vel.x;
+    p->pos.y += p->vel.y;
     p->direction = 0;
 
     if(p->shoot_count  == 0){
@@ -94,8 +97,6 @@ void Player_Update(PLAYER *p){
         b->y = p->y;
         b->vy = -1;
         b->vy = 1;
-
-
         p->shoot_count = p->shoot_timer;
     }
 
@@ -111,6 +112,12 @@ void Player_Update(PLAYER *p){
 void Player_Render(PLAYER *p){
 
     SDL_Texture *bullet_spr = resources_get_sprite(SPRITE_SHOOT_SPR);
+    SDL_Texture  *player_spr = resources_get_sprite(SPRITE_CANNON);
+
+    SDL_FRect r = {p->pos.x, p->pos.y, 32,32};
+
+    SDL_RenderCopyExF(g_display.renderer, player_spr, NULL, &r, 0.0, NULL, SDL_FLIP_NONE);
+
     //al_draw_filled_rectangle(p->x, p->y, p->x + 32, p->y + 32, al_map_rgb(0,0,255));
     Bullet_Draw(&p->bullets, bullet_spr);
 }

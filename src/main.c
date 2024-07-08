@@ -1,6 +1,7 @@
 #include "display.h"
 #include "sound.h"
 #include "invaders.h"
+#include "utils.h"
 
 int main(int argc, char *argv[]){
     if(!Dsp_InitVideo()){
@@ -9,7 +10,7 @@ int main(int argc, char *argv[]){
     }
 
     Snd_Init(8);
-    Dsp_CreateDisplay(800,600,0,0,"Invaders 2");
+    Dsp_CreateDisplay(800,600,TRUE,FALSE,"Invaders 2");
     Dsp_CreateScreenBuffer(g_display.width,g_display.height);
     Dsp_RegisterEvents();
 

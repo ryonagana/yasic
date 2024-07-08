@@ -21,13 +21,14 @@ static int s_shoot_counter_list[LEVEL_DIFFICULT_NIGHTMARE+1] = {
 };
 
 
+/*
 static float march_walk_speed_list[LEVEL_DIFFICULT_NIGHTMARE+1] = {
     1.0,
     1.0,
     10.0,
     11.0,
     11.0
-};
+};*/
 
 
 
@@ -77,7 +78,14 @@ void LVL_Update(LEVEL *level, ENEMY (*enemies)[ENEMY_COLS]){
                 ENEMY *e = &enemies[row][col];
 
 
-                if(e->x >= Dsp_GetWindowWidth() - TILE - 1 && e->direction == ENEMY_DIR_RIGHT){
+                if(e->pos.x >= Dsp_GetWindowWidth() - TILE - 1 && e->direction == ENEMY_DIR_RIGHT){
+
+                    Enemy_ChangeDirection(enemies, e->direction);
+                    Enemy_MoveDown(enemies,level);
+                    continue;
+                }
+
+                if(e->pos.x <= 0 && e->direction == ENEMY_DIR_LEFT){
 
                     Enemy_ChangeDirection(enemies, e->direction);
                     Enemy_MoveDown(enemies,level);
@@ -85,16 +93,8 @@ void LVL_Update(LEVEL *level, ENEMY (*enemies)[ENEMY_COLS]){
                     continue;
                 }
 
-                if(e->x <= 0 && e->direction == ENEMY_DIR_LEFT){
-
-                    Enemy_ChangeDirection(enemies, e->direction);
-                    Enemy_MoveDown(enemies,level);
-                    //Enemy_CorrectPosition(enemies);
-                    continue;
-                }
-
-                 e->vx = march_walk_speed_list[level->difficulty];
-                 e->x += e->vx * e->direction * ENEMY_GRID_SPACE;
+                 //e->vel.x = march_walk_speed_list[level->difficulty];
+                 //e->pos.x += e->vel.x * e->direction * ENEMY_GRID_SPACE;
             }
         }
 

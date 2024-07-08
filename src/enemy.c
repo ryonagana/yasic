@@ -17,6 +17,9 @@
 
 //static ALLEGRO_BITMAP *tmp_enemies = NULL;
 
+
+
+
 void Enemy_Init(ENEMY (*enemies)[ENEMY_COLS]){
 
     ENEMY_LOOP(ENEMY, enemies)
@@ -24,10 +27,11 @@ void Enemy_Init(ENEMY (*enemies)[ENEMY_COLS]){
         e->alive = 1;
         e->direction = ENEMY_DIR_LEFT;
         e->flags = 0;
-        e->vx = 1.0f;
-        e->vy = 0.0f;
-        e->x = (j * TILE) * ENEMY_GRID_SPACE;
-        e->y = (i * TILE) * ENEMY_GRID_SPACE;
+        e->vel.x = 1.0f;
+        e->vel.y = 0.0f;
+        e->pos.x = (j * TILE) * ENEMY_GRID_SPACE;
+        e->pos.y = (i * TILE) * ENEMY_GRID_SPACE;
+        e->speed = 1.0f;
     }
     ENEMY_LOOP_END();
 
@@ -56,11 +60,10 @@ void Enemy_Update(ENEMY (*enemies)[ENEMY_COLS], float deltaTime){
     ENEMY_LOOP(ENEMY, enemies)
     {
         if(e->alive)
-        {       e->vx = 2.0 * deltaTime;
-                //e->vy = 2.0;
-
-                e->x += e->vx;
-                e->y += e->vy;
+        {
+                e->vel.x = e->speed * e->direction *  (1 * deltaTime);
+                e->pos.x += e->vel.x;
+                e->pos.y += e->vel.y;
         }
     }
     ENEMY_LOOP_END();
@@ -70,15 +73,13 @@ void Enemy_ChangeDirection(ENEMY (*enemies)[ENEMY_COLS], int direction){
     ENEMY_LOOP(ENEMY, enemies)
     {
         if(e->alive){
-
-
             if(direction == ENEMY_DIR_RIGHT){
-                e->vx *=  ENEMY_DIR_LEFT * ENEMY_GRID_SPACE ;
+                //e->vel.x = ENEMY_DIR_LEFT * ENEMY_GRID_SPACE ;
                 e->direction = ENEMY_DIR_LEFT;
             }
 
             if(direction == ENEMY_DIR_LEFT){
-                e->vx *=  ENEMY_DIR_LEFT * ENEMY_GRID_SPACE;
+                //e->vel.x = ENEMY_DIR_LEFT * ENEMY_GRID_SPACE ;
                 e->direction = ENEMY_DIR_RIGHT;
             }
 
@@ -93,7 +94,7 @@ void Enemy_MoveDown(ENEMY (*enemies)[ENEMY_COLS], LEVEL *level){
     ENEMY_LOOP(ENEMY, enemies)
     {
         if(e->alive){
-            e->y += TILE * ENEMY_GRID_SPACE;
+            e->pos.y += TILE * ENEMY_GRID_SPACE;
         }
     }
     ENEMY_LOOP_END();
@@ -112,8 +113,9 @@ void Enemy_Render(ENEMY (*enemies)[ENEMY_COLS]){
             if(e->alive){
 
                 SDL_Texture* enemy = resources_get_sprite(SPRITE_ENEMY01_SPR);
-                SDL_Rect r = (SDL_Rect){e->x, e->y, 32,32 };
-                SDL_RenderCopyEx(g_display.renderer, enemy, NULL, &r , 0, NULL, SDL_FLIP_NONE);
+
+                SDL_FRect r = (SDL_FRect){e->pos.x, e->pos.y, 32,32 };
+                SDL_RenderCopyExF(g_display.renderer, enemy, NULL, &r , 0, NULL, SDL_FLIP_NONE);
 
             }
 

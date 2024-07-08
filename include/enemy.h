@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <SDL2/SDL.h>
 
 #define ENEMY_ROWS 7
 #define ENEMY_COLS 7
@@ -13,12 +14,11 @@
 #define ENEMY_DIR_LEFT  (-1)
 
 typedef struct ENEMY {
-    int x;
-    int y;
-    int vx;
-    int vy;
     int alive;
+    SDL_FRect pos;
+    SDL_FRect vel;
     uint32_t flags;
+    float speed;
     int direction;
 }ENEMY;
 

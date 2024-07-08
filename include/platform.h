@@ -1,4 +1,8 @@
-#pragma once
+#ifndef PLATFORM_H
+#define PLATFORM_H
+
+
+
 
 //detect CPU
 #if defined(_M_IX86) || defined(__i386__) || defined(__X86__) || defined(__INTEL__)
@@ -59,8 +63,8 @@
 */
 
 
-/* is ms visual studio
-#if defined(_MSC_VER)
+/* is ms visual studio ? */
+#if defined(_MSC_VER) || (MSC_VER)
 #define GAME_COMPILER_MSVC _MSC_FULL_VER
 #define GAME_COMPILER "Microsoft Visual C++"
 #define GAME_COMPILER_VER GAME_COMPILER_MSVC
@@ -80,7 +84,7 @@
 
 
 
-#elif defined(__linux__) && defined(__unix__)
+#elif defined(__GNUC__) || defined(__linux__) || defined(__unix__)
 #define GAME_COMPILER_GCC
 #define GAME_COMPILER "GCC"
 #define GAME_COMPILER_VER (__GNUC__ * 1000) +  (__GNUC_MINOR__ * 100) + __GNUC_PATCHLEVEL__)
@@ -93,7 +97,7 @@
 #else
 #error "unknown compiler"
 #endif
-*/
+
 
 #if defined(PLATFORM_WIN64) || defined(PLATFORM_WIN32)
     #if defined(GAME_COMPILER_MINGWX86_64) || defined(GAME_COMPILER_MINGW32)
@@ -108,3 +112,6 @@
 #elif defined(GAME_COMPILER_LLVM)
     #define GAME_INLINE inline
 #endif
+
+
+#endif // PLATFORM_H

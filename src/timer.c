@@ -17,6 +17,8 @@ void GameTimer_Start(GAMETIMER *timer){
 
     timer->start_ticks  = SDL_GetTicks();
     timer->paused_ticks = 0;
+    timer->fpsDesired = 60.0f;
+    timer->deltaTime = 0;
 
     return;
 }
@@ -47,19 +49,22 @@ void GameTimer_Unpause(GAMETIMER *timer){
 
     return;
 }
-Uint32 GameTimer_GetTicks(GAMETIMER *timer){
-    Uint32 actual_time = 0;
+void GameTimer_UpdateTicks(GAMETIMER *timer){
+    timer->deltaTime = (SDL_GetTicks() - timer->lastTime) * (timer->fpsDesired/1000.0f);
 
-    if(timer->is_started){
-
-        if(timer->is_paused){
-            actual_time = timer->paused_ticks;
-            return actual_time;
-        }
-
-
-        actual_time = SDL_GetTicks() - timer->start_ticks;
+    if(timer->deltaTime > 1.5f){
+        timer->deltaTime = 1.5f;
     }
 
-    return actual_time;
+    timer->lastTime = SDL_GetTicks();
+
+    return;
+}
+
+void GameTimer_SetFPS(GAMETIMER *timer, float fps){
+    timer->fpsDesired = fps;
+}
+
+float GameTimer_GetDelta(GAMETIMER *timer){
+    return timer->deltaTime;
 }

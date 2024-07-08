@@ -2,22 +2,61 @@
 #include "resources.h"
 #include "display.h"
 #include "texture.h"
-
- SDL_Texture *g_sprite[RESOURCES_MAX];
- int s_sprites_loaded = 0;
-
-const char *s_assets_folder = "assets";
-const char s_sprites_filepath[RESOURCES_MAX][255] = {
-    {"pshot.bmp\0"},
-    {"enemy01.bmp\0"},
-    {"enemy02.bmp\0"},
-    {0}
-
-};
-
+#include "platform.h"
+#include "utils.h"
 
 #include <sys/stat.h>
 #include <sys/types.h>
+
+
+static SDL_Texture *g_sprite[RESOURCES_MAX];
+static int s_sprites_loaded = 0;
+
+
+typedef struct FILERESOURCE {
+    char filepath[255];
+    int  has_colormask;
+    int  color;
+    int  end;
+}FILERESOURCE;
+
+FILERESOURCE resource[RESOURCES_MAX] = {
+
+    {
+        .filepath = "pshot.bmp\0",
+        .has_colormask = TRUE,
+        .color = 0xff00ff,
+        .end = FALSE
+    },
+
+    {
+        .filepath = "enemy01.bmp\0",
+        .has_colormask = TRUE,
+        .color = 0xff00ff,
+        .end = FALSE
+    },
+
+    {
+        .filepath = "enemy02.bmp\0",
+        .has_colormask = TRUE,
+        .color = 0xff00ff,
+        .end = FALSE
+    },
+
+    {
+        .filepath = "cannon.bmp\0",
+        .has_colormask = TRUE,
+        .color = 0xff00ff,
+        .end = FALSE
+    },
+
+    {
+        .end = TRUE
+    }
+};
+
+
+const char s_assets_folder[] = "assets";
 
 
 static int s_resource_exists(const char *filepath, uint64_t *size){
@@ -37,23 +76,26 @@ static int s_resource_exists(const char *filepath, uint64_t *size){
 void resources_init(void){
 
     for(int i = 0; i < RESOURCES_MAX; i++){
+             if(resource[i].end) break;
 
-            if(s_sprites_filepath[i][0] == '\0') return;
-            char buf[255];
-            snprintf(buf, 255, "%s//%s", s_assets_folder, s_sprites_filepath[i]);
+             char buffer[2048];
+             snprintf(buffer, sizeof(buffer), "%s//%s", s_assets_folder, resource[i].filepath);
 
-
-            SDL_Surface *surf = SDL_LoadBMP(buf);
+             SDL_Surface *surf =  IMG_Load(buffer);
 
 
             if(surf == NULL){
-                fprintf(stdout, "%s failed to load\n", buf);
+                fprintf(stdout, "%s failed to load\n", buffer);
                 return;
             }
 
-            g_sprite[i] = r_create_texture_colormask(surf, 0xff00ff); //r_create_texture(surf);  //SDL_CreateTextureFromSurface(g_display.renderer, surf);
+            if(resource[i].has_colormask){
+                g_sprite[i] = r_create_texture_colormask(surf, resource[i].color);
+            }
+
             s_sprites_loaded++;
             SDL_FreeSurface(surf);
+
     }
 
     return;

@@ -7,6 +7,9 @@
 
 
 typedef struct PLAYER {
+
+    SDL_FRect pos;
+    SDL_FRect vel;
     int x;
     int y;
     int vx;

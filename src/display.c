@@ -1,10 +1,10 @@
 #include "display.h"
 #include "utils.h"
 
-#define _E(...) do { fprintf(stderr,__VA_ARGS__); }while(0);
+#define _E(...) do { SDL_Log(__VA_ARGS__); }while(0);
 
 DISPLAY g_display;
-
+static SDL_Texture *tv_surface = NULL;
 
 int Dsp_InitVideo(void){
 
@@ -18,6 +18,13 @@ int Dsp_InitVideo(void){
         _E("Image Addon Failed to Load!");
         return 0;
     }
+
+    if(TTF_Init() < 0){
+        _E("TTF Not Loaded!");
+        return 0;
+    }
+
+
 
     /*
     if(!al_init()){
@@ -130,6 +137,8 @@ void Dsp_CreateDisplay(int w, int h, int fullscreen, int enable_vsync, const cha
     g_display.width =  w;
     g_display.height = h;
 
+    tv_surface = SDL_CreateTexture(g_display.renderer, SDL_PIXELFORMAT_RGBA32,  SDL_TEXTUREACCESS_STATIC, w,h);
+
 
     return;
 
@@ -146,6 +155,7 @@ void Dsp_ShutdownVideo(void){
      SDL_DestroyTexture(g_display.screen);
      SDL_DestroyRenderer(g_display.renderer);
      SDL_DestroyWindow(g_display.window);
+     SDL_DestroyTexture(tv_surface);
 
 }
 
@@ -185,11 +195,15 @@ void Dsp_RenderNoise(void){
 }
 
 int Dsp_GetWindowWidth(void){
-    return  g_display.width;
+    int w;
+    SDL_GetWindowSize(g_display.window, &w, NULL);
+    return  w;
 }
 
 int Dsp_GetWindowHeight(void){
-    return  g_display.height;
+    int h;
+    SDL_GetWindowSize(g_display.window, NULL, &h);
+    return  h;
 }
 
 int Dsp_GetTimerSecs(void){

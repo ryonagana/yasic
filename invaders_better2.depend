@@ -1,13 +1,17 @@
 # depslib dependency file v1.0
-1718073181 source:/home/user/programacao/c/yasic/src/invaders.c
+1720461760 source:/home/user/programacao/c/yasic/src/invaders.c
 	"invaders.h"
 	"display.h"
 	"level.h"
 	"enemy.h"
 	"player.h"
 	"bullet.h"
+	"resources.h"
+	"utils.h"
+	"timer.h"
+	"keyboard.h"
 
-1717346483 source:/home/user/programacao/c/yasic/src/display.c
+1720455995 source:/home/user/programacao/c/yasic/src/display.c
 	"display.h"
 	"utils.h"
 
@@ -26,7 +30,7 @@
 	<allegro5/allegro_native_dialog.h>
 	<allegro5/allegro_primitives.h>
 
-1716881222 /usr/include/stdio.h
+1717403079 /usr/include/stdio.h
 	<bits/libc-header-start.h>
 	<stddef.h>
 	<stdarg.h>
@@ -46,95 +50,95 @@
 	<bits/stdio.h>
 	<bits/stdio2.h>
 
-1716881222 /usr/include/bits/libc-header-start.h
+1717403079 /usr/include/bits/libc-header-start.h
 	<features.h>
 
-1716881222 /usr/include/features.h
+1717403079 /usr/include/features.h
 	<features-time64.h>
 	<stdc-predef.h>
 	<sys/cdefs.h>
 	<gnu/stubs.h>
 
-1716881222 /usr/include/features-time64.h
+1717403079 /usr/include/features-time64.h
 	<bits/wordsize.h>
 	<bits/timesize.h>
 
-1716881222 /usr/include/bits/wordsize.h
+1717403079 /usr/include/bits/wordsize.h
 
-1716881222 /usr/include/bits/timesize.h
+1717403079 /usr/include/bits/timesize.h
 	<bits/wordsize.h>
 
-1716881222 /usr/include/stdc-predef.h
+1717403079 /usr/include/stdc-predef.h
 
-1716881222 /usr/include/sys/cdefs.h
+1717403079 /usr/include/sys/cdefs.h
 	<features.h>
 	<bits/wordsize.h>
 	<bits/long-double.h>
 
-1716881222 /usr/include/bits/long-double.h
+1717403079 /usr/include/bits/long-double.h
 
-1716881222 /usr/include/gnu/stubs.h
+1717403079 /usr/include/gnu/stubs.h
 	<gnu/stubs-32.h>
 	<gnu/stubs-64.h>
 	<gnu/stubs-x32.h>
 
-1716881222 /usr/include/gnu/stubs-64.h
+1717403079 /usr/include/gnu/stubs-64.h
 
-1716881222 /usr/include/bits/types.h
+1717403079 /usr/include/bits/types.h
 	<features.h>
 	<bits/wordsize.h>
 	<bits/timesize.h>
 	<bits/typesizes.h>
 	<bits/time64.h>
 
-1716881222 /usr/include/bits/typesizes.h
+1717403079 /usr/include/bits/typesizes.h
 
-1716881222 /usr/include/bits/time64.h
+1717403079 /usr/include/bits/time64.h
 
-1716881222 /usr/include/bits/types/__fpos_t.h
+1717403079 /usr/include/bits/types/__fpos_t.h
 	<bits/types.h>
 	<bits/types/__mbstate_t.h>
 
-1716881222 /usr/include/bits/types/__mbstate_t.h
+1717403079 /usr/include/bits/types/__mbstate_t.h
 
-1716881222 /usr/include/bits/types/__fpos64_t.h
+1717403079 /usr/include/bits/types/__fpos64_t.h
 	<bits/types.h>
 	<bits/types/__mbstate_t.h>
 
-1716881222 /usr/include/bits/types/__FILE.h
+1717403079 /usr/include/bits/types/__FILE.h
 
-1716881222 /usr/include/bits/types/FILE.h
+1717403079 /usr/include/bits/types/FILE.h
 
-1716881222 /usr/include/bits/types/struct_FILE.h
+1717403079 /usr/include/bits/types/struct_FILE.h
 	<bits/types.h>
 
-1716881222 /usr/include/bits/types/cookie_io_functions_t.h
+1717403079 /usr/include/bits/types/cookie_io_functions_t.h
 	<bits/types.h>
 
-1716881222 /usr/include/bits/stdio_lim.h
+1717403079 /usr/include/bits/stdio_lim.h
 
-1716881222 /usr/include/bits/floatn.h
+1717403079 /usr/include/bits/floatn.h
 	<features.h>
 	<bits/floatn-common.h>
 
-1716881222 /usr/include/bits/floatn-common.h
+1717403079 /usr/include/bits/floatn-common.h
 	<features.h>
 	<bits/long-double.h>
 
-1716881222 /usr/include/bits/getopt_posix.h
+1717403079 /usr/include/bits/getopt_posix.h
 	<bits/getopt_core.h>
 
-1716881222 /usr/include/bits/getopt_core.h
+1717403079 /usr/include/bits/getopt_core.h
 
-1716881222 /usr/include/bits/stdio2-decl.h
+1717403079 /usr/include/bits/stdio2-decl.h
 
-1716881222 /usr/include/bits/stdio-ldbl.h
+1717403079 /usr/include/bits/stdio-ldbl.h
 
-1716881222 /usr/include/bits/stdio.h
+1717403079 /usr/include/bits/stdio.h
 
-1716881222 /usr/include/bits/stdio2.h
+1717403079 /usr/include/bits/stdio2.h
 
-1705822921 /usr/include/allegro5/allegro.h
+1705822922 /usr/include/allegro5/allegro.h
 	"allegro5/base.h"
 	"allegro5/altime.h"
 	"allegro5/bitmap.h"
@@ -175,7 +179,7 @@
 	"allegro5/utf8.h"
 	"allegro5/alcompat.h"
 
-1705822921 /usr/include/allegro5/base.h
+1705822922 /usr/include/allegro5/base.h
 	<errno.h>
 	<limits.h>
 	<limits.h>
@@ -189,12 +193,12 @@
 	<dmalloc.h>
 	"allegro5/internal/alconfig.h"
 
-1716881222 /usr/include/errno.h
+1717403079 /usr/include/errno.h
 	<features.h>
 	<bits/errno.h>
 	<bits/types/error_t.h>
 
-1716881222 /usr/include/bits/errno.h
+1717403079 /usr/include/bits/errno.h
 	<linux/errno.h>
 
 1715588176 /usr/include/linux/errno.h
@@ -208,39 +212,39 @@
 
 1715588176 /usr/include/asm-generic/errno-base.h
 
-1716881222 /usr/include/bits/types/error_t.h
+1717403079 /usr/include/bits/types/error_t.h
 
-1716881222 /usr/include/limits.h
+1717403079 /usr/include/limits.h
 	<bits/libc-header-start.h>
 	<bits/wordsize.h>
 	<bits/posix1_lim.h>
 	<bits/posix2_lim.h>
 	<bits/xopen_lim.h>
 
-1716881222 /usr/include/bits/posix1_lim.h
+1717403079 /usr/include/bits/posix1_lim.h
 	<bits/wordsize.h>
 	<bits/local_lim.h>
 
-1716881222 /usr/include/bits/local_lim.h
+1717403079 /usr/include/bits/local_lim.h
 	<linux/limits.h>
 	<bits/pthread_stack_min-dynamic.h>
 
 1715588176 /usr/include/linux/limits.h
 
-1716881222 /usr/include/bits/pthread_stack_min-dynamic.h
+1717403079 /usr/include/bits/pthread_stack_min-dynamic.h
 	<bits/pthread_stack_min.h>
 
-1716881222 /usr/include/bits/pthread_stack_min.h
+1717403079 /usr/include/bits/pthread_stack_min.h
 
-1716881222 /usr/include/bits/posix2_lim.h
+1717403079 /usr/include/bits/posix2_lim.h
 
-1716881222 /usr/include/bits/xopen_lim.h
+1717403079 /usr/include/bits/xopen_lim.h
 	<bits/uio_lim.h>
 	<bits/wordsize.h>
 
-1716881222 /usr/include/bits/uio_lim.h
+1717403079 /usr/include/bits/uio_lim.h
 
-1716881222 /usr/include/stdlib.h
+1717403079 /usr/include/stdlib.h
 	<bits/libc-header-start.h>
 	<stddef.h>
 	<bits/waitflags.h>
@@ -255,16 +259,16 @@
 	<bits/floatn.h>
 	<bits/stdlib-ldbl.h>
 
-1716881222 /usr/include/bits/waitflags.h
+1717403079 /usr/include/bits/waitflags.h
 
-1716881222 /usr/include/bits/waitstatus.h
+1717403079 /usr/include/bits/waitstatus.h
 
-1716881222 /usr/include/bits/types/locale_t.h
+1717403079 /usr/include/bits/types/locale_t.h
 	<bits/types/__locale_t.h>
 
-1716881222 /usr/include/bits/types/__locale_t.h
+1717403079 /usr/include/bits/types/__locale_t.h
 
-1716881222 /usr/include/sys/types.h
+1717403079 /usr/include/sys/types.h
 	<features.h>
 	<bits/types.h>
 	<bits/types/clock_t.h>
@@ -277,40 +281,40 @@
 	<sys/select.h>
 	<bits/pthreadtypes.h>
 
-1716881222 /usr/include/bits/types/clock_t.h
+1717403079 /usr/include/bits/types/clock_t.h
 	<bits/types.h>
 
-1716881222 /usr/include/bits/types/clockid_t.h
+1717403079 /usr/include/bits/types/clockid_t.h
 	<bits/types.h>
 
-1716881222 /usr/include/bits/types/time_t.h
+1717403079 /usr/include/bits/types/time_t.h
 	<bits/types.h>
 
-1716881222 /usr/include/bits/types/timer_t.h
+1717403079 /usr/include/bits/types/timer_t.h
 	<bits/types.h>
 
-1716881222 /usr/include/bits/stdint-intn.h
+1717403079 /usr/include/bits/stdint-intn.h
 	<bits/types.h>
 
-1716881222 /usr/include/endian.h
+1717403079 /usr/include/endian.h
 	<features.h>
 	<bits/endian.h>
 	<bits/byteswap.h>
 	<bits/uintn-identity.h>
 
-1716881222 /usr/include/bits/endian.h
+1717403079 /usr/include/bits/endian.h
 	<bits/endianness.h>
 
-1716881222 /usr/include/bits/endianness.h
+1717403079 /usr/include/bits/endianness.h
 
-1716881222 /usr/include/bits/byteswap.h
+1717403079 /usr/include/bits/byteswap.h
 	<features.h>
 	<bits/types.h>
 
-1716881222 /usr/include/bits/uintn-identity.h
+1717403079 /usr/include/bits/uintn-identity.h
 	<bits/types.h>
 
-1716881222 /usr/include/sys/select.h
+1717403079 /usr/include/sys/select.h
 	<features.h>
 	<bits/types.h>
 	<bits/select.h>
@@ -320,57 +324,57 @@
 	<bits/types/struct_timespec.h>
 	<bits/select2.h>
 
-1716881222 /usr/include/bits/select.h
+1717403079 /usr/include/bits/select.h
 
-1716881222 /usr/include/bits/types/sigset_t.h
+1717403079 /usr/include/bits/types/sigset_t.h
 	<bits/types/__sigset_t.h>
 
-1716881222 /usr/include/bits/types/__sigset_t.h
+1717403079 /usr/include/bits/types/__sigset_t.h
 
-1716881222 /usr/include/bits/types/struct_timeval.h
+1717403079 /usr/include/bits/types/struct_timeval.h
 	<bits/types.h>
 
-1716881222 /usr/include/bits/types/struct_timespec.h
+1717403079 /usr/include/bits/types/struct_timespec.h
 	<bits/types.h>
 	<bits/endian.h>
 	<bits/types/time_t.h>
 
-1716881222 /usr/include/bits/select2.h
+1717403079 /usr/include/bits/select2.h
 	<bits/select-decl.h>
 
-1716881222 /usr/include/bits/select-decl.h
+1717403079 /usr/include/bits/select-decl.h
 
-1716881222 /usr/include/bits/pthreadtypes.h
+1717403079 /usr/include/bits/pthreadtypes.h
 	<bits/thread-shared-types.h>
 
-1716881222 /usr/include/bits/thread-shared-types.h
+1717403079 /usr/include/bits/thread-shared-types.h
 	<bits/pthreadtypes-arch.h>
 	<bits/atomic_wide_counter.h>
 	<bits/struct_mutex.h>
 	<bits/struct_rwlock.h>
 
-1716881222 /usr/include/bits/pthreadtypes-arch.h
+1717403079 /usr/include/bits/pthreadtypes-arch.h
 	<bits/wordsize.h>
 
-1716881222 /usr/include/bits/atomic_wide_counter.h
+1717403079 /usr/include/bits/atomic_wide_counter.h
 
-1716881222 /usr/include/bits/struct_mutex.h
+1717403079 /usr/include/bits/struct_mutex.h
 
-1716881222 /usr/include/bits/struct_rwlock.h
+1717403079 /usr/include/bits/struct_rwlock.h
 
-1716881222 /usr/include/alloca.h
+1717403079 /usr/include/alloca.h
 	<features.h>
 	<stddef.h>
 
-1716881222 /usr/include/bits/stdlib-bsearch.h
+1717403079 /usr/include/bits/stdlib-bsearch.h
 
-1716881222 /usr/include/bits/stdlib-float.h
+1717403079 /usr/include/bits/stdlib-float.h
 
-1716881222 /usr/include/bits/stdlib.h
+1717403079 /usr/include/bits/stdlib.h
 
-1716881222 /usr/include/bits/stdlib-ldbl.h
+1717403079 /usr/include/bits/stdlib-ldbl.h
 
-1716881222 /usr/include/time.h
+1717403079 /usr/include/time.h
 	<features.h>
 	<stddef.h>
 	<bits/time.h>
@@ -383,40 +387,40 @@
 	<bits/types/struct_itimerspec.h>
 	<bits/types/locale_t.h>
 
-1716881222 /usr/include/bits/time.h
+1717403079 /usr/include/bits/time.h
 	<bits/types.h>
 	<bits/timex.h>
 
-1716881222 /usr/include/bits/timex.h
+1717403079 /usr/include/bits/timex.h
 	<bits/types.h>
 	<bits/types/struct_timeval.h>
 
-1716881222 /usr/include/bits/types/struct_tm.h
+1717403079 /usr/include/bits/types/struct_tm.h
 	<bits/types.h>
 
-1716881222 /usr/include/bits/types/struct_itimerspec.h
+1717403079 /usr/include/bits/types/struct_itimerspec.h
 	<bits/types.h>
 	<bits/types/struct_timespec.h>
 
-1716881222 /usr/include/string.h
+1717403079 /usr/include/string.h
 	<bits/libc-header-start.h>
 	<stddef.h>
 	<bits/types/locale_t.h>
 	<strings.h>
 	<bits/string_fortified.h>
 
-1716881222 /usr/include/strings.h
+1717403079 /usr/include/strings.h
 	<features.h>
 	<stddef.h>
 	<bits/types/locale_t.h>
 	<bits/strings_fortified.h>
 
-1716881222 /usr/include/bits/strings_fortified.h
+1717403079 /usr/include/bits/strings_fortified.h
 
-1716881222 /usr/include/bits/string_fortified.h
+1717403079 /usr/include/bits/string_fortified.h
 	<bits/strings_fortified.h>
 
-1705822921 /usr/include/allegro5/internal/alconfig.h
+1705822922 /usr/include/allegro5/internal/alconfig.h
 	"allegro5/platform/alplatf.h"
 	"allegro5/platform/alwatcom.h"
 	"allegro5/platform/almngw32.h"
@@ -431,9 +435,9 @@
 	"allegro5/platform/astdint.h"
 	"allegro5/platform/astdbool.h"
 
-1705822921 /usr/include/allegro5/platform/alplatf.h
+1705822922 /usr/include/allegro5/platform/alplatf.h
 
-1705822921 /usr/include/allegro5/platform/alwatcom.h
+1705822922 /usr/include/allegro5/platform/alwatcom.h
 	<io.h>
 	<i86.h>
 	<conio.h>
@@ -441,7 +445,7 @@
 	<direct.h>
 	<malloc.h>
 
-1716881222 /usr/include/fcntl.h
+1717403079 /usr/include/fcntl.h
 	<features.h>
 	<bits/types.h>
 	<bits/fcntl.h>
@@ -449,60 +453,60 @@
 	<bits/stat.h>
 	<bits/fcntl2.h>
 
-1716881222 /usr/include/bits/fcntl.h
+1717403079 /usr/include/bits/fcntl.h
 	<bits/fcntl-linux.h>
 
-1716881222 /usr/include/bits/fcntl-linux.h
+1717403079 /usr/include/bits/fcntl-linux.h
 	<bits/fcntl-linux.h>
 	<bits/types/struct_iovec.h>
 	<linux/falloc.h>
 
-1716881222 /usr/include/bits/types/struct_iovec.h
+1717403079 /usr/include/bits/types/struct_iovec.h
 	<stddef.h>
 
 1715588176 /usr/include/linux/falloc.h
 
-1716881222 /usr/include/bits/stat.h
+1717403079 /usr/include/bits/stat.h
 	<bits/struct_stat.h>
 
-1716881222 /usr/include/bits/struct_stat.h
+1717403079 /usr/include/bits/struct_stat.h
 	<bits/struct_stat_time64_helper.h>
 	<bits/struct_stat_time64_helper.h>
 
-1716881222 /usr/include/bits/struct_stat_time64_helper.h
+1717403079 /usr/include/bits/struct_stat_time64_helper.h
 
-1716881222 /usr/include/bits/fcntl2.h
+1717403079 /usr/include/bits/fcntl2.h
 
-1716881222 /usr/include/malloc.h
+1717403079 /usr/include/malloc.h
 	<features.h>
 	<stddef.h>
 	<stdio.h>
 
-1705822921 /usr/include/allegro5/platform/almngw32.h
+1705822922 /usr/include/allegro5/platform/almngw32.h
 	<io.h>
 	<fcntl.h>
 	<direct.h>
 	<malloc.h>
 	"allegro5/platform/alplatf.h"
 
-1705822921 /usr/include/allegro5/platform/albcc32.h
+1705822922 /usr/include/allegro5/platform/albcc32.h
 	<io.h>
 	<fcntl.h>
 	<direct.h>
 	<malloc.h>
 
-1705822921 /usr/include/allegro5/platform/almsvc.h
+1705822922 /usr/include/allegro5/platform/almsvc.h
 	<io.h>
 	<fcntl.h>
 	<direct.h>
 	<malloc.h>
 	"allegro5/platform/alplatf.h"
 
-1705822921 /usr/include/allegro5/platform/aliphonecfg.h
+1705822922 /usr/include/allegro5/platform/aliphonecfg.h
 	<fcntl.h>
 	<unistd.h>
 
-1716881222 /usr/include/unistd.h
+1717403079 /usr/include/unistd.h
 	<features.h>
 	<bits/posix_opt.h>
 	<bits/environments.h>
@@ -513,56 +517,56 @@
 	<bits/unistd.h>
 	<bits/unistd_ext.h>
 
-1716881222 /usr/include/bits/posix_opt.h
+1717403079 /usr/include/bits/posix_opt.h
 
-1716881222 /usr/include/bits/environments.h
+1717403079 /usr/include/bits/environments.h
 	<bits/wordsize.h>
 
-1716881222 /usr/include/bits/confname.h
+1717403079 /usr/include/bits/confname.h
 
-1716881222 /usr/include/bits/unistd.h
+1717403079 /usr/include/bits/unistd.h
 	<bits/unistd-decl.h>
 
-1716881222 /usr/include/bits/unistd-decl.h
+1717403079 /usr/include/bits/unistd-decl.h
 
-1716881222 /usr/include/bits/unistd_ext.h
+1717403079 /usr/include/bits/unistd_ext.h
 	"linux/close_range.h"
 
 1715588176 /usr/include/linux/close_range.h
 
-1705822921 /usr/include/allegro5/platform/alosxcfg.h
+1705822922 /usr/include/allegro5/platform/alosxcfg.h
 	"allegro5/platform/alplatf.h"
 
-1705822921 /usr/include/allegro5/platform/alandroidcfg.h
+1705822922 /usr/include/allegro5/platform/alandroidcfg.h
 
-1705822921 /usr/include/allegro5/platform/alraspberrypicfg.h
+1705822922 /usr/include/allegro5/platform/alraspberrypicfg.h
 	<fcntl.h>
 	<unistd.h>
 	<sys/types.h>
 
-1705822921 /usr/include/allegro5/platform/alucfg.h
+1705822922 /usr/include/allegro5/platform/alucfg.h
 	<fcntl.h>
 	<unistd.h>
 	"alunix.h"
 	"allegro5/platform/alplatf.h"
 
-1705822921 /usr/include/allegro5/platform/alunix.h
+1705822922 /usr/include/allegro5/platform/alunix.h
 
-1705822921 /usr/include/allegro5/platform/allegro_sdl_config.h
+1705822922 /usr/include/allegro5/platform/allegro_sdl_config.h
 	<fcntl.h>
 	<unistd.h>
 
-1705822921 /usr/include/allegro5/platform/astdint.h
+1705822922 /usr/include/allegro5/platform/astdint.h
 	<inttypes.h>
 	<stdint.h>
 	<limits.h>
 
-1716881222 /usr/include/inttypes.h
+1717403079 /usr/include/inttypes.h
 	<features.h>
 	<stdint.h>
 	<stddef.h>
 
-1716881222 /usr/include/stdint.h
+1717403079 /usr/include/stdint.h
 	<bits/libc-header-start.h>
 	<bits/types.h>
 	<bits/wchar.h>
@@ -571,105 +575,105 @@
 	<bits/stdint-uintn.h>
 	<bits/stdint-least.h>
 
-1716881222 /usr/include/bits/wchar.h
+1717403079 /usr/include/bits/wchar.h
 
-1716881222 /usr/include/bits/stdint-uintn.h
+1717403079 /usr/include/bits/stdint-uintn.h
 	<bits/types.h>
 
-1716881222 /usr/include/bits/stdint-least.h
+1717403079 /usr/include/bits/stdint-least.h
 	<bits/types.h>
 
-1705822921 /usr/include/allegro5/platform/astdbool.h
+1705822922 /usr/include/allegro5/platform/astdbool.h
 	<stdbool.h>
 
-1705822921 /usr/include/allegro5/altime.h
+1705822922 /usr/include/allegro5/altime.h
 	"allegro5/base.h"
 
-1705822921 /usr/include/allegro5/bitmap.h
+1705822922 /usr/include/allegro5/bitmap.h
 	"allegro5/color.h"
 
-1705822921 /usr/include/allegro5/color.h
+1705822922 /usr/include/allegro5/color.h
 	"allegro5/base.h"
 
-1705822921 /usr/include/allegro5/bitmap_draw.h
+1705822922 /usr/include/allegro5/bitmap_draw.h
 	"allegro5/bitmap.h"
 
-1705822921 /usr/include/allegro5/bitmap_io.h
+1705822922 /usr/include/allegro5/bitmap_io.h
 	"allegro5/bitmap.h"
 	"allegro5/file.h"
 
-1705822921 /usr/include/allegro5/file.h
+1705822922 /usr/include/allegro5/file.h
 	"allegro5/base.h"
 	"allegro5/path.h"
 	"allegro5/utf8.h"
 
-1705822921 /usr/include/allegro5/path.h
+1705822922 /usr/include/allegro5/path.h
 	"allegro5/base.h"
 	"allegro5/utf8.h"
 
-1705822921 /usr/include/allegro5/utf8.h
+1705822922 /usr/include/allegro5/utf8.h
 	"allegro5/base.h"
 
-1705822921 /usr/include/allegro5/bitmap_lock.h
+1705822922 /usr/include/allegro5/bitmap_lock.h
 	"allegro5/bitmap.h"
 
-1705822921 /usr/include/allegro5/blender.h
+1705822922 /usr/include/allegro5/blender.h
 	"allegro5/base.h"
 	"allegro5/color.h"
 
-1705822921 /usr/include/allegro5/clipboard.h
+1705822922 /usr/include/allegro5/clipboard.h
 	"allegro5/base.h"
 	"allegro5/display.h"
 	"allegro5/utf8.h"
 
-1705822921 /usr/include/allegro5/display.h
+1705822922 /usr/include/allegro5/display.h
 	"allegro5/bitmap.h"
 	"allegro5/color.h"
 	"allegro5/events.h"
 
-1705822921 /usr/include/allegro5/events.h
+1705822922 /usr/include/allegro5/events.h
 	"allegro5/altime.h"
 
-1705822921 /usr/include/allegro5/config.h
+1705822922 /usr/include/allegro5/config.h
 	"allegro5/file.h"
 
-1705822921 /usr/include/allegro5/cpu.h
+1705822922 /usr/include/allegro5/cpu.h
 	"allegro5/base.h"
 
-1705822921 /usr/include/allegro5/debug.h
+1705822922 /usr/include/allegro5/debug.h
 	<assert.h>
 	"allegro5/base.h"
 
-1716881222 /usr/include/assert.h
+1717403079 /usr/include/assert.h
 	<features.h>
 
-1705822921 /usr/include/allegro5/drawing.h
+1705822922 /usr/include/allegro5/drawing.h
 	"allegro5/color.h"
 
-1705822921 /usr/include/allegro5/error.h
+1705822922 /usr/include/allegro5/error.h
 	"allegro5/base.h"
 
-1705822921 /usr/include/allegro5/fixed.h
+1705822922 /usr/include/allegro5/fixed.h
 	"allegro5/base.h"
 
-1705822921 /usr/include/allegro5/fmaths.h
+1705822922 /usr/include/allegro5/fmaths.h
 	"allegro5/base.h"
 	"allegro5/fixed.h"
 	"allegro5/inline/fmaths.inl"
 
-1705822921 /usr/include/allegro5/inline/fmaths.inl
+1705822922 /usr/include/allegro5/inline/fmaths.inl
 	"allegro5/error.h"
 
-1705822921 /usr/include/allegro5/fshook.h
+1705822922 /usr/include/allegro5/fshook.h
 	"allegro5/base.h"
 	"allegro5/file.h"
 	"allegro5/path.h"
 	<sys/types.h>
 
-1705822921 /usr/include/allegro5/fullscreen_mode.h
+1705822922 /usr/include/allegro5/fullscreen_mode.h
 	"allegro5/base.h"
 
-1705822921 /usr/include/allegro5/haptic.h
+1705822922 /usr/include/allegro5/haptic.h
 	"allegro5/base.h"
 	"allegro5/display.h"
 	"allegro5/events.h"
@@ -678,59 +682,59 @@
 	"allegro5/mouse.h"
 	"allegro5/touch_input.h"
 
-1705822921 /usr/include/allegro5/joystick.h
+1705822922 /usr/include/allegro5/joystick.h
 	"allegro5/base.h"
 	"allegro5/events.h"
 
-1705822921 /usr/include/allegro5/keyboard.h
+1705822922 /usr/include/allegro5/keyboard.h
 	"allegro5/base.h"
 	"allegro5/events.h"
 	"allegro5/keycodes.h"
 
-1705822921 /usr/include/allegro5/keycodes.h
+1705822922 /usr/include/allegro5/keycodes.h
 
-1705822921 /usr/include/allegro5/mouse.h
+1705822922 /usr/include/allegro5/mouse.h
 	"allegro5/base.h"
 	"allegro5/events.h"
 
-1705822921 /usr/include/allegro5/touch_input.h
+1705822922 /usr/include/allegro5/touch_input.h
 	"allegro5/base.h"
 	"allegro5/events.h"
 
-1705822921 /usr/include/allegro5/memory.h
+1705822922 /usr/include/allegro5/memory.h
 	"allegro5/base.h"
 
-1705822921 /usr/include/allegro5/monitor.h
+1705822922 /usr/include/allegro5/monitor.h
 	"allegro5/base.h"
 
-1705822921 /usr/include/allegro5/mouse_cursor.h
+1705822922 /usr/include/allegro5/mouse_cursor.h
 	"allegro5/base.h"
 
-1705822921 /usr/include/allegro5/render_state.h
+1705822922 /usr/include/allegro5/render_state.h
 	"allegro5/base.h"
 
-1705822921 /usr/include/allegro5/shader.h
+1705822922 /usr/include/allegro5/shader.h
 	"allegro5/base.h"
 	"allegro5/transformations.h"
 
-1705822921 /usr/include/allegro5/transformations.h
+1705822922 /usr/include/allegro5/transformations.h
 	"allegro5/display.h"
 
-1705822921 /usr/include/allegro5/system.h
+1705822922 /usr/include/allegro5/system.h
 	"allegro5/config.h"
 	"allegro5/path.h"
 
-1705822921 /usr/include/allegro5/threads.h
+1705822922 /usr/include/allegro5/threads.h
 	"allegro5/altime.h"
 
-1705822921 /usr/include/allegro5/timer.h
+1705822922 /usr/include/allegro5/timer.h
 	"allegro5/base.h"
 	"allegro5/events.h"
 
-1705822921 /usr/include/allegro5/tls.h
+1705822922 /usr/include/allegro5/tls.h
 	"allegro5/base.h"
 
-1705822921 /usr/include/allegro5/alcompat.h
+1705822922 /usr/include/allegro5/alcompat.h
 
 1705822921 /usr/include/allegro5/allegro_audio.h
 	"allegro5/allegro.h"
@@ -752,72 +756,72 @@
 1705822921 /usr/include/allegro5/allegro_native_dialog.h
 	"allegro5/allegro.h"
 
-1705822921 /usr/include/allegro5/allegro_primitives.h
+1705822922 /usr/include/allegro5/allegro_primitives.h
 	<allegro5/allegro.h>
 
-1717378328 source:/home/user/programacao/c/yasic/src/main.c
+1720443353 source:/home/user/programacao/c/yasic/src/main.c
 	"display.h"
 	"sound.h"
 	"invaders.h"
+	"utils.h"
 
 1718058498 /home/user/programacao/c/yasic/include/invaders.h
 
-1717032928 /home/user/programacao/c/yasic/include/utils.h
+1720454276 /home/user/programacao/c/yasic/include/utils.h
 
-1717346539 /home/user/programacao/c/yasic/include/display.h
+1720446301 /home/user/programacao/c/yasic/include/display.h
 	<stdio.h>
-	<allegro5/allegro.h>
-	<allegro5/allegro_audio.h>
-	<allegro5/allegro_acodec.h>
-	<allegro5/allegro_image.h>
-	<allegro5/allegro_font.h>
-	<allegro5/allegro_ttf.h>
-	<allegro5/allegro_native_dialog.h>
-	<allegro5/allegro_primitives.h>
+	<SDL2/SDL.h>
+	<SDL2/SDL_image.h>
+	<SDL2/SDL_ttf.h>
 
-1718073266 source:/home/user/programacao/c/yasic/src/enemy.c
+1720458922 source:/home/user/programacao/c/yasic/src/enemy.c
 	"enemy.h"
 	<allegro5/allegro_primitives.h>
 	"level.h"
 	"display.h"
+	"resources.h"
 
-1717376191 /home/user/programacao/c/yasic/include/enemy.h
+1720455258 /home/user/programacao/c/yasic/include/enemy.h
 	<stdio.h>
 	<stdint.h>
+	<SDL2/SDL.h>
 
-1717346934 source:/home/user/programacao/c/yasic/src/level.c
+1720457761 source:/home/user/programacao/c/yasic/src/level.c
 	"level.h"
 	"enemy.h"
+	"display.h"
 	<string.h>
+	<allegro5/allegro_primitives.h>
 
-1717258106 /home/user/programacao/c/yasic/include/level.h
+1719693673 /home/user/programacao/c/yasic/include/level.h
 	"enemy.h"
 
-1718058904 source:/home/user/programacao/c/yasic/src/sound.c
+1720442255 source:/home/user/programacao/c/yasic/src/sound.c
 	"sound.h"
 	<stdio.h>
-	<allegro5/allegro.h>
-	<allegro5/allegro_audio.h>
-	<allegro5/allegro_acodec.h>
+	"utils.h"
 
 1717377478 /home/user/programacao/c/yasic/include/sound.h
 
-1718064672 source:/home/user/programacao/c/yasic/src/player.c
+1720459771 source:/home/user/programacao/c/yasic/src/player.c
 	"player.h"
 	"display.h"
+	"level.h"
+	"resources.h"
 
-1718064645 /home/user/programacao/c/yasic/include/player.h
+1720459524 /home/user/programacao/c/yasic/include/player.h
 	<stdio.h>
 	<stdint.h>
+	"bullet.h"
 
-1718073399 source:/home/user/programacao/c/yasic/src/bullet.c
+1720442255 source:/home/user/programacao/c/yasic/src/bullet.c
 	"bullet.h"
 	<stdio.h>
 	"display.h"
 
-1718073337 /home/user/programacao/c/yasic/include/bullet.h
-	<allegro5/allegro.h>
-	<allegro5/allegro_primitives.h>
+1720442255 /home/user/programacao/c/yasic/include/bullet.h
+	<SDL2/SDL.h>
 
 1720110178 source:d:\projetos\c\invaders\src\bullet.c
 	"bullet.h"
@@ -1226,5 +1230,899 @@
 	"utils.h"
 
 1720183087 d:\projetos\c\invaders\include\timer.h
+	<SDL2/SDL.h>
+
+1718695954 /usr/include/SDL2/SDL.h
+	"SDL_main.h"
+	"SDL_stdinc.h"
+	"SDL_assert.h"
+	"SDL_atomic.h"
+	"SDL_audio.h"
+	"SDL_clipboard.h"
+	"SDL_cpuinfo.h"
+	"SDL_endian.h"
+	"SDL_error.h"
+	"SDL_events.h"
+	"SDL_filesystem.h"
+	"SDL_gamecontroller.h"
+	"SDL_guid.h"
+	"SDL_haptic.h"
+	"SDL_hidapi.h"
+	"SDL_hints.h"
+	"SDL_joystick.h"
+	"SDL_loadso.h"
+	"SDL_log.h"
+	"SDL_messagebox.h"
+	"SDL_metal.h"
+	"SDL_mutex.h"
+	"SDL_power.h"
+	"SDL_render.h"
+	"SDL_rwops.h"
+	"SDL_sensor.h"
+	"SDL_shape.h"
+	"SDL_system.h"
+	"SDL_thread.h"
+	"SDL_timer.h"
+	"SDL_version.h"
+	"SDL_video.h"
+	"SDL_locale.h"
+	"SDL_misc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_main.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_stdinc.h
+	"SDL_config.h"
+	<sys/types.h>
+	<stdio.h>
+	<stdlib.h>
+	<stddef.h>
+	<stdarg.h>
+	<stdlib.h>
+	<malloc.h>
+	<stddef.h>
+	<stdarg.h>
+	<memory.h>
+	<string.h>
+	<strings.h>
+	<wchar.h>
+	<inttypes.h>
+	<stdint.h>
+	<ctype.h>
+	<math.h>
+	<float.h>
+	<alloca.h>
+	<malloc.h>
+	<malloc.h>
+	<malloc.h>
+	<stdlib.h>
+	<sal.h>
+	"begin_code.h"
+	<stdlib.h>
+	<string.h>
+	<stdio.h>
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_config.h
+	"SDL_platform.h"
+
+1718695954 /usr/include/SDL2/SDL_platform.h
+	<AvailabilityMacros.h>
+	<TargetConditionals.h>
+	<TargetConditionals.h>
+	<winapifamily.h>
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/begin_code.h
+
+1718695954 /usr/include/SDL2/close_code.h
+
+1717403079 /usr/include/memory.h
+	<features.h>
+	<string.h>
+
+1717403079 /usr/include/wchar.h
+	<bits/libc-header-start.h>
+	<bits/floatn.h>
+	<stddef.h>
+	<stdarg.h>
+	<stdarg.h>
+	<bits/wchar.h>
+	<bits/types/wint_t.h>
+	<bits/types/mbstate_t.h>
+	<bits/types/__FILE.h>
+	<bits/types/FILE.h>
+	<bits/types/locale_t.h>
+	<bits/wctype-wchar.h>
+	<bits/wchar2-decl.h>
+	<bits/wchar-ldbl.h>
+	<bits/wchar2.h>
+
+1717403079 /usr/include/bits/types/wint_t.h
+
+1717403079 /usr/include/bits/types/mbstate_t.h
+	<bits/types/__mbstate_t.h>
+
+1717403079 /usr/include/bits/wctype-wchar.h
+	<bits/types.h>
+	<bits/types/wint_t.h>
+	<bits/endian.h>
+
+1717403079 /usr/include/bits/wchar2-decl.h
+
+1717403079 /usr/include/bits/wchar-ldbl.h
+
+1717403079 /usr/include/bits/wchar2.h
+
+1717403079 /usr/include/ctype.h
+	<features.h>
+	<bits/types.h>
+	<bits/endian.h>
+	<bits/types/locale_t.h>
+
+1717403079 /usr/include/math.h
+	<bits/libc-header-start.h>
+	<bits/types.h>
+	<bits/math-vector.h>
+	<bits/floatn.h>
+	<bits/flt-eval-method.h>
+	<bits/fp-logb.h>
+	<bits/fp-fast.h>
+	<bits/mathcalls-helper-functions.h>
+	<bits/mathcalls.h>
+	<bits/mathcalls-helper-functions.h>
+	<bits/mathcalls.h>
+	<bits/mathcalls-helper-functions.h>
+	<bits/mathcalls.h>
+	<bits/mathcalls-helper-functions.h>
+	<bits/mathcalls.h>
+	<bits/mathcalls-helper-functions.h>
+	<bits/mathcalls.h>
+	<bits/mathcalls-helper-functions.h>
+	<bits/mathcalls.h>
+	<bits/mathcalls-helper-functions.h>
+	<bits/mathcalls.h>
+	<bits/mathcalls-helper-functions.h>
+	<bits/mathcalls.h>
+	<bits/mathcalls-helper-functions.h>
+	<bits/mathcalls.h>
+	<bits/mathcalls-helper-functions.h>
+	<bits/mathcalls.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/mathcalls-narrow.h>
+	<bits/iscanonical.h>
+
+1717403079 /usr/include/bits/math-vector.h
+	<bits/libm-simd-decl-stubs.h>
+
+1717403079 /usr/include/bits/libm-simd-decl-stubs.h
+
+1717403079 /usr/include/bits/flt-eval-method.h
+
+1717403079 /usr/include/bits/fp-logb.h
+
+1717403079 /usr/include/bits/fp-fast.h
+
+1717403079 /usr/include/bits/mathcalls-helper-functions.h
+
+1717403079 /usr/include/bits/mathcalls.h
+
+1717403079 /usr/include/bits/mathcalls-narrow.h
+
+1717403079 /usr/include/bits/iscanonical.h
+
+1718695954 /usr/include/SDL2/SDL_assert.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	<signal.h>
+	"close_code.h"
+
+1717403079 /usr/include/signal.h
+	<features.h>
+	<bits/types.h>
+	<bits/signum-generic.h>
+	<bits/types/sig_atomic_t.h>
+	<bits/types/sigset_t.h>
+	<bits/types/struct_timespec.h>
+	<bits/types/siginfo_t.h>
+	<bits/siginfo-consts.h>
+	<bits/types/sigval_t.h>
+	<bits/types/sigevent_t.h>
+	<bits/sigevent-consts.h>
+	<bits/sigaction.h>
+	<bits/sigcontext.h>
+	<stddef.h>
+	<bits/types/stack_t.h>
+	<sys/ucontext.h>
+	<bits/sigstack.h>
+	<bits/sigstksz.h>
+	<bits/ss_flags.h>
+	<bits/types/struct_sigstack.h>
+	<bits/pthreadtypes.h>
+	<bits/sigthread.h>
+	<bits/signal_ext.h>
+
+1717403079 /usr/include/bits/signum-generic.h
+	<bits/signum-arch.h>
+
+1717403079 /usr/include/bits/signum-arch.h
+
+1717403079 /usr/include/bits/types/sig_atomic_t.h
+	<bits/types.h>
+
+1717403079 /usr/include/bits/types/siginfo_t.h
+	<bits/wordsize.h>
+	<bits/types.h>
+	<bits/types/__sigval_t.h>
+	<bits/siginfo-arch.h>
+
+1717403079 /usr/include/bits/types/__sigval_t.h
+
+1717403079 /usr/include/bits/siginfo-arch.h
+
+1717403079 /usr/include/bits/siginfo-consts.h
+	<bits/siginfo-arch.h>
+	<bits/siginfo-consts-arch.h>
+
+1717403079 /usr/include/bits/siginfo-consts-arch.h
+
+1717403079 /usr/include/bits/types/sigval_t.h
+	<bits/types/__sigval_t.h>
+
+1717403079 /usr/include/bits/types/sigevent_t.h
+	<bits/wordsize.h>
+	<bits/types.h>
+	<bits/types/__sigval_t.h>
+
+1717403079 /usr/include/bits/sigevent-consts.h
+
+1717403079 /usr/include/bits/sigaction.h
+
+1717403079 /usr/include/bits/sigcontext.h
+	<bits/types.h>
+
+1717403079 /usr/include/bits/types/stack_t.h
+	<stddef.h>
+
+1717403079 /usr/include/sys/ucontext.h
+	<features.h>
+	<bits/types.h>
+	<bits/types/sigset_t.h>
+	<bits/types/stack_t.h>
+
+1717403079 /usr/include/bits/sigstack.h
+
+1717403079 /usr/include/bits/sigstksz.h
+	<unistd.h>
+
+1717403079 /usr/include/bits/ss_flags.h
+
+1717403079 /usr/include/bits/types/struct_sigstack.h
+
+1717403079 /usr/include/bits/sigthread.h
+	<bits/types/__sigset_t.h>
+
+1717403079 /usr/include/bits/signal_ext.h
+
+1718695954 /usr/include/SDL2/SDL_atomic.h
+	"SDL_stdinc.h"
+	"SDL_platform.h"
+	"begin_code.h"
+	<sys/cpuinline.h>
+	<mbarrier.h>
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_audio.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_endian.h"
+	"SDL_mutex.h"
+	"SDL_thread.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_error.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_endian.h
+	"SDL_stdinc.h"
+	<intrin.h>
+	<endian.h>
+	<endian.h>
+	<sys/endian.h>
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_mutex.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_thread.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_atomic.h"
+	"SDL_mutex.h"
+	<process.h>
+	<process.h>
+	<stdlib.h>
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_rwops.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_clipboard.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_cpuinfo.h
+	"SDL_stdinc.h"
+	<intrin.h>
+	<intrin.h>
+	<arm_neon.h>
+	<altivec.h>
+	<arm_neon.h>
+	<armintr.h>
+	<arm_neon.h>
+	<arm64intr.h>
+	<arm64_neon.h>
+	<mm3dnow.h>
+	<lsxintrin.h>
+	<lasxintrin.h>
+	<immintrin.h>
+	<mmintrin.h>
+	<xmmintrin.h>
+	<emmintrin.h>
+	<pmmintrin.h>
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_events.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"SDL_keyboard.h"
+	"SDL_mouse.h"
+	"SDL_joystick.h"
+	"SDL_gamecontroller.h"
+	"SDL_quit.h"
+	"SDL_gesture.h"
+	"SDL_touch.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_video.h
+	"SDL_stdinc.h"
+	"SDL_pixels.h"
+	"SDL_rect.h"
+	"SDL_surface.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_pixels.h
+	"SDL_stdinc.h"
+	"SDL_endian.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_rect.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_pixels.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_surface.h
+	"SDL_stdinc.h"
+	"SDL_pixels.h"
+	"SDL_rect.h"
+	"SDL_blendmode.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_blendmode.h
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_keyboard.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_keycode.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_keycode.h
+	"SDL_stdinc.h"
+	"SDL_scancode.h"
+
+1718695954 /usr/include/SDL2/SDL_scancode.h
+	"SDL_stdinc.h"
+
+1718695954 /usr/include/SDL2/SDL_mouse.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_joystick.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_guid.h"
+	"SDL_mutex.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_guid.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_gamecontroller.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_rwops.h"
+	"SDL_sensor.h"
+	"SDL_joystick.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_sensor.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_quit.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+
+1718695954 /usr/include/SDL2/SDL_gesture.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"SDL_touch.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_touch.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_filesystem.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_haptic.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_joystick.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_hidapi.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_hints.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_loadso.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_log.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_messagebox.h
+	"SDL_stdinc.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_metal.h
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_power.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_render.h
+	"SDL_stdinc.h"
+	"SDL_rect.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_shape.h
+	"SDL_stdinc.h"
+	"SDL_pixels.h"
+	"SDL_rect.h"
+	"SDL_surface.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_system.h
+	"SDL_stdinc.h"
+	"SDL_keyboard.h"
+	"SDL_render.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_timer.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_version.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_locale.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1718695954 /usr/include/SDL2/SDL_misc.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1704145496 /usr/include/SDL2/SDL_image.h
+	"SDL.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1720459485 /home/user/programacao/c/yasic/include/resources.h
+	<SDL2/SDL.h>
+	<SDL2/SDL_image.h>
+
+1720453251 /home/user/programacao/c/yasic/include/timer.h
+	<SDL2/SDL.h>
+
+1720442255 source:/home/user/programacao/c/yasic/src/render.c
+
+1720442255 source:/home/user/programacao/c/yasic/src/texture.c
+	"texture.h"
+	"display.h"
+
+1720442255 /home/user/programacao/c/yasic/include/texture.h
+	<SDL2/SDL.h>
+
+1720455575 source:/home/user/programacao/c/yasic/src/timer.c
+	"timer.h"
+	"utils.h"
+
+1720460624 source:/home/user/programacao/c/yasic/src/resources.c
+	<stdio.h>
+	"resources.h"
+	"display.h"
+	"texture.h"
+	"platform.h"
+	"utils.h"
+	<sys/stat.h>
+	<sys/types.h>
+
+1720454396 /home/user/programacao/c/yasic/include/platform.h
+
+1717403079 /usr/include/sys/stat.h
+	<features.h>
+	<bits/types.h>
+	<bits/types/struct_timespec.h>
+	<bits/types/time_t.h>
+	<bits/stat.h>
+	<bits/statx.h>
+
+1717403079 /usr/include/bits/statx.h
+	"linux/stat.h"
+	<bits/statx-generic.h>
+
+1715588176 /usr/include/linux/stat.h
+	<linux/types.h>
+
+1715588176 /usr/include/linux/types.h
+	<asm/types.h>
+	<linux/posix_types.h>
+
+1715588176 /usr/include/asm/types.h
+	<asm-generic/types.h>
+
+1715588176 /usr/include/asm-generic/types.h
+	<asm-generic/int-ll64.h>
+
+1715588176 /usr/include/asm-generic/int-ll64.h
+	<asm/bitsperlong.h>
+
+1715588176 /usr/include/asm/bitsperlong.h
+	<asm-generic/bitsperlong.h>
+
+1715588176 /usr/include/asm-generic/bitsperlong.h
+
+1715588176 /usr/include/linux/posix_types.h
+	<linux/stddef.h>
+	<asm/posix_types.h>
+
+1715588176 /usr/include/linux/stddef.h
+
+1715588176 /usr/include/asm/posix_types.h
+	<asm/posix_types_32.h>
+	<asm/posix_types_x32.h>
+	<asm/posix_types_64.h>
+
+1715588176 /usr/include/asm/posix_types_32.h
+	<asm-generic/posix_types.h>
+
+1715588176 /usr/include/asm-generic/posix_types.h
+	<asm/bitsperlong.h>
+
+1715588176 /usr/include/asm/posix_types_x32.h
+	<asm/posix_types_64.h>
+
+1715588176 /usr/include/asm/posix_types_64.h
+	<asm-generic/posix_types.h>
+
+1717403079 /usr/include/bits/statx-generic.h
+	<bits/types/struct_statx_timestamp.h>
+	<bits/types/struct_statx.h>
+
+1717403079 /usr/include/bits/types/struct_statx_timestamp.h
+
+1717403079 /usr/include/bits/types/struct_statx.h
+
+1705857173 /usr/include/SDL2/SDL_ttf.h
+	"SDL.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL.h
+	"SDL_main.h"
+	"SDL_stdinc.h"
+	"SDL_audio.h"
+	"SDL_cdrom.h"
+	"SDL_cpuinfo.h"
+	"SDL_endian.h"
+	"SDL_error.h"
+	"SDL_events.h"
+	"SDL_loadso.h"
+	"SDL_mutex.h"
+	"SDL_rwops.h"
+	"SDL_thread.h"
+	"SDL_timer.h"
+	"SDL_video.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_main.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_stdinc.h
+	"SDL_config.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<sys/types.h>
+	<stdio.h>
+	<stdlib.h>
+	<malloc.h>
+	<stddef.h>
+	<stdarg.h>
+	<string.h>
+	<strings.h>
+	<inttypes.h>
+	<stdint.h>
+	<ctype.h>
+	<iconv.h>
+	<alloca.h>
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_config.h
+	"SDL_platform.h"
+	<stdint.h>
+	<stdarg.h>
+
+1695754953 /usr/include/SDL/SDL_platform.h
+	<AvailabilityMacros.h>
+	<TargetConditionals.h>
+	<winapifamily.h>
+
+1717403079 /usr/include/iconv.h
+	<features.h>
+	<stddef.h>
+
+1695754953 /usr/include/SDL/begin_code.h
+
+1695754953 /usr/include/SDL/close_code.h
+
+1695754953 /usr/include/SDL/SDL_audio.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_endian.h"
+	"SDL_mutex.h"
+	"SDL_thread.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_error.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_endian.h
+	"SDL_stdinc.h"
+	<intrin.h>
+	<endian.h>
+	<endian.h>
+	<sys/endian.h>
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_mutex.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_thread.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_mutex.h"
+	<process.h>
+	<stdlib.h>
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_rwops.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_cdrom.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_cpuinfo.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_events.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_active.h"
+	"SDL_keyboard.h"
+	"SDL_mouse.h"
+	"SDL_joystick.h"
+	"SDL_quit.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_active.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_keyboard.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_keysym.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_keysym.h
+
+1695754953 /usr/include/SDL/SDL_mouse.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_video.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_joystick.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_quit.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+
+1695754953 /usr/include/SDL/SDL_loadso.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_timer.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1695754953 /usr/include/SDL/SDL_version.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1720462905 source:/home/user/programacao/c/yasic/src/keyboard.c
+	"keyboard.h"
+
+1720462901 /home/user/programacao/c/yasic/include/keyboard.h
 	<SDL2/SDL.h>
 

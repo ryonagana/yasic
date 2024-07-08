@@ -7,7 +7,7 @@
 #include "resources.h"
 #include "utils.h"
 #include "timer.h"
-
+#include "keyboard.h"
 
 
 static LEVEL game_level;
@@ -31,6 +31,8 @@ void Invaders_Start(void){
     //Bullet_Init(&bullets, 10);
 
     GameTimer_Init(&game_timer);
+    GameTimer_SetFPS(&game_timer, 60.0f);
+    GameTimer_Start(&game_timer);
 
     memset(pressed_keys, 0, sizeof(pressed_keys));
     memset(released_keys, 0, sizeof(released_keys));
@@ -44,32 +46,68 @@ void Invaders_Start(void){
 
 }
 
-int InvadersHandleLoop(float delta){
-    SDL_Event e;
-    SDL_PollEvent(&e);
 
+void InvadersHandleKeyboard(SDL_Event *e){
+    if(e->type == SDL_KEYUP){
+        if(e->key.repeat == 0){
 
-    if(e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE){
-        return 1;
+        }
     }
 
-    return 0;
+    if(e->type == SDL_KEYDOWN){
 
+    }
 }
 
 void Invaders_Loop(void){
 
 
-    float deltaTime = 0;
-    Uint32 prevFrameTime = 0;
+    int window_close = FALSE;
 
 
+    while(!window_close){
+        SDL_Event event;
+        float dt = GameTimer_GetDelta(&game_timer);
+
+
+
+        while(SDL_PollEvent(&event)){
+            if(event.type == SDL_QUIT || event.key.keysym.sym == SDLK_ESCAPE){
+                window_close = TRUE;
+            }
+
+            InvadersHandleKeyboard(&event);
+        }
+
+        LVL_Update(&game_level, enemies);
+        Enemy_Update(enemies, dt);
+        Player_Update(&player);
+
+        SDL_SetRenderTarget(g_display.renderer, g_display.screen);
+        SDL_RenderClear(g_display.renderer);
+        Enemy_Render(enemies);
+        Player_Render(&player);
+        SDL_SetRenderTarget(g_display.renderer, NULL);
+        Dsp_Render();
+
+        /*
+        if(Keyboard_IsPressed(SDLK_UP)){
+            SDL_Log("UP!");
+        }
+        */
+
+        GameTimer_UpdateTicks(&game_timer);
+
+
+    }
+
+/*
     while(!InvadersHandleLoop(deltaTime)){
         deltaTime = (SDL_GetTicks() - prevFrameTime ) / 1000.0f;
         prevFrameTime = SDL_GetTicks();
 
 
-        Enemy_Update(enemies, deltaTime);
+        Enemy_Update(enemies,  deltaTime);
 
         SDL_SetRenderTarget(g_display.renderer, g_display.screen);
         SDL_RenderClear(g_display.renderer);
@@ -84,7 +122,7 @@ void Invaders_Loop(void){
             Dsp_CapFrameRate(prevFrameTime);
         }
     }
-
+    */
 
 }
 void Invaders_Shutdown(void){
