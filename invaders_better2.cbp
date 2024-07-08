@@ -75,14 +75,9 @@
 				</Compiler>
 				<Linker>
 					<Add option="-m64" />
-					<Add option="-lallegro" />
-					<Add option="-lallegro_audio" />
-					<Add option="-lallegro_acodec" />
-					<Add option="-lallegro_font" />
-					<Add option="-lallegro_ttf" />
-					<Add option="-lallegro_image" />
-					<Add option="-lallegro_dialog" />
-					<Add option="-lallegro_primitives" />
+					<Add option="-lSDL2" />
+					<Add option="-lSDL2_image" />
+					<Add option="-lSDL2_ttf" />
 					<Add directory="/usr/lib64" />
 					<Add directory="/usr/local/lib" />
 					<LinkerExe value="CCompiler" />
@@ -101,6 +96,7 @@
 		<Unit filename="include/display.h" />
 		<Unit filename="include/enemy.h" />
 		<Unit filename="include/invaders.h" />
+		<Unit filename="include/keyboard.h" />
 		<Unit filename="include/level.h" />
 		<Unit filename="include/platform.h" />
 		<Unit filename="include/player.h" />
@@ -120,6 +116,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/invaders.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/keyboard.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/level.c">

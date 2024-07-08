@@ -13,11 +13,7 @@
 static LEVEL game_level;
 static ENEMY enemies[ENEMY_ROWS][ENEMY_COLS];
 static PLAYER player;
-//static TBULLETS bullets;
 
-uint8_t keys[227];
-uint8_t released_keys[227];
-uint8_t pressed_keys[227];
 int shot_time_test = 60;
 
 GAMETIMER game_timer;
@@ -28,18 +24,13 @@ void Invaders_Start(void){
     LVL_Start(enemies);
     Player_Init(&player);
 
-    //Bullet_Init(&bullets, 10);
-
     GameTimer_Init(&game_timer);
     GameTimer_SetFPS(&game_timer, 60.0f);
     GameTimer_Start(&game_timer);
 
-    memset(pressed_keys, 0, sizeof(pressed_keys));
-    memset(released_keys, 0, sizeof(released_keys));
-
     int total = Enemy_AliveCount(enemies);
 
-    printf("%d", total);
+    SDL_Log("%d", total);
 
     Player_SpawnPos(&player, Dsp_GetWindowWidth() / 2 - 32, Dsp_GetWindowHeight() - 64);
 
@@ -50,12 +41,14 @@ void Invaders_Start(void){
 void InvadersHandleKeyboard(SDL_Event *e){
     if(e->type == SDL_KEYUP){
         if(e->key.repeat == 0){
-
+            Keyboard_PollKeyUp(e);
         }
     }
 
     if(e->type == SDL_KEYDOWN){
-
+        if(e->key.repeat == 0){
+           Keyboard_PollKeyDown(e);
+        }
     }
 }
 
@@ -80,8 +73,8 @@ void Invaders_Loop(void){
         }
 
         LVL_Update(&game_level, enemies);
-        Enemy_Update(enemies, dt);
-        Player_Update(&player);
+        Enemy_Update(enemies,  dt);
+        Player_Update(&player, dt);
 
         SDL_SetRenderTarget(g_display.renderer, g_display.screen);
         SDL_RenderClear(g_display.renderer);
@@ -90,6 +83,15 @@ void Invaders_Loop(void){
         SDL_SetRenderTarget(g_display.renderer, NULL);
         Dsp_Render();
 
+        if(Keyboard_isPressed(SDL_SCANCODE_A)){
+            Player_MoveLeft(&player);
+        }else if(Keyboard_isPressed(SDL_SCANCODE_D)){
+            Player_MoveRight(&player);
+        }
+
+        if(Keyboard_isPressed(SDL_SCANCODE_SPACE)){
+            Player_Shoot(&player);
+        }
         /*
         if(Keyboard_IsPressed(SDLK_UP)){
             SDL_Log("UP!");
@@ -130,11 +132,3 @@ void Invaders_Shutdown(void){
 }
 
 
-int KeyDown(int key)
-{
-    return pressed_keys[key];
-}
-int KeyUp(int key)
-{
-    return released_keys[key];
-}

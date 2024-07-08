@@ -5,15 +5,20 @@
 #include "bullet.h"
 
 
+typedef struct PlayerKeyEvent {
+    SDL_Keysym left;
+    SDL_Keysym right;
+    SDL_Keysym shoot;
+
+    int isleftPressed;
+    int isRightPressed;
+    int isShootPressed;
+}PlayerKeyEvent;
 
 typedef struct PLAYER {
 
     SDL_FRect pos;
     SDL_FRect vel;
-    int x;
-    int y;
-    int vx;
-    int vy;
     int shoot_timer;
     int direction;
     uint32_t shoot_count;
@@ -24,6 +29,7 @@ typedef struct PLAYER {
     int state;
     TBULLETS bullets;
 
+
 }PLAYER;
 
 void Player_Init(PLAYER *p);
@@ -31,7 +37,7 @@ void Player_SpawnPos(PLAYER *p, int x, int y);
 void Player_SetShootTime(PLAYER *p, int timer);
 void Player_SetShootCount(PLAYER *p, int count);
 
-void Player_Update(PLAYER *p);
+void Player_Update(PLAYER *p, float deltaTime);
 void Player_Render(PLAYER *p);
 
 void Player_MoveLeft(PLAYER *p);
@@ -39,4 +45,5 @@ void Player_MoveRight(PLAYER *p);
 
 void Player_Shoot(PLAYER *p);
 
+void Player_PollKeys(PLAYER *p, SDL_Event *e);
 #endif // PLAYER_H
