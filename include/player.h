@@ -5,15 +5,6 @@
 #include "bullet.h"
 
 
-typedef struct PlayerKeyEvent {
-    SDL_Keysym left;
-    SDL_Keysym right;
-    SDL_Keysym shoot;
-
-    int isleftPressed;
-    int isRightPressed;
-    int isShootPressed;
-}PlayerKeyEvent;
 
 typedef struct PLAYER {
 
@@ -42,6 +33,8 @@ void Player_Render(PLAYER *p);
 
 void Player_MoveLeft(PLAYER *p);
 void Player_MoveRight(PLAYER *p);
+void Player_ReleasedLeft(PLAYER *p);
+void Player_ReleasedRight(PLAYER *p);
 
 void Player_Shoot(PLAYER *p);
 

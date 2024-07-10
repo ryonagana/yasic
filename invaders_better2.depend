@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1720473929 source:/home/user/programacao/c/yasic/src/invaders.c
+1720554038 source:/home/user/programacao/c/yasic/src/invaders.c
 	"invaders.h"
 	"display.h"
 	"level.h"
@@ -804,19 +804,20 @@
 
 1717377478 /home/user/programacao/c/yasic/include/sound.h
 
-1720473690 source:/home/user/programacao/c/yasic/src/player.c
+1720555673 source:/home/user/programacao/c/yasic/src/player.c
 	"player.h"
 	"display.h"
 	"level.h"
 	"resources.h"
 	<SDL2/SDL.h>
+	"utils.h"
 
-1720474066 /home/user/programacao/c/yasic/include/player.h
+1720552254 /home/user/programacao/c/yasic/include/player.h
 	<stdio.h>
 	<stdint.h>
 	"bullet.h"
 
-1720442255 source:/home/user/programacao/c/yasic/src/bullet.c
+1720553612 source:/home/user/programacao/c/yasic/src/bullet.c
 	"bullet.h"
 	<stdio.h>
 	"display.h"
@@ -2121,9 +2122,9 @@
 	"begin_code.h"
 	"close_code.h"
 
-1720471896 source:/home/user/programacao/c/yasic/src/keyboard.c
+1720543128 source:/home/user/programacao/c/yasic/src/keyboard.c
 	"keyboard.h"
 
-1720471907 /home/user/programacao/c/yasic/include/keyboard.h
+1720543144 /home/user/programacao/c/yasic/include/keyboard.h
 	<SDL2/SDL.h>
 

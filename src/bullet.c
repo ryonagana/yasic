@@ -65,12 +65,6 @@ void Bullet_Draw(TBULLETS *bullet_root, SDL_Texture *bmp){
                 bullet_root->render_callback(b, bullet_root->length, bmp);
                 return;
             }
-
-            if(bmp){
-                //al_draw_bitmap(bmp, b->x, b->y,0);
-            }else {
-                //al_draw_filled_circle(b->x,b->y,5,al_map_rgb(255,0,255));
-            }
         }
     }
 }

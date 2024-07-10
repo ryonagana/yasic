@@ -18,6 +18,8 @@ int shot_time_test = 60;
 
 GAMETIMER game_timer;
 
+
+
 void Invaders_Start(void){
     resources_init();
     LVL_Init(&game_level, enemies);
@@ -32,23 +34,33 @@ void Invaders_Start(void){
 
     SDL_Log("%d", total);
 
-    Player_SpawnPos(&player, Dsp_GetWindowWidth() / 2 - 32, Dsp_GetWindowHeight() - 64);
-
+    Player_SpawnPos(&player, Dsp_GetWindowWidth() / 2 - 32, Dsp_GetWindowHeight() - 32);
 
 }
 
-
 void InvadersHandleKeyboard(SDL_Event *e){
     if(e->type == SDL_KEYUP){
-        if(e->key.repeat == 0){
-            Keyboard_PollKeyUp(e);
-        }
+            if(e->key.keysym.sym == SDLK_a){
+                Player_ReleasedLeft(&player);
+            }
+
+           if(e->key.keysym.sym == SDLK_d){
+                Player_ReleasedRight(&player);
+           }
+
+           if(e->key.keysym.sym == SDLK_SPACE){
+                Player_Shoot(&player);
+           }
     }
 
     if(e->type == SDL_KEYDOWN){
-        if(e->key.repeat == 0){
-           Keyboard_PollKeyDown(e);
-        }
+            if(e->key.keysym.sym == SDLK_a){
+                Player_MoveLeft(&player);
+           }
+
+           if(e->key.keysym.sym == SDLK_d){
+                Player_MoveRight(&player);
+           }
     }
 }
 
@@ -85,8 +97,12 @@ void Invaders_Loop(void){
 
         if(Keyboard_isPressed(SDL_SCANCODE_A)){
             Player_MoveLeft(&player);
+            SDL_Log("LEFT %d", player.direction);
         }else if(Keyboard_isPressed(SDL_SCANCODE_D)){
             Player_MoveRight(&player);
+            SDL_Log("LEFT %d", player.direction);
+        }else {
+            player.direction = 0;
         }
 
         if(Keyboard_isPressed(SDL_SCANCODE_SPACE)){
@@ -99,7 +115,7 @@ void Invaders_Loop(void){
         */
 
         GameTimer_UpdateTicks(&game_timer);
-
+        Keyboard_Update();
 
     }
 

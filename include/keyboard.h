@@ -10,5 +10,6 @@
 void Keyboard_PollKeyUp(SDL_Event *e);
 void Keyboard_PollKeyDown(SDL_Event *e);
 int *Keyboard_getKeys(void);
+void Keyboard_Update(void);
 int Keyboard_isPressed(int key);
 #endif // KEYBOARD_H
