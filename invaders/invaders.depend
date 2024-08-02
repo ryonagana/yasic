@@ -1,0 +1,45 @@
+# depslib dependency file v1.0
+1722570886 source:/home/user/programacao/c/yasic/src/invaders.c
+	"linux_win.h"
+	<SDL2/SDL.h>
+	"video.h"
+	"utils.h"
+	"ship.h"
+
+1722562721 source:/home/user/programacao/c/yasic/src/linux_win.c
+	"linux_win.h"
+	<stdio.h>
+	<string.h>
+	<SDL2/SDL.h>
+	<SDL2/SDL_image.h>
+	"video.h"
+
+1722556675 /home/user/programacao/c/yasic/include/linux_win.h
+
+1722562989 source:/home/user/programacao/c/yasic/src/video.c
+	"video.h"
+
+1722563016 /home/user/programacao/c/yasic/include/video.h
+	<SDL2/SDL.h>
+
+1722570179 /home/user/programacao/c/yasic/include/utils.h
+
+1722570075 source:/home/user/programacao/c/yasic/src/ship.c
+	"ship.h"
+	"video.h"
+	"convert.h"
+	<assert.h>
+	"utils.h"
+
+1722567675 /home/user/programacao/c/yasic/include/ship.h
+	<SDL2/SDL.h>
+	<SDL2/SDL_image.h>
+
+1722561289 source:/home/user/programacao/c/yasic/src/convert.c
+	"convert.h"
+	<SDL2/SDL_image.h>
+	"video.h"
+
+1722561309 /home/user/programacao/c/yasic/include/convert.h
+	<SDL2/SDL.h>
+

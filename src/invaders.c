@@ -1,150 +1,93 @@
-#include "invaders.h"
-#include "display.h"
-#include "level.h"
-#include "enemy.h"
-#include "player.h"
-#include "bullet.h"
-#include "resources.h"
+#include "linux_win.h"
+#include <SDL2/SDL.h>
+#include "video.h"
 #include "utils.h"
-#include "timer.h"
-#include "keyboard.h"
+#include "ship.h"
 
+int keys[255];
 
-static LEVEL game_level;
-static ENEMY enemies[ENEMY_ROWS][ENEMY_COLS];
-static PLAYER player;
-
-int shot_time_test = 60;
-
-GAMETIMER game_timer;
-
-
-
-void Invaders_Start(void){
-    resources_init();
-    LVL_Init(&game_level, enemies);
-    LVL_Start(enemies);
-    Player_Init(&player);
-
-    GameTimer_Init(&game_timer);
-    GameTimer_SetFPS(&game_timer, 60.0f);
-    GameTimer_Start(&game_timer);
-
-    int total = Enemy_AliveCount(enemies);
-
-    SDL_Log("%d", total);
-
-    Player_SpawnPos(&player, Dsp_GetWindowWidth() / 2 - 32, Dsp_GetWindowHeight() - 32);
-
+int KeyPressed(int key){
+    return (keys[key] & KEY_PRESSED) == 0;
 }
 
-void InvadersHandleKeyboard(SDL_Event *e){
-    if(e->type == SDL_KEYUP){
-            if(e->key.keysym.sym == SDLK_a){
-                Player_ReleasedLeft(&player);
+int KeyReleased(int key){
+    return (keys[key] & KEY_RELEASED) == 0;
+}
+
+int main(int argc, char *argv[]){
+
+    UNUSED(argc);
+    UNUSED(argv);
+
+    window_init();
+    window_display_create(800,600,0,1, "INVADERS!");
+
+    int close = 0;
+    int vsync_on = TRUE;
+
+    Uint64 now = SDL_GetPerformanceCounter();
+    Uint64 last = 0;
+    double deltaTime = 0;
+    char fps_txt[125];
+    ship_init();
+
+    int first_frame = TRUE;
+
+    memset(keys, 0x0, sizeof(keys));
+
+    while(!close){
+
+        SDL_Event e;
+        struct spaceship *ship = ship_get();
+
+        if(!first_frame){
+            last = now;
+            first_frame = TRUE;
+        }
+
+        now = SDL_GetPerformanceCounter();
+        deltaTime = (double) ((now-last)*1000) / (double) SDL_GetPerformanceFrequency();
+
+        snprintf(fps_txt, sizeof(fps_txt), "%.6f", deltaTime);
+        SDL_SetWindowTitle(gamewindow.window, fps_txt);
+
+        while(SDL_PollEvent(&e) != 0){
+
+            if(e.type == SDL_QUIT){
+                close = 1;
+                break;
             }
 
-           if(e->key.keysym.sym == SDLK_d){
-                Player_ReleasedRight(&player);
-           }
-
-           if(e->key.keysym.sym == SDLK_SPACE){
-                Player_Shoot(&player);
-           }
-    }
-
-    if(e->type == SDL_KEYDOWN){
-            if(e->key.keysym.sym == SDLK_a){
-                Player_MoveLeft(&player);
-           }
-
-           if(e->key.keysym.sym == SDLK_d){
-                Player_MoveRight(&player);
-           }
-    }
-}
-
-void Invaders_Loop(void){
-
-
-    int window_close = FALSE;
-
-
-    while(!window_close){
-        SDL_Event event;
-        float dt = GameTimer_GetDelta(&game_timer);
-
-
-
-        while(SDL_PollEvent(&event)){
-            if(event.type == SDL_QUIT || event.key.keysym.sym == SDLK_ESCAPE){
-                window_close = TRUE;
+            if(e.type == SDL_KEYDOWN){
+                keys[e.key.keysym.scancode] |= KEY_PRESSED;
+                keys[e.key.keysym.scancode] &= ~KEY_RELEASED;
             }
 
-            InvadersHandleKeyboard(&event);
+            if(e.type == SDL_KEYUP){
+                keys[e.key.keysym.scancode] &= ~KEY_PRESSED;
+                keys[e.key.keysym.scancode] |= KEY_RELEASED;
+            }
         }
 
-        LVL_Update(&game_level, enemies);
-        Enemy_Update(enemies,  dt);
-        Player_Update(&player, dt);
+        fprintf(stderr, "left %d\n", ship->keys.left);
+        ship_update(deltaTime);
 
-        SDL_SetRenderTarget(g_display.renderer, g_display.screen);
-        SDL_RenderClear(g_display.renderer);
-        Enemy_Render(enemies);
-        Player_Render(&player);
-        SDL_SetRenderTarget(g_display.renderer, NULL);
-        Dsp_Render();
+        SDL_SetRenderTarget(gamewindow.renderer, gamewindow.screen);
+        SDL_RenderClear(gamewindow.renderer);
+        ship_draw();
+        SDL_SetRenderTarget(gamewindow.renderer, NULL);
 
-        if(Keyboard_isPressed(SDL_SCANCODE_A)){
-            Player_MoveLeft(&player);
-            SDL_Log("LEFT %d", player.direction);
-        }else if(Keyboard_isPressed(SDL_SCANCODE_D)){
-            Player_MoveRight(&player);
-            SDL_Log("LEFT %d", player.direction);
-        }else {
-            player.direction = 0;
-        }
+        video_render();
 
-        if(Keyboard_isPressed(SDL_SCANCODE_SPACE)){
-            Player_Shoot(&player);
-        }
-        /*
-        if(Keyboard_IsPressed(SDLK_UP)){
-            SDL_Log("UP!");
-        }
-        */
+        memset(keys, 0x0, sizeof(keys));
 
-        GameTimer_UpdateTicks(&game_timer);
-        Keyboard_Update();
+        last = now;
 
-    }
-
-/*
-    while(!InvadersHandleLoop(deltaTime)){
-        deltaTime = (SDL_GetTicks() - prevFrameTime ) / 1000.0f;
-        prevFrameTime = SDL_GetTicks();
-
-
-        Enemy_Update(enemies,  deltaTime);
-
-        SDL_SetRenderTarget(g_display.renderer, g_display.screen);
-        SDL_RenderClear(g_display.renderer);
-
-        Enemy_Render(enemies);
-        SDL_SetRenderTarget(g_display.renderer, NULL);
-
-        Dsp_Render();
-
-
-        if(g_display.vsync){
-            Dsp_CapFrameRate(prevFrameTime);
+        if(!vsync_on){
+            float elapsed = (last -now) / SDL_GetPerformanceFrequency() * 1000;
+            SDL_Delay(floor(1.0/60.0) - elapsed);
         }
     }
-    */
 
+    return 0;
 }
-void Invaders_Shutdown(void){
-    Enemy_Shutdown();
-}
-
-
