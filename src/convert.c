@@ -2,7 +2,7 @@
 #include <SDL2/SDL_image.h>
 #include "video.h"
 
-SDL_Texture*  load_texture_from_filepath(const char *path){
+SDL_Texture*  load_texture_from_filepath(const char *path, Uint32 *color){
     SDL_Surface *sf;
     SDL_Texture *tex;
 
@@ -16,6 +16,10 @@ SDL_Texture*  load_texture_from_filepath(const char *path){
     if(NULL == sf){
         fprintf(stderr, "asset %s invalid ", path);
         return NULL;
+    }
+
+    if(NULL != color){
+        SDL_SetColorKey(sf, SDL_TRUE, *color);
     }
 
     tex = SDL_CreateTextureFromSurface(gamewindow.renderer, sf);
@@ -44,4 +48,5 @@ SDL_Texture*  convert_surface_to_texture(SDL_Surface *surf){
 
 void create_colorkey(SDL_Surface *surf, Uint32 color){
     SDL_SetColorKey(surf, SDL_TRUE, color);
+    return;
 }

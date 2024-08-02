@@ -43,3 +43,67 @@
 1722561309 /home/user/programacao/c/yasic/include/convert.h
 	<SDL2/SDL.h>
 
+1722610982 source:d:\projetos\c\invaders\src\convert.c
+	"convert.h"
+	<SDL2/SDL_image.h>
+	"video.h"
+
+1722610980 d:\projetos\c\invaders\include\convert.h
+	<SDL2/SDL.h>
+
+1722600498 d:\projetos\c\invaders\include\video.h
+	<SDL2/SDL.h>
+
+1722620251 source:d:\projetos\c\invaders\src\invaders.c
+	"win.h"
+	<SDL2/SDL.h>
+	"video.h"
+	"utils.h"
+	"ship.h"
+	"enemy.h"
+
+1722600498 d:\projetos\c\invaders\include\win.h
+
+1722611498 d:\projetos\c\invaders\include\utils.h
+
+1722611266 d:\projetos\c\invaders\include\ship.h
+	<SDL2/SDL.h>
+	<SDL2/SDL_image.h>
+	"bullet.h"
+
+1722617451 source:d:\projetos\c\invaders\src\ship.c
+	"ship.h"
+	"video.h"
+	"convert.h"
+	<assert.h>
+	"utils.h"
+
+1722600499 source:d:\projetos\c\invaders\src\video.c
+	"video.h"
+
+1722600755 source:d:\projetos\c\invaders\src\win.c
+	"win.h"
+	<stdio.h>
+	<string.h>
+	<SDL2/SDL.h>
+	<SDL2/SDL_image.h>
+	"video.h"
+
+1722617412 source:d:\projetos\c\invaders\src\bullet.c
+	"bullet.h"
+	"utils.h"
+	"video.h"
+	<math.h>
+
+1722617063 d:\projetos\c\invaders\include\bullet.h
+	<SDL2/SDL.h>
+
+1722620083 source:d:\projetos\c\invaders\src\enemy.c
+	"enemy.h"
+	"utils.h"
+	"video.h"
+
+1722620036 d:\projetos\c\invaders\include\enemy.h
+	<SDL2/SDL.h>
+	"convert.h"
+
