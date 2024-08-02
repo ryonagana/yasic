@@ -8,6 +8,7 @@
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/invaders" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../invaders" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -29,9 +30,9 @@
 			</Target>
 			<Target title="Debug Linux">
 				<Option output="invaders" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option use_console_runner="0" />
 				<Compiler>
 					<Add option="-pedantic" />
 					<Add option="-Wextra" />
@@ -61,12 +62,17 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="../include/convert.h" />
 		<Unit filename="../include/linux_win.h">
 			<Option target="Debug Linux" />
 			<Option target="Release Linux" />
 		</Unit>
+		<Unit filename="../include/ship.h" />
 		<Unit filename="../include/utils.h" />
 		<Unit filename="../include/video.h" />
+		<Unit filename="../src/convert.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../src/invaders.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -74,6 +80,9 @@
 			<Option compilerVar="CC" />
 			<Option target="Debug Linux" />
 			<Option target="Release Linux" />
+		</Unit>
+		<Unit filename="../src/ship.c">
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/video.c">
 			<Option compilerVar="CC" />
