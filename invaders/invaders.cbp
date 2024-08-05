@@ -71,6 +71,7 @@
 					<Add option="-lSDL2" />
 					<Add option="-lSDL2_image" />
 					<Add option="-lSDL2_mixer" />
+					<Add option="-lm" />
 					<Add directory="/usr/lib64" />
 					<Add directory="/usr/lib" />
 				</Linker>

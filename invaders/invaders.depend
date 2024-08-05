@@ -1,10 +1,11 @@
 # depslib dependency file v1.0
-1722570886 source:/home/user/programacao/c/yasic/src/invaders.c
-	"linux_win.h"
+1722634520 source:/home/user/programacao/c/yasic/src/invaders.c
+	"win.h"
 	<SDL2/SDL.h>
 	"video.h"
 	"utils.h"
 	"ship.h"
+	"enemy.h"
 
 1722562721 source:/home/user/programacao/c/yasic/src/linux_win.c
 	"linux_win.h"
@@ -22,25 +23,26 @@
 1722563016 /home/user/programacao/c/yasic/include/video.h
 	<SDL2/SDL.h>
 
-1722570179 /home/user/programacao/c/yasic/include/utils.h
+1722634520 /home/user/programacao/c/yasic/include/utils.h
 
-1722570075 source:/home/user/programacao/c/yasic/src/ship.c
+1722634520 source:/home/user/programacao/c/yasic/src/ship.c
 	"ship.h"
 	"video.h"
 	"convert.h"
 	<assert.h>
 	"utils.h"
 
-1722567675 /home/user/programacao/c/yasic/include/ship.h
+1722634520 /home/user/programacao/c/yasic/include/ship.h
 	<SDL2/SDL.h>
 	<SDL2/SDL_image.h>
+	"bullet.h"
 
-1722561289 source:/home/user/programacao/c/yasic/src/convert.c
+1722634520 source:/home/user/programacao/c/yasic/src/convert.c
 	"convert.h"
 	<SDL2/SDL_image.h>
 	"video.h"
 
-1722561309 /home/user/programacao/c/yasic/include/convert.h
+1722634520 /home/user/programacao/c/yasic/include/convert.h
 	<SDL2/SDL.h>
 
 1722610982 source:d:\projetos\c\invaders\src\convert.c
@@ -106,4 +108,32 @@
 1722620036 d:\projetos\c\invaders\include\enemy.h
 	<SDL2/SDL.h>
 	"convert.h"
+
+1722634520 source:/home/user/programacao/c/yasic/src/bullet.c
+	"bullet.h"
+	"utils.h"
+	"video.h"
+	<math.h>
+
+1722634520 /home/user/programacao/c/yasic/include/bullet.h
+	<SDL2/SDL.h>
+
+1722634520 source:/home/user/programacao/c/yasic/src/enemy.c
+	"enemy.h"
+	"utils.h"
+	"video.h"
+
+1722634520 /home/user/programacao/c/yasic/include/enemy.h
+	<SDL2/SDL.h>
+	"convert.h"
+
+1722634520 /home/user/programacao/c/yasic/include/win.h
+
+1722634520 source:/home/user/programacao/c/yasic/src/win.c
+	"win.h"
+	<stdio.h>
+	<string.h>
+	<SDL2/SDL.h>
+	<SDL2/SDL_image.h>
+	"video.h"
 
