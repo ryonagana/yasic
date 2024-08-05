@@ -1,4 +1,5 @@
 #include "convert.h"
+#include <stdio.h>
 #include <SDL2/SDL_image.h>
 #include "video.h"
 
@@ -50,3 +51,4 @@ void create_colorkey(SDL_Surface *surf, Uint32 color){
     SDL_SetColorKey(surf, SDL_TRUE, color);
     return;
 }
+

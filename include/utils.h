@@ -22,4 +22,9 @@ extern int keys[255];
 int KeyPressed(int key);
 int KeyReleased(int key);
 
+int rect_collision(float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2);
+
+
+int rand_range(int min, int max);
+int rand_num(int m);
 #endif // UTILS_HEADER
